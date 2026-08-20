@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+
+<html lang="pt-AO"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KiVenda - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#e5eeff",
+                        "on-surface-variant": "#3e4a3d",
+                        "surface": "#f8f9ff",
+                        "tertiary-fixed": "#c9e6ff",
+                        "error-container": "#ffdad6",
+                        "secondary": "#4059aa",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#dce1ff",
+                        "background": "#f8f9ff",
+                        "on-primary-fixed": "#002109",
+                        "on-secondary-fixed": "#00164e",
+                        "tertiary": "#00628d",
+                        "surface-container-high": "#dce9ff",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#f7fff2",
+                        "surface-container-low": "#eff4ff",
+                        "on-tertiary-fixed-variant": "#004c6e",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "tertiary-fixed-dim": "#89ceff",
+                        "outline-variant": "#bdcaba",
+                        "primary": "#006b2c",
+                        "on-background": "#0b1c30",
+                        "primary-fixed-dim": "#62df7d",
+                        "surface-container-highest": "#d3e4fe",
+                        "inverse-surface": "#213145",
+                        "outline": "#6e7b6c",
+                        "error": "#ba1a1a",
+                        "primary-container": "#00873a",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-primary-fixed-variant": "#005320",
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f8f9ff",
+                        "tertiary-container": "#007cb1",
+                        "inverse-primary": "#62df7d",
+                        "on-tertiary-container": "#fcfcff",
+                        "secondary-container": "#8fa7fe",
+                        "secondary-fixed-dim": "#b6c4ff",
+                        "surface-dim": "#cbdbf5",
+                        "on-surface": "#0b1c30",
+                        "on-tertiary-fixed": "#001e2f",
+                        "on-secondary-container": "#1d3989",
+                        "surface-tint": "#006e2d",
+                        "on-secondary-fixed-variant": "#264191",
+                        "primary-fixed": "#7ffc97"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .active-indicator::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 4px;
+            height: 20px;
+            background-color: #006b2c;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex overflow-hidden h-screen">
+<!-- SideNavBar Anchor -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">KiVenda</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70">Angolan ERP</p>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto px-3 space-y-1">
+<!-- Active: Dashboard -->
+<a class="relative flex items-center gap-3 px-4 py-3 text-primary dark:text-primary-fixed-dim font-bold bg-secondary-container/20 before:content-[''] before:absolute before:left-0 before:w-1 before:h-6 before:bg-primary before:rounded-full rounded-lg transition-all active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Vendas</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Produtos</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-md text-label-md">Compras</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md text-label-md">Fornecedores</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="font-label-md text-label-md">Caixa</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Relatórios</span>
+</a>
+<div class="pt-4 mt-4 border-t border-outline-variant/20">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md">Utilizadores</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Configurações</span>
+</a>
+</div>
+</nav>
+<div class="px-6 mt-auto">
+<div class="p-4 rounded-xl bg-primary-container/10 border border-primary/20">
+<p class="font-label-sm text-label-sm text-primary mb-1">Backup de Dados</p>
+<div class="w-full bg-surface-variant rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary w-[85%] h-full"></div>
+</div>
+<p class="font-label-sm text-[10px] mt-2 opacity-60 uppercase tracking-wider">Último: Há 2 horas</p>
+</div>
+</div>
+</aside>
+<!-- Main Wrapper -->
+<main class="flex-1 ml-[260px] flex flex-col h-full overflow-hidden">
+<!-- TopNavBar Anchor -->
+<header class="fixed top-0 right-0 left-[260px] h-16 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm flex justify-between items-center px-8 z-40">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-50">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-variant/30 border border-transparent rounded-full font-body-md text-body-md focus:border-primary/50 focus:bg-white transition-all outline-none" placeholder="Pesquisar produtos, vendas ou clientes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-2 rounded-full hover:bg-surface-variant transition-all active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full ring-2 ring-white"></span>
+</button>
+<div class="flex items-center gap-3 pl-6 border-l border-outline-variant/30">
+<div class="text-right">
+<p class="font-label-md text-label-md font-bold text-on-surface">João Manuel</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70">Operador de Caixa</p>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a friendly Angolan man in a smart corporate shirt, set against a clean, softly lit office environment. The image is captured with shallow depth of field, highlighting the subject's warm expression. The lighting is soft and natural, emphasizing a modern, trustworthy business atmosphere with a color palette of whites and corporate blues." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUywpof6-uknq-nPnJaftgU737yh6HhoNBvlORb1UBLAjIT3PJAKQ7CMsAVZXB7VXApCSmgWKw_WBs3DvsFxigdVgsLqY9vTklyreHsqzNXHRClqZwKp0N_rIW2k7QaeGdnyepHXEA2J0NHvZNlSEpORC-kqJylktBUSL3zp-tLUHCAl9kJi71nBOkPyaRnVJntsQDZ1AMVfv_MEfjzdKGwNpdC1_bxBRByssqroHPmCE124y8o1mh"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="flex-1 overflow-y-auto mt-16 p-8">
+<div class="max-w-[1600px] mx-auto space-y-8">
+<!-- Welcome Header -->
+<section class="flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-1">Bom dia, Operador</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+<span id="current-date">Sexta-feira, 25 de Outubro de 2023</span>
+</p>
+</div>
+<button class="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-label-md text-label-md font-bold hover:shadow-lg hover:shadow-primary/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                        Nova Venda (F2)
+                    </button>
+</section>
+<!-- KPI Cards Row -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+<!-- KPI 1 -->
+<div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary-container/20 rounded-xl text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div class="flex items-center text-primary font-bold text-xs bg-primary/10 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> 12%
+                            </div>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Vendas de Hoje</p>
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface mt-1">150.400 Kz</h3>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="glass-card p-6 rounded-2xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-secondary-container/20 rounded-xl text-secondary">
+<span class="material-symbols-outlined">point_of_sale</span>
+</div>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Caixa Atual</p>
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface mt-1">45.000 Kz</h3>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="glass-card p-6 rounded-2xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-tertiary-container/20 rounded-xl text-tertiary">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Lucro Estimado</p>
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface mt-1">32.000 Kz</h3>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="glass-card p-6 rounded-2xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-error-container/20 rounded-xl text-error">
+<span class="material-symbols-outlined">inventory</span>
+</div>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Stock Baixo</p>
+<h3 class="font-headline-md text-headline-md font-bold text-error mt-1">12</h3>
+</div>
+</div>
+<!-- KPI 5 -->
+<div class="glass-card p-6 rounded-2xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-surface-container-high rounded-xl text-on-surface">
+<span class="material-symbols-outlined">shopping_bag</span>
+</div>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Vendas Realizadas</p>
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface mt-1">24</h3>
+</div>
+</div>
+</section>
+<!-- Main Grid: Charts and Alerts -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+<!-- Large Chart Section -->
+<div class="xl:col-span-2 glass-card rounded-3xl p-8">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h4 class="font-title-lg text-title-lg text-on-surface">Tendência de Vendas</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Últimos 7 dias de atividade comercial</p>
+</div>
+<div class="flex bg-surface-variant/30 rounded-lg p-1">
+<button class="px-4 py-1.5 text-xs font-bold bg-white shadow-sm rounded-md">7 Dias</button>
+<button class="px-4 py-1.5 text-xs font-bold text-on-surface-variant hover:text-on-surface">30 Dias</button>
+</div>
+</div>
+<!-- Custom Chart Visualization -->
+<div class="h-64 w-full flex items-end justify-between gap-4 relative">
+<!-- Background Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+<div class="border-t border-on-surface"></div>
+<div class="border-t border-on-surface"></div>
+<div class="border-t border-on-surface"></div>
+<div class="border-t border-on-surface"></div>
+</div>
+<!-- Simple Bar/Line Graph Hybrid for demonstration -->
+<div class="flex-1 flex flex-col items-center group relative">
+<div class="w-full bg-primary/10 rounded-t-lg transition-all group-hover:bg-primary/20 relative" style="height: 40%;">
+<div class="absolute -top-1 w-full border-t-2 border-primary"></div>
+</div>
+<span class="mt-4 font-label-sm text-label-sm opacity-50">Seg</span>
+</div>
+<div class="flex-1 flex flex-col items-center group relative">
+<div class="w-full bg-primary/10 rounded-t-lg transition-all group-hover:bg-primary/20 relative" style="height: 60%;">
+<div class="absolute -top-1 w-full border-t-2 border-primary"></div>
+</div>
+<span class="mt-4 font-label-sm text-label-sm opacity-50">Ter</span>
+</div>
+<div class="flex-1 flex flex-col items-center group relative">
+<div class="w-full bg-primary/10 rounded-t-lg transition-all group-hover:bg-primary/20 relative" style="height: 55%;">
+<div class="absolute -top-1 w-full border-t-2 border-primary"></div>
+</div>
+<span class="mt-4 font-label-sm text-label-sm opacity-50">Qua</span>
+</div>
+<div class="flex-1 flex flex-col items-center group relative">
+<div class="w-full bg-primary/10 rounded-t-lg transition-all group-hover:bg-primary/20 relative" style="height: 85%;">
+<div class="absolute -top-1 w-full border-t-2 border-primary"></div>
+</div>
+<span class="mt-4 font-label-sm text-label-sm opacity-50">Qui</span>
+</div>
+<div class="flex-1 flex flex-col items-center group relative">
+<div class="w-full bg-primary/20 rounded-t-lg transition-all group-hover:bg-primary/30 relative" style="height: 95%;">
+<div class="absolute -top-1 w-full border-t-2 border-primary"></div>
+<div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-inverse-surface text-white px-2 py-1 rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">182k Kz</div>
+</div>
+<span class="mt-4 font-label-md text-label-md font-bold text-primary">Sex</span>
+</div>
+<div class="flex-1 flex flex-col items-center group relative">
+<div class="w-full bg-primary/10 rounded-t-lg transition-all group-hover:bg-primary/20 relative" style="height: 45%;">
+<div class="absolute -top-1 w-full border-t-2 border-primary"></div>
+</div>
+<span class="mt-4 font-label-sm text-label-sm opacity-50">Sáb</span>
+</div>
+<div class="flex-1 flex flex-col items-center group relative">
+<div class="w-full bg-primary/10 rounded-t-lg transition-all group-hover:bg-primary/20 relative" style="height: 30%;">
+<div class="absolute -top-1 w-full border-t-2 border-primary"></div>
+</div>
+<span class="mt-4 font-label-sm text-label-sm opacity-50">Dom</span>
+</div>
+</div>
+</div>
+<!-- Sidebar Widget: Alerts & Notifications -->
+<div class="xl:col-span-1 flex flex-col gap-6">
+<div class="glass-card rounded-3xl p-6 flex-1">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">notifications_active</span>
+<h4 class="font-title-lg text-title-lg text-on-surface">Alertas e Notificações</h4>
+</div>
+<div class="space-y-4">
+<!-- Alert 1 -->
+<div class="p-4 rounded-xl bg-error/5 border border-error/10 flex gap-4 items-start">
+<div class="w-10 h-10 rounded-lg bg-error/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-error text-[20px]">warning</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Stock Crítico</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">'Arroz Tio Lucas' tem apenas 2 unidades.</p>
+</div>
+</div>
+<!-- Alert 2 -->
+<div class="p-4 rounded-xl bg-tertiary/5 border border-tertiary/10 flex gap-4 items-start">
+<div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-tertiary text-[20px]">cloud_upload</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Backup Pendente</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">A sincronização diária não foi concluída.</p>
+</div>
+</div>
+<!-- Alert 3 -->
+<div class="p-4 rounded-xl bg-secondary/5 border border-secondary/10 flex gap-4 items-start">
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-[20px]">schedule</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Sessão de Caixa</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Caixa aberto desde as 08:00 (há 4h).</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-3 border border-outline-variant rounded-xl font-label-md text-label-md hover:bg-surface-variant transition-colors">Ver Todos os Alertas</button>
+</div>
+</div>
+</div>
+<!-- Bottom Row: Recent Sales Table -->
+<section class="glass-card rounded-3xl overflow-hidden">
+<div class="p-8 border-b border-outline-variant/30 flex justify-between items-center">
+<h4 class="font-title-lg text-title-lg text-on-surface">Vendas Recentes</h4>
+<button class="text-primary font-bold font-label-md text-label-md flex items-center gap-1 hover:underline">
+                            Exportar Relatório <span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-variant/20">
+<tr>
+<th class="px-8 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Cliente</th>
+<th class="px-8 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Hora</th>
+<th class="px-8 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total</th>
+<th class="px-8 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Método</th>
+<th class="px-8 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-8 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right">Ação</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-4 font-body-md text-body-md font-medium">Consumidor Final</td>
+<td class="px-8 py-4 font-body-md text-body-md opacity-70">11:45</td>
+<td class="px-8 py-4 font-body-md text-body-md font-bold">12.500 Kz</td>
+<td class="px-8 py-4">
+<span class="flex items-center gap-2 font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">payments</span> Dinheiro
+                                        </span>
+</td>
+<td class="px-8 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Concluída
+                                        </span>
+</td>
+<td class="px-8 py-4 text-right">
+<button class="p-2 hover:bg-surface-variant rounded-lg transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-4 font-body-md text-body-md font-medium">Manuel Domingos</td>
+<td class="px-8 py-4 font-body-md text-body-md opacity-70">11:20</td>
+<td class="px-8 py-4 font-body-md text-body-md font-bold">8.400 Kz</td>
+<td class="px-8 py-4">
+<span class="flex items-center gap-2 font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">credit_card</span> Multicaixa
+                                        </span>
+</td>
+<td class="px-8 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Concluída
+                                        </span>
+</td>
+<td class="px-8 py-4 text-right">
+<button class="p-2 hover:bg-surface-variant rounded-lg transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-8 py-4 font-body-md text-body-md font-medium">Supermercado Nova Era</td>
+<td class="px-8 py-4 font-body-md text-body-md opacity-70">10:55</td>
+<td class="px-8 py-4 font-body-md text-body-md font-bold">45.200 Kz</td>
+<td class="px-8 py-4">
+<span class="flex items-center gap-2 font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">account_balance</span> Transferência
+                                        </span>
+</td>
+<td class="px-8 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary/10 text-secondary text-[11px] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Processando
+                                        </span>
+</td>
+<td class="px-8 py-4 text-right">
+<button class="p-2 hover:bg-surface-variant rounded-lg transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</div>
+</main>
+<script>
+        // Update current date in local language
+        const dateElement = document.getElementById('current-date');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString('pt-AO', options);
+        // Capitalize first letter
+        dateElement.textContent = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+
+        // Simple interactive micro-interaction for cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+                card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

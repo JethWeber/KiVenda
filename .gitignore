@@ -1,0 +1,35 @@
+## Build artifacts .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+artifacts/
+
+## Testes
+TestResults/
+*.trx
+
+## Base de dados SQLite local (gerada em runtime, nunca versionada)
+*.db
+*.db-shm
+*.db-wal
+
+## Backups gerados pela aplicação
+*.wtbak
+backups/
+
+## Ficheiro de licença local (nunca versionar em produção)
+*.wta
+
+## Logs (Serilog)
+logs/
+
+## Editores / SO
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+## Publicação
+publish/

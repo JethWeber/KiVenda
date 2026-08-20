@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    KiVenda.Infrastructure
+    Integrações técnicas dependentes do ambiente Desktop: impressora,
+    leitura de código de barras, backup/restore e licenciamento.
+    Implementa as interfaces definidas em KiVenda.Application.
+    Implementação: ver Fase 4 (serviços) e Fase 8 (scanner) do plano.
+  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\KiVenda.Core\KiVenda.Core.csproj" />
+    <ProjectReference Include="..\KiVenda.Application\KiVenda.Application.csproj" />
+  </ItemGroup>
+
+</Project>

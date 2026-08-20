@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    KiVenda.Application
+    Casos de uso / serviços de aplicação. Orquestra o Core, define os
+    contratos (Abstractions/) que Infrastructure e Persistence
+    implementam (Dependency Inversion). NÃO deve referenciar
+    Infrastructure, Persistence ou Desktop.
+  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\KiVenda.Core\KiVenda.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+</Project>

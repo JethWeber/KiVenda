@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    KiVenda.Core
+    Camada mais interna da arquitetura: entidades e regras de negócio puras.
+    NÃO deve ter referência a nenhum outro projeto da solução, nem a
+    pacotes de infraestrutura (EF Core, Avalonia, etc.).
+    Implementação das entidades: ver Fase 1 do plano de implementação.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+</Project>

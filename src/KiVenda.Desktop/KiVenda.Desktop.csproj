@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    KiVenda.Desktop
+    Camada de topo: interface gráfica em Avalonia 11 com MVVM
+    (CommunityToolkit.Mvvm). É o único projeto "executável" da solução
+    e o composition root da aplicação (DI + logging).
+  -->
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
+
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.File" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KiVenda.Core\KiVenda.Core.csproj" />
+    <ProjectReference Include="..\KiVenda.Application\KiVenda.Application.csproj" />
+    <ProjectReference Include="..\KiVenda.Infrastructure\KiVenda.Infrastructure.csproj" />
+    <ProjectReference Include="..\KiVenda.Persistence\KiVenda.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>

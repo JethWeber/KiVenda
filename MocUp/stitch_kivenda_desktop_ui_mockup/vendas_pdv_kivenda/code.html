@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html lang="pt"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KiVenda - PDV (Ponto de Venda)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e5eeff",
+                    "on-surface-variant": "#3e4a3d",
+                    "surface": "#f8f9ff",
+                    "tertiary-fixed": "#c9e6ff",
+                    "error-container": "#ffdad6",
+                    "secondary": "#4059aa",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#dce1ff",
+                    "background": "#f8f9ff",
+                    "on-primary-fixed": "#002109",
+                    "on-secondary-fixed": "#00164e",
+                    "tertiary": "#00628d",
+                    "surface-container-high": "#dce9ff",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-primary-container": "#f7fff2",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-fixed-variant": "#004c6e",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#d3e4fe",
+                    "tertiary-fixed-dim": "#89ceff",
+                    "outline-variant": "#bdcaba",
+                    "primary": "#006b2c",
+                    "on-background": "#0b1c30",
+                    "primary-fixed-dim": "#62df7d",
+                    "surface-container-highest": "#d3e4fe",
+                    "inverse-surface": "#213145",
+                    "outline": "#6e7b6c",
+                    "error": "#ba1a1a",
+                    "primary-container": "#00873a",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-fixed-variant": "#005320",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f8f9ff",
+                    "tertiary-container": "#007cb1",
+                    "inverse-primary": "#62df7d",
+                    "on-tertiary-container": "#fcfcff",
+                    "secondary-container": "#8fa7fe",
+                    "secondary-fixed-dim": "#b6c4ff",
+                    "surface-dim": "#cbdbf5",
+                    "on-surface": "#0b1c30",
+                    "on-tertiary-fixed": "#001e2f",
+                    "on-secondary-container": "#1d3989",
+                    "surface-tint": "#006e2d",
+                    "on-secondary-fixed-variant": "#264191",
+                    "primary-fixed": "#7ffc97"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "card-gap": "20px",
+                    "sidebar-width": "260px",
+                    "gutter": "16px",
+                    "unit": "4px",
+                    "container-padding": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "title-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body class="bg-background text-on-surface overflow-hidden">
+<!-- SIDEBAR -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">storefront</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">KiVenda</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70">Angolan ERP</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="relative flex items-center gap-3 px-6 py-3 text-primary dark:text-primary-fixed-dim font-bold bg-secondary-container/20 before:content-[''] before:absolute before:left-0 before:w-1 before:h-6 before:bg-primary before:rounded-full" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-label-md text-label-md">Vendas</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Produtos</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-md text-label-md">Compras</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md text-label-md">Fornecedores</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="font-label-md text-label-md">Caixa</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Relatórios</span>
+</a>
+</nav>
+<div class="mt-auto px-6 space-y-1">
+<a class="flex items-center gap-3 px-2 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-variant/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md">Utilizadores</span>
+</a>
+<a class="flex items-center gap-3 px-2 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-variant/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Configurações</span>
+</a>
+</div>
+</aside>
+<!-- TOP BAR -->
+<header class="fixed top-0 right-0 left-[260px] h-16 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-96 max-w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low border border-outline-variant/50 rounded-full text-body-md focus:outline-none focus:border-primary transition-all" placeholder="Global search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
+<div class="text-right">
+<p class="font-label-md text-label-md font-bold text-on-surface">João Manuel</p>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold opacity-60">Operador de Caixa</p>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 p-0.5">
+<img class="w-full h-full rounded-full object-cover" data-alt="A professional headshot of a friendly Angolan male employee wearing a clean white company polo shirt, smiling at the camera in a modern bright office setting. High quality photography with soft natural lighting and a minimalist background of blue and white tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_oYVyZ9_HneETTDVlaoCfi6PbmKmvUtI_IUogk7z4JEj7fzjg40s3NyTRpMv6qneA95RX1IWRewp04Lbdz-yW5f4f_YVKFnixNu-Bf2LcLedzGsk2_mb676f9yy4uoMHUlu8sPxxJCDFS7cxyYQ31aO02ILnpIc4zyaIMR43GWX4Shw5Sdmz0l0N2huypztwxyrC1RY9naO1Ud1IBSXD5XDRB7syR6g-ukYj0xfE-sX-V7msYr2C0"/>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="ml-[260px] pt-16 h-screen flex overflow-hidden">
+<!-- LEFT COLUMN: PRODUCT SELECTION (70%) -->
+<section class="w-[70%] h-full flex flex-col p-6 overflow-hidden">
+<!-- SEARCH BAR AREA -->
+<div class="mb-6">
+<div class="relative group">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-primary text-2xl">barcode_scanner</span>
+</div>
+<input class="w-full h-14 pl-14 pr-6 bg-surface-container-lowest border-2 border-outline-variant/20 rounded-xl text-title-lg font-body-md focus:ring-0 focus:border-primary transition-all shadow-sm group-hover:shadow-md" placeholder="Pesquisar Produto ou Bipar Código" type="text"/>
+<div class="absolute inset-y-0 right-4 flex items-center gap-2">
+<kbd class="px-2 py-1 bg-surface-container rounded text-label-sm border border-outline-variant/30 text-on-surface-variant">F1</kbd>
+</div>
+</div>
+</div>
+<!-- CATEGORY PILLS -->
+<div class="flex gap-3 mb-6 overflow-x-auto pb-2 no-scrollbar">
+<button class="flex-shrink-0 px-6 py-2 bg-primary text-white font-bold rounded-full shadow-sm hover:opacity-90 transition-all">Todos</button>
+<button class="flex-shrink-0 px-6 py-2 bg-surface-container-lowest text-on-surface border border-outline-variant/30 font-medium rounded-full hover:bg-surface-variant/50 transition-all">Bebidas</button>
+<button class="flex-shrink-0 px-6 py-2 bg-surface-container-lowest text-on-surface border border-outline-variant/30 font-medium rounded-full hover:bg-surface-variant/50 transition-all">Mercearia</button>
+<button class="flex-shrink-0 px-6 py-2 bg-surface-container-lowest text-on-surface border border-outline-variant/30 font-medium rounded-full hover:bg-surface-variant/50 transition-all">Higiene</button>
+<button class="flex-shrink-0 px-6 py-2 bg-surface-container-lowest text-on-surface border border-outline-variant/30 font-medium rounded-full hover:bg-surface-variant/50 transition-all">Congelados</button>
+<button class="flex-shrink-0 px-6 py-2 bg-surface-container-lowest text-on-surface border border-outline-variant/30 font-medium rounded-full hover:bg-surface-variant/50 transition-all">Padaria</button>
+</div>
+<!-- PRODUCT GRID -->
+<div class="flex-1 overflow-y-auto pr-2">
+<div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+<!-- Product Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/50 transition-all group active:scale-[0.98]">
+<div class="h-32 bg-surface-container-low relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A cold, condensation-covered glass bottle of soft drink standing on a white wooden table. Vibrant colors, bright daylight, high contrast product photography, clean minimalist background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo0oyDWt-ImR_KxpAlKuXBVdf1no5yORaudGRl3EltFww5TcXWAUpZFn_CHAPWjYoDbbPuNbrVTJJihV__QIY6mWd_rg8jhaYCi9WNE44VJI_98jLJHpsUrlXJYwv3UIgXKmkdUH5u_X0SicjUBWcDjUNZzelghNxcMAu7asX2PiIiHxXwsBEKBPvt_-MsPP3W5_NRMuGoA-CGT3iqzJwYlCT88tEmsChcKuMDEXNjncIr-N0Qj5vk"/>
+<div class="absolute top-2 right-2 px-2 py-1 bg-white/90 backdrop-blur rounded-lg shadow-sm">
+<span class="font-label-sm text-primary font-bold">12 UN</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-body-md font-bold text-on-surface line-clamp-1 mb-1">Cuca Lata 330ml</h3>
+<p class="text-primary font-bold text-lg">750,00 Kz</p>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/50 transition-all group active:scale-[0.98]">
+<div class="h-32 bg-surface-container-low relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A rustic brown paper bag filled with fresh white rice, some grains scattered on a polished wooden surface. Warm studio lighting, sharp focus on texture, high-end food commercial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyUGXh6mr7kuBvY2W90HdQzs1yLheYoeSTCC9k37IUnrAOrdyPIqZGlB4JaadGhxoYAtx9JsF4wwDXqjFYo-Nj30El3zHJ14w7GwZZyY2eHf86hzogCce8aXdLSQZ0Db8YbpvNoNvdFUUEmvUULSN_1HO8VN2G7GJ8Z1pGUyFWEOSjZAga8EN35_87annIUEMRytw7ZTvSt3i3ua5BOhxsFXC_w0HU_G01_uq_Ibo8JgRqST9-HTia"/>
+<div class="absolute top-2 right-2 px-2 py-1 bg-white/90 backdrop-blur rounded-lg shadow-sm">
+<span class="font-label-sm text-primary font-bold">45 UN</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-body-md font-bold text-on-surface line-clamp-1 mb-1">Arroz Tio Lucas 1kg</h3>
+<p class="text-primary font-bold text-lg">1.250,00 Kz</p>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/50 transition-all group active:scale-[0.98]">
+<div class="h-32 bg-surface-container-low relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A clean, minimalist white plastic bottle of cooking oil with a vibrant yellow cap and label, sitting on a bright kitchen counter. High key lighting, sharp edges, professional product shot." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7D8wpKyY_DkHXzlsF_mZzaDphczuZz_PQi0jthSktOJ8-uNIik190MtyHjf1acUyW2AT-oUbD9ahDaLoUlDbtgm7GFB4nhIVLvev6cZOM6zawiJTOGuLhDLtC_QyqVRn0KBIEVGdKKtzVfsZm9UHrcegxSPrvRm7tO6zTxW-lFKHFtW0-emaAJfLcJGu2J7rtc7yWRktLgCkccsIm8l_Zp_J_UZK1F-IU3cC1UZBcV3WdZChYnaS7"/>
+<div class="absolute top-2 right-2 px-2 py-1 bg-white/90 backdrop-blur rounded-lg shadow-sm">
+<span class="font-label-sm text-primary font-bold">8 UN</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-body-md font-bold text-on-surface line-clamp-1 mb-1">Óleo Fula 1L</h3>
+<p class="text-primary font-bold text-lg">2.100,00 Kz</p>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/50 transition-all group active:scale-[0.98]">
+<div class="h-32 bg-surface-container-low relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A pack of fresh white eggs in a blue cardboard carton on a marble countertop. Bright morning light from a window, clean composition, high-end grocery aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAITG3H1iDo8x2mfZFdN8o_WIrhKVWUZquNfxPCQukbcsZHFIHmppSjDUZ6CAGVhZPraRvGIgSEbrNT0uIuAIozKi2DT2Vi1_symihkZdaeYt67oLqRs6SZPUqozkkgFXRKqnozKZxfsaWXt0kOUCpby1CEgqx0V2Q2Jg7B2dN93xdmjqHcROdi4qdS61dMQwvBe7092IpUfWuCHK3ZzfXYjA81Y02ughP_85HImk5IkshyQFLNmvC9"/>
+<div class="absolute top-2 right-2 px-2 py-1 bg-white/90 backdrop-blur rounded-lg shadow-sm">
+<span class="font-label-sm text-primary font-bold">15 UN</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-body-md font-bold text-on-surface line-clamp-1 mb-1">Ovos Frescos (30un)</h3>
+<p class="text-primary font-bold text-lg">4.500,00 Kz</p>
+</div>
+</div>
+<!-- Repeat items for grid effect -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/50 transition-all group active:scale-[0.98]">
+<div class="h-32 bg-surface-container-low relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A blue box of quality pasta on a dark granite surface with a sprig of fresh basil. Editorial style food photography, sophisticated lighting, deep contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfrngi6M9srQ0xut8LrKvWZfHgKU0EOM1jBe7XXJQ7B3CeAXHSpt3svS_gnwLBhR0J0ChDnQ7cGPv04JYbmh73kQfHZgYbR6z2OiVTEHZuEmA6Rd0X8JYt1K5HvDcF5_-tF9ETVF10f0DeLApVWDzVEmiJptZGvmrPJ6t-Ys_OoWYj7U13c_lyUzjJIRsY1QB1GB7DfRuvty6DHAWEmkn33GRprY2lFqeSR9ZxdERWI85e19Jft4RC"/>
+<div class="absolute top-2 right-2 px-2 py-1 bg-white/90 backdrop-blur rounded-lg shadow-sm">
+<span class="font-label-sm text-primary font-bold">22 UN</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-body-md font-bold text-on-surface line-clamp-1 mb-1">Massa Milaneza 500g</h3>
+<p class="text-primary font-bold text-lg">850,00 Kz</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/50 transition-all group active:scale-[0.98]">
+<div class="h-32 bg-surface-container-low relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A silver aluminum can of high energy drink with vibrant yellow and black graphics. Floating in mid-air against a clean white background with water droplets. Ultra sharp focus, energetic feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJUr8-599qtTqYBinD52G_tcXKzcuMI1GYCJOMcPNMsHjbd9LK5QcgdrQfu2p5ctc0s-zz2jCFqQ0Sle9E7ifPkhVheg9EJXQxQJ-iHGSitz8txnCa9_8_42FOujufjoCWvfgUXrni78As7bGEmxcEZfcR_Q1jYSb9vFpI4S0b-i6RyJEWJsE3-UdPgXIwNefNg0w4ufhr-0LC5KLkcQZArFrcTUSv6dbOCk1baKj49d87gjgNianW"/>
+<div class="absolute top-2 right-2 px-2 py-1 bg-white/90 backdrop-blur rounded-lg shadow-sm">
+<span class="font-label-sm text-primary font-bold">3 UN</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-body-md font-bold text-on-surface line-clamp-1 mb-1">Red Bull 250ml</h3>
+<p class="text-primary font-bold text-lg">1.400,00 Kz</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/50 transition-all group active:scale-[0.98]">
+<div class="h-32 bg-surface-container-low relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A red box of washing powder with fresh blue bubbles and clothing icons. Clean and hygienic aesthetic, bright studio lighting, commercial product shot." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgU0D77D2nj-18Dqs0dLoA7P1XJw5DFXccW23GnidggxlT-NAKW87MoIfp710-YP2IFu-MWbEdMj_Z37GTUb1yz3DrNinorCB8yzp9MI-_HFNqKILgfO_cnap2PeZQ5vc-ie2txqE0fVFJboIWahMyuvUNR-6VQXelXRHYjrOo3RUD7A5PY6XB82JQXu-w-b_uBcWUiT_T72blonArTBTeNAqWrUI2fSJt7LCCdg3lCcTZX19IoNqH"/>
+<div class="absolute top-2 right-2 px-2 py-1 bg-white/90 backdrop-blur rounded-lg shadow-sm">
+<span class="font-label-sm text-error font-bold">0 UN</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-body-md font-bold text-on-surface line-clamp-1 mb-1">Omo Sabão Pó 1kg</h3>
+<p class="text-primary font-bold text-lg">3.200,00 Kz</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/50 transition-all group active:scale-[0.98]">
+<div class="h-32 bg-surface-container-low relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A transparent plastic bottle of pure spring water with a light blue label and cap. Captured in a bright, airy environment with a sense of freshness and purity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVugcGmj1XidR2-l9Pr-UsZexXY0QRczZXBqLz56nl_tfvqK9YfQNj7LTB4nU7PYRrS079Iswi1exP8gjUDFPUgqNOiBuSBDfqltU8ppuR3IsjQSGSgsHNwqjXnmaMGBNs8C0YZGL2-Od7Ko82vYMjlxtAiSYEO1DKTewjb1TWkHJlnNqKoCJFqh7wr_89wBpyHApMOv3WjGYYvg4iuwJZN946rxAO6QS2JA7REId3XxquzpzFcUwy"/>
+<div class="absolute top-2 right-2 px-2 py-1 bg-white/90 backdrop-blur rounded-lg shadow-sm">
+<span class="font-label-sm text-primary font-bold">120 UN</span>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-body-md font-bold text-on-surface line-clamp-1 mb-1">Água Pura 1.5L</h3>
+<p class="text-primary font-bold text-lg">300,00 Kz</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN: CART SECTION (30%) -->
+<aside class="w-[30%] h-full bg-white border-l border-outline-variant/30 flex flex-col shadow-2xl">
+<!-- CART HEADER -->
+<div class="p-6 border-b border-outline-variant/20 bg-surface-container-low/30">
+<div class="flex justify-between items-center mb-1">
+<h2 class="font-headline-md text-title-lg font-bold">Carrinho</h2>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-label-md font-bold">3 Itens</span>
+</div>
+<p class="text-label-sm text-on-surface-variant font-medium">Venda nº 8832-A</p>
+</div>
+<!-- ITEMS LIST -->
+<div class="flex-1 overflow-y-auto p-6 space-y-4">
+<div class="flex items-center gap-3 animate-in fade-in slide-in-from-right duration-300">
+<div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Cuca beer bottle close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbo7c40GIlQtlh4Ls8FQG_CRcCBqapQy2ewHZoiDZLMOq-geJDium-NvNtJfATy--3tPtcED_ubuzptwTxEdsPlgh4Z86XvBLSJU2No5IyM82aY6igY84daiWx5rhYbWIfLXGdoZnO2gHonJt5Py_J2ax-gC9WpgiMkBB2HHHBAZxCmVfp9bsUnFHQK2ef-3d-6bnajTmXS2OYa7sDYRRI4t5Oq6PkBLG7Tuhc5c4wzvs_PM0FtzVo"/>
+</div>
+<div class="flex-1">
+<h4 class="font-body-md font-bold text-on-surface leading-tight">Cuca Lata 330ml</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="text-label-md text-on-surface-variant">2 x 750,00</span>
+<span class="font-body-md font-bold">1.500,00 Kz</span>
+</div>
+</div>
+<button class="text-error hover:bg-error/10 p-1 rounded transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Bag of rice product shot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrzaJjrs-uXrQ8rzCTRwLBppxMg0BBaAO39W18AZgY284c6UeQi1n5btEa2gusmgt1FKPxibk7WbkkzMe9jMmQ9sxAIpxNcxfKj2VMvvWCKiyLPAQSJ127P2tZWkScT-LBXT3yTk0_6LxD5FvT2-GPh9CdllA4nxP_D5m5yziuTXDPIiM4oHz5CjgCPNfp2rzdLbe7wl8eY4UQ98Uc6tVLYqFioTz7PtHJlL0pCCCHKoeZrSptTUps"/>
+</div>
+<div class="flex-1">
+<h4 class="font-body-md font-bold text-on-surface leading-tight">Arroz Tio Lucas 1kg</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="text-label-md text-on-surface-variant">1 x 1.250,00</span>
+<span class="font-body-md font-bold">1.250,00 Kz</span>
+</div>
+</div>
+<button class="text-error hover:bg-error/10 p-1 rounded transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Bottle of cooking oil" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1DaFoWz4LL5rzSFMS6nNlI1oIpD2RWNFqvoIE1zHX_7lboMKBI7-AObevVrjdnlAFSrj3y0hC-OqTCtKS-WGSGDsjHo-IgQiJJxbwFIVvt9xLtFLDpXVzR8LtORVZ_4n8ptbuJ2cQ3SIUqJm2xZqzXKoYLjTOEsG4IuykvxwwLrymDW2BE43T2DJ7HEdjVZi0t_dna_D97W91fTOZgEWBGPOhqoCBwAuMhoCmlgaYHI2lB2Cjss-i"/>
+</div>
+<div class="flex-1">
+<h4 class="font-body-md font-bold text-on-surface leading-tight">Óleo Fula 1L</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="text-label-md text-on-surface-variant">1 x 2.100,00</span>
+<span class="font-body-md font-bold">2.100,00 Kz</span>
+</div>
+</div>
+<button class="text-error hover:bg-error/10 p-1 rounded transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<!-- SUMMARY AREA -->
+<div class="p-6 bg-surface-container-lowest border-t border-outline-variant/30 space-y-3">
+<div class="flex justify-between text-body-md text-on-surface-variant">
+<span>Subtotal</span>
+<span>4.850,00 Kz</span>
+</div>
+<div class="flex justify-between text-body-md text-on-surface-variant">
+<span>Desconto</span>
+<span class="text-error">- 0,00 Kz</span>
+</div>
+<div class="flex justify-between items-center py-2 border-t border-dashed border-outline-variant/50">
+<span class="font-headline-md text-title-lg font-bold">TOTAL</span>
+<span class="font-headline-lg text-[28px] font-extrabold text-[#16A34A]">4.850,00 Kz</span>
+</div>
+</div>
+<!-- ACTION BUTTONS -->
+<div class="p-6 pt-0 space-y-3">
+<button class="w-full py-5 bg-[#16A34A] text-white rounded-xl font-headline-md text-headline-md font-extrabold shadow-lg hover:shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase tracking-wider">
+<span class="material-symbols-outlined text-3xl">payments</span>
+                    RECEBER (F10)
+                </button>
+<div class="grid grid-cols-2 gap-3">
+<button class="py-3 bg-secondary text-white rounded-lg font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined">add_circle</span>
+                        NOVA VENDA
+                    </button>
+<button class="py-3 bg-error/10 text-error border border-error/20 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-error/20 transition-all active:scale-95">
+<span class="material-symbols-outlined">cancel</span>
+                        CANCELAR
+                    </button>
+</div>
+</div>
+<!-- FOOTER STATUS -->
+<div class="px-6 py-4 bg-surface-container-high/50 flex items-center justify-between">
+<div class="flex items-center gap-2 text-primary">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+</span>
+<span class="font-label-sm uppercase tracking-widest font-bold">Scanner: ATIVO</span>
+</div>
+<div class="text-on-surface-variant/50">
+<span class="material-symbols-outlined text-sm">wifi</span>
+</div>
+</div>
+</aside>
+</main>
+<!-- KEYBOARD OVERLAY INDICATOR (SIMULATED) -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-6 py-2 rounded-full shadow-2xl z-[100] flex items-center gap-3 opacity-0 pointer-events-none transition-all duration-300" id="scanner-indicator">
+<span class="material-symbols-outlined animate-pulse text-primary-fixed">barcode_scanner</span>
+<span class="font-label-md font-medium">Aguardando leitura de código...</span>
+</div>
+<script>
+        // Micro-interaction: Focus search on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.querySelector('input[placeholder="Pesquisar Produto ou Bipar Código"]');
+            if(searchInput) searchInput.focus();
+        });
+
+        // Simulate Scanner Activation
+        document.addEventListener('keydown', (e) => {
+            const indicator = document.getElementById('scanner-indicator');
+            if (e.key === 'Control') { // Simulating a scanner trigger
+                indicator.style.opacity = '1';
+                indicator.style.transform = 'translateX(-50%) translateY(-10px)';
+                setTimeout(() => {
+                    indicator.style.opacity = '0';
+                    indicator.style.transform = 'translateX(-50%) translateY(0px)';
+                }, 1500);
+            }
+        });
+
+        // Toggle Active Sidebar states (simple simulation)
+        const navItems = document.querySelectorAll('aside nav a');
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                navItems.forEach(i => {
+                    i.classList.remove('text-primary', 'font-bold', 'bg-secondary-container/20', 'before:content-[\'\']', 'before:absolute', 'before:left-0', 'before:w-1', 'before:h-6', 'before:bg-primary', 'before:rounded-full');
+                    i.classList.add('text-on-surface-variant', 'hover:bg-surface-variant/50');
+                    const icon = i.querySelector('.material-symbols-outlined');
+                    if(icon) icon.style.fontVariationSettings = "'FILL' 0";
+                });
+                item.classList.add('text-primary', 'font-bold', 'bg-secondary-container/20', 'before:content-[\'\']', 'before:absolute', 'before:left-0', 'before:w-1', 'before:h-6', 'before:bg-primary', 'before:rounded-full');
+                item.classList.remove('text-on-surface-variant', 'hover:bg-surface-variant/50');
+                const activeIcon = item.querySelector('.material-symbols-outlined');
+                if(activeIcon) activeIcon.style.fontVariationSettings = "'FILL' 1";
+            });
+        });
+    </script>
+</body></html>

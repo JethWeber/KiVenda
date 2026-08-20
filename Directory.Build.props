@@ -1,0 +1,28 @@
+<Project>
+
+  <!--
+    Propriedades comuns a TODOS os projetos da solução (src e tests).
+    Cada .csproj individual só deve conter o que é específico dele.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <Company>Weber Tech</Company>
+    <Product>KiVenda Desktop</Product>
+    <Authors>Weber Tech</Authors>
+    <Copyright>Weber Tech</Copyright>
+
+    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+</Project>

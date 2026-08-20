@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+
+<html lang="pt"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KiVenda - Gestão de Inventário</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#e5eeff",
+                        "on-surface-variant": "#3e4a3d",
+                        "surface": "#f8f9ff",
+                        "tertiary-fixed": "#c9e6ff",
+                        "error-container": "#ffdad6",
+                        "secondary": "#4059aa",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#dce1ff",
+                        "background": "#f8f9ff",
+                        "on-primary-fixed": "#002109",
+                        "on-secondary-fixed": "#00164e",
+                        "tertiary": "#00628d",
+                        "surface-container-high": "#dce9ff",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#f7fff2",
+                        "surface-container-low": "#eff4ff",
+                        "on-tertiary-fixed-variant": "#004c6e",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "tertiary-fixed-dim": "#89ceff",
+                        "outline-variant": "#bdcaba",
+                        "primary": "#006b2c",
+                        "on-background": "#0b1c30",
+                        "primary-fixed-dim": "#62df7d",
+                        "surface-container-highest": "#d3e4fe",
+                        "inverse-surface": "#213145",
+                        "outline": "#6e7b6c",
+                        "error": "#ba1a1a",
+                        "primary-container": "#00873a",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-primary-fixed-variant": "#005320",
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f8f9ff",
+                        "tertiary-container": "#007cb1",
+                        "inverse-primary": "#62df7d",
+                        "on-tertiary-container": "#fcfcff",
+                        "secondary-container": "#8fa7fe",
+                        "secondary-fixed-dim": "#b6c4ff",
+                        "surface-dim": "#cbdbf5",
+                        "on-surface": "#0b1c30",
+                        "on-tertiary-fixed": "#001e2f",
+                        "on-secondary-container": "#1d3989",
+                        "surface-tint": "#006e2d",
+                        "on-secondary-fixed-variant": "#264191",
+                        "primary-fixed": "#7ffc97"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "card-gap": "20px",
+                        "sidebar-width": "260px",
+                        "gutter": "16px",
+                        "unit": "4px",
+                        "container-padding": "24px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "label-sm": ["11px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50">
+<div class="px-6 mb-10 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">KiVenda</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70">Angolan ERP</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<!-- Nav Items -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 dark:hover:bg-surface-container-highest/20 rounded-lg group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">Vendas</span>
+</a>
+<!-- Active State for Produtos -->
+<a class="relative flex items-center gap-3 px-4 py-3 text-primary dark:text-primary-fixed-dim font-bold bg-secondary-container/20 before:content-[''] before:absolute before:left-0 before:w-1 before:h-6 before:bg-primary before:rounded-full rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-body-md text-body-md">Produtos</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-body-md text-body-md">Compras</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md text-body-md">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-body-md text-body-md">Fornecedores</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="font-body-md text-body-md">Caixa</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-body-md text-body-md">Relatórios</span>
+</a>
+</nav>
+<div class="px-3 mt-auto pt-6 border-t border-outline-variant/20">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-body-md text-body-md">Utilizadores</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-secondary-fixed-variant transition-colors hover:bg-surface-variant/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Configurações</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 right-0 left-[260px] h-16 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm z-40">
+<div class="flex justify-between items-center px-8 h-full w-full">
+<div class="flex items-center bg-surface-container-low border border-outline-variant/20 rounded-full px-4 py-1.5 w-96">
+<span class="material-symbols-outlined text-on-surface-variant text-body-md mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full placeholder:text-on-surface-variant/50" placeholder="Pesquisar em todo o sistema..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-2 hover:bg-surface-variant rounded-full transition-all active:opacity-80">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="flex items-center gap-3 border-l border-outline-variant/30 pl-6">
+<div class="text-right">
+<p class="font-label-sm text-label-sm font-bold text-primary">Operador Principal</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-60">Admin</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="Professional corporate headshot of a friendly Angolan male business manager wearing a crisp white shirt, clean lighting, soft bokeh background, high-resolution portrait style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR0M47q_78VtL30jDeGaL044ZbYT_jO62P_y3zv3CvlG9jC2nnkOI6EJAPmOLJLkJV2vbwQPqKWuOpGxgg-DQegCtLAlpQK3zS7CluqGHMYPsmyPQBhKwjCf6SqCi6NIy0vvkvYtXga7Y3uVCWcCFsD4SjYNpYELIKzNrevW3sNhTT-HsMC9HW1xGdDuPFeMkoA0pyMU_DY1LFgcJdBpVz_G_1plr1rxxUJeBTfeU5Kyb6-55fL8Qb"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] pt-16 min-h-screen">
+<div class="p-8 max-w-[1600px] mx-auto">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-1">Gestão de Inventário</h2>
+<nav class="flex gap-2 text-on-surface-variant/60 font-label-md text-label-md">
+<span>Produtos</span>
+<span>/</span>
+<span class="text-primary font-bold">Listagem Geral</span>
+</nav>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-high text-primary font-bold rounded-xl hover:bg-surface-variant transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">south</span>
+<span class="font-label-md text-label-md">Entrada de Stock</span>
+</button>
+<button class="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-container transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">add</span>
+<span class="font-label-md text-label-md">Novo Produto</span>
+</button>
+</div>
+</div>
+<!-- Filters & Actions Row -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-4 mb-6 shadow-sm flex flex-wrap items-center gap-4">
+<div class="flex-1 min-w-[300px] relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-surface border-outline-variant/30 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-body-md" placeholder="Procurar por nome, código ou EAN..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<select class="bg-surface border-outline-variant/30 rounded-xl px-4 py-2.5 text-body-md focus:ring-2 focus:ring-primary/20 min-w-[180px]">
+<option>Todas Categorias</option>
+<option>Alimentação</option>
+<option>Bebidas</option>
+<option>Higiene</option>
+<option>Eletrónicos</option>
+</select>
+<div class="flex bg-surface border border-outline-variant/30 rounded-xl p-1">
+<button class="px-4 py-1.5 text-label-md rounded-lg bg-primary text-on-primary font-bold">Todos</button>
+<button class="px-4 py-1.5 text-label-md rounded-lg hover:bg-surface-variant/50 text-on-surface-variant">Em Stock</button>
+<button class="px-4 py-1.5 text-label-md rounded-lg hover:bg-surface-variant/50 text-on-surface-variant">Baixo</button>
+</div>
+</div>
+<button class="p-2.5 text-on-surface-variant hover:bg-surface-variant/50 rounded-xl transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+<!-- Products Table Card -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant/30">
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Código</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Nome do Produto</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Categoria</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">P. Compra</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">P. Venda</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Stock</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Estado</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="px-6 py-4">
+<span class="font-label-md text-label-md text-on-surface-variant">PRD-001</span>
+<p class="text-[10px] text-on-surface-variant/50 mt-1">5601234567890</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface border border-outline-variant/20 flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="High-quality commercial product photography of a pack of premium long-grain rice, 1kg bag, bright clean lighting, minimalist background, professional grocery store catalog style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUU4_VdMic0WTu8fckVxtIkIUnDz6iAvmrS-0sMo4R9RJtymulC1cEIL4Fi2fH3HNS4bw5JM30WXT-DHm6H4pMjCdaCT9ty-bE_ReofPJTZPYpCiA1hnjNZYekTVh9yEIl1y-Wo9CG4LFdi7sJWU2EXP08Qh-gmc_8Enwc56pMXnE158sGIEvuavW1zL-XvG_AmLxHX10sn0W8EWDIWfPAO4mtqq6s0AFTv5ID06GQPCOxHUbcI49M"/>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-on-surface">Arroz Agulha Extra 1kg</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/70">Unidade: KG</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-surface-container rounded-full text-label-sm text-on-tertiary-fixed-variant">Alimentação</span>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md">450.00 Kz</td>
+<td class="px-6 py-4 font-body-md text-body-md font-bold text-primary">650.00 Kz</td>
+<td class="px-6 py-4 font-body-md text-body-md">124</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 text-primary rounded-full text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                        Em Stock
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-variant rounded-lg text-secondary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 hover:bg-error-container/30 rounded-lg text-error transition-colors" title="Eliminar">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="px-6 py-4">
+<span class="font-label-md text-label-md text-on-surface-variant">PRD-042</span>
+<p class="text-[10px] text-on-surface-variant/50 mt-1">5609876543210</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface border border-outline-variant/20 flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Sleek aluminum soda can, 330ml, water droplets on the surface, vibrant colors, product photography for a soft drink, bright commercial studio lighting, minimalist composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoiMIuvVjFZYX2yzRL1exBhWD2mSchuIEizkPziI_L0tswT0AXem4-qFCMq9BBRDzM-y566_NhKkpJBQo-1ITZyWeq5th_B6yC5RdUo0IbQuDEe1cGEnZ-RnqafbOUU59pRsLmRncUKuy-nxZYEa9LfoT8Kv1glS8m9tJNF3-72hQAWswkypDo7jsLRWC__mNq61Aby6rB7EjkxLQpgP7uxthoKFjsMx2EX6pLBxoMqlKHCWF_NGrn"/>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-on-surface">Cuca Lata 330ml</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/70">Unidade: UN</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-surface-container rounded-full text-label-sm text-on-tertiary-fixed-variant">Bebidas</span>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md">280.00 Kz</td>
+<td class="px-6 py-4 font-body-md text-body-md font-bold text-primary">450.00 Kz</td>
+<td class="px-6 py-4 font-body-md text-body-md font-bold text-error">8</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-error/10 text-error rounded-full text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                        Baixo Stock
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-variant rounded-lg text-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 hover:bg-error-container/30 rounded-lg text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="px-6 py-4">
+<span class="font-label-md text-label-md text-on-surface-variant">PRD-109</span>
+<p class="text-[10px] text-on-surface-variant/50 mt-1">5605554443332</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface border border-outline-variant/20 flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="High-end electronic smartphone box packaging, premium aesthetic, white and silver detailing, professional product shot for a technology retail catalog, soft shadow on a white surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBet1YTU23vT5eVc7Xy_8zDNkzGalVDMpmfldeAGcd1O9sEi9aOPrNHROQJ0TANacSTfMTHpz7X3wDuDuGjEF6GwwO2y-glK4Gfki8i9KOz0976i0-6lNdYTRWbUn6PEhSb3jPeXwQwqfs-5I3aIvJ5NI343EUkxl-Emz7lzE72oNArfz3_cyW1O7D3hBH0vOqgpqT_2vIH-Te3zrDv883B39qAP32Vj6hcSf_vSTb92aRePfIGHMZq"/>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-on-surface">Samsung Galaxy S23 FE</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/70">Unidade: UN</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-surface-container rounded-full text-label-sm text-on-tertiary-fixed-variant">Eletrónicos</span>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md">315,000.00 Kz</td>
+<td class="px-6 py-4 font-body-md text-body-md font-bold text-primary">385,000.00 Kz</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant/40">0</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-on-surface-variant/10 text-on-surface-variant rounded-full text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></span>
+                                        Sem Stock
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-variant rounded-lg text-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 hover:bg-error-container/30 rounded-lg text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- More rows for visual fullness -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="px-6 py-4">
+<span class="font-label-md text-label-md text-on-surface-variant">PRD-215</span>
+<p class="text-[10px] text-on-surface-variant/50 mt-1">5601112223334</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface border border-outline-variant/20 flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Bottled vegetable cooking oil, 1 liter, golden transparent liquid, professional kitchen ingredient photography, clean lighting on white background, sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAM6ia9XeL6deTmK4a4ByBmqXn4MmYihfdo-I_kwlYEBEvQJGOuZN5tl1BO0hQ5krstSDal9WUlpLc0aXAXr_E-lkgxrw-Anpv_lJ2ZmuSWeEBQEQj1bGJ3TGfPBLeBTrGhPDvOHVvIiy_u-CFvSJO0cPNmncn7U3KROBZQPSryXzD5jWfSfXMuREx0DxWhneWewz1O-pho8h1f4JOJ4LrUi8fFv_ILIqn9u7eMDjNn2jRWSIEd0dDG"/>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-on-surface">Óleo Alimentar Fula 1L</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/70">Unidade: LT</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-surface-container rounded-full text-label-sm text-on-tertiary-fixed-variant">Alimentação</span>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md">1,100.00 Kz</td>
+<td class="px-6 py-4 font-body-md text-body-md font-bold text-primary">1,450.00 Kz</td>
+<td class="px-6 py-4 font-body-md text-body-md">45</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 text-primary rounded-full text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                        Em Stock
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-variant rounded-lg text-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 hover:bg-error-container/30 rounded-lg text-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-surface border-t border-outline-variant/30 flex items-center justify-between">
+<p class="font-label-md text-label-md text-on-surface-variant">Mostrando 1-4 de 128 produtos</p>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-variant rounded-lg text-on-surface-variant/50 transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold text-label-md shadow-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant text-on-surface-variant text-label-md transition-colors">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant text-on-surface-variant text-label-md transition-colors">3</button>
+<span class="text-on-surface-variant/50">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant text-on-surface-variant text-label-md transition-colors">32</button>
+<button class="p-2 hover:bg-surface-variant rounded-lg text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Dashboard Style Metrics (Small) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
+<div class="bg-surface-container-lowest border border-outline-variant/30 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-3">
+<span class="material-symbols-outlined text-primary p-2 bg-primary/10 rounded-lg">inventory</span>
+<span class="text-primary font-bold text-label-sm">+12%</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Total em Stock</p>
+<h3 class="font-headline-md text-headline-md font-bold mt-1">2,481 un.</h3>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/30 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-3">
+<span class="material-symbols-outlined text-secondary p-2 bg-secondary/10 rounded-lg">monetization_on</span>
+<span class="text-secondary font-bold text-label-sm">Total</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Valor do Inventário</p>
+<h3 class="font-headline-md text-headline-md font-bold mt-1">12,450,200.00 Kz</h3>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/30 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-3">
+<span class="material-symbols-outlined text-error p-2 bg-error/10 rounded-lg">warning</span>
+<span class="text-error font-bold text-label-sm">Ação</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Produtos Baixo Stock</p>
+<h3 class="font-headline-md text-headline-md font-bold mt-1">14 itens</h3>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/30 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-3">
+<span class="material-symbols-outlined text-tertiary p-2 bg-tertiary/10 rounded-lg">category</span>
+<span class="text-tertiary font-bold text-label-sm">Geral</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Categorias Ativas</p>
+<h3 class="font-headline-md text-headline-md font-bold mt-1">24 cat.</h3>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', (e) => {
+                if (!e.target.closest('button')) {
+                    // Logic for row click could go here, e.g., open details
+                    console.log('Row clicked');
+                }
+            });
+        });
+    </script>
+</body></html>
