@@ -27,7 +27,7 @@ documentação. O plano detalhado de cada fase está em
 | DI | Microsoft.Extensions.DependencyInjection |
 | Logging | Serilog (consola + ficheiro) |
 | Testes | xUnit + FluentAssertions |
-| Gestão de pacotes | Central Package Management (`Directory.Packages.props`) |
+| Gestão de pacotes | Versão explícita por `PackageReference` em cada `.csproj` (Central Package Management foi tentado e revertido — [ver nota](#correção-pós-fase-3--central-package-management-revertido)) |
 
 ---
 
@@ -38,6 +38,7 @@ KiVenda/                              ← raiz do repositório
 ├── KiVenda.sln
 ├── global.json                       ← fixa o SDK .NET 10
 ├── Directory.Build.props             ← propriedades comuns a todos os projetos
+├── Directory.Build.targets           ← força ManagePackageVersionsCentrally=false (ver Correção Pós-Fase 3, parte 2)
 ├── Directory.Packages.props          ← versões centralizadas dos pacotes NuGet
 ├── .editorconfig
 ├── .gitignore
@@ -140,10 +141,13 @@ serão construídas.
 - [x] `global.json` a fixar o SDK **.NET 10**.
 - [x] `Directory.Build.props` com propriedades comuns (TargetFramework,
       Nullable, ImplicitUsings, analisadores).
-- [x] `Directory.Packages.props` com gestão centralizada de versões
-      (Central Package Management), incluindo **Avalonia 11**,
+- [x] Versões de pacotes fixadas explicitamente em cada `.csproj`
+      (`Version="..."` por `PackageReference`), incluindo **Avalonia 11**,
       **CommunityToolkit.Mvvm**, EF Core + SQLite (fixados para a Fase 2),
-      Serilog e xUnit/FluentAssertions.
+      Serilog e xUnit/FluentAssertions. ⚠️ Originalmente esta fase tinha
+      adotado Central Package Management (`Directory.Packages.props`);
+      foi revertido depois da Fase 3 por não funcionar na máquina do
+      Jeth — ver [Correção Pós-Fase 3](#correção-pós-fase-3--central-package-management-revertido) mais abaixo.
 - [x] Projeto `KiVenda.Desktop` configurado com Avalonia 11
       (`Avalonia`, `Avalonia.Desktop`, `Avalonia.Themes.Fluent`,
       `Avalonia.Fonts.Inter`, `Avalonia.Diagnostics` em Debug) e
@@ -171,9 +175,9 @@ serão construídas.
 - **Nome da raiz do repositório é `KiVenda/`**, não `KiVenda.Desktop/`
   — `KiVenda.Desktop` é apenas o projeto de UI (Avalonia), um dos cinco
   projetos dentro de `src/`.
-- **Central Package Management** adotado desde o início (`Directory.Packages.props`)
-  para evitar divergência de versões entre projetos à medida que o
-  número de camadas cresce.
+- ~~Central Package Management adotado desde o início~~ — **revertido
+  após a Fase 3**, ver nota de correção mais abaixo. Cada `.csproj`
+  fixa a sua própria versão de pacote diretamente.
 - **Composition root simples** (`ServiceCollection` direto em
   `App.axaml.cs`) nesta fase; avaliar migração para `Microsoft.Extensions.Hosting`
   completo (`IHost`) quando a Application/Infrastructure tiverem serviços
@@ -187,8 +191,7 @@ serão construídas.
 - [ ] `dotnet build` — confirmar compilação limpa da solução completa.
 - [ ] `dotnet run --project src/KiVenda.Desktop` — confirmar que a janela abre.
 - [ ] `dotnet test` — confirmar que os 3 smoke tests passam.
-- [ ] Rever versões em `Directory.Packages.props` contra as mais recentes
-      disponíveis no NuGet no momento da primeira execução.
+- [x] ~~Rever versões em `Directory.Packages.props`~~ — já não aplicável, ver nota de correção abaixo.
 
 ### Próxima fase
 
@@ -402,6 +405,121 @@ Cada caso de uso é uma classe com um único método público (`ExecutarAsync`),
 
 ➡️ **Fase 4 — Infrastructure**
 (ver detalhe em [`docs/PLANO_DE_IMPLEMENTACAO.md`](docs/PLANO_DE_IMPLEMENTACAO.md#fase-4--kivendainfrastructure))
+
+---
+
+## Correção Pós-Fase 3 — Central Package Management revertido
+
+**O que aconteceu:** ao correr `dotnet test --filter KiVenda.Application.Tests`
+pela primeira vez numa máquina real, o `dotnet restore` falhou em todos
+os projetos com `error NU1015: The following PackageReference item(s)
+do not have a version specified`, incluindo um aviso muito revelador:
+
+```
+warning NU1602: KiVenda.Application does not provide an inclusive lower
+bound for dependency Microsoft.Extensions.DependencyInjection.
+Microsoft.Extensions.DependencyInjection 1.0.0 was resolved instead.
+```
+
+**Diagnóstico:** o facto de o NuGet ter tentado resolver `Microsoft.Extensions.DependencyInjection`
+sem nenhuma restrição de versão (caindo na 1.0.0, de 2016) confirma que
+o `Directory.Packages.props` não estava a ser reconhecido como fonte de
+versões — se estivesse, um `PackageReference` sem `Version` seria
+válido (esse é o objetivo do Central Package Management), não um erro.
+Não foi possível reproduzir nem depurar a causa raiz exata neste
+ambiente de geração do scaffold (sem SDK .NET/NuGet disponível), pelo
+que investigar às cegas um mecanismo que não consigo testar seria
+arriscado.
+
+**Correção aplicada:** em vez de depurar a fundo o porquê do CPM não
+estar a ser detetado nesta máquina, o Central Package Management foi
+**abandonado**:
+
+- `Directory.Packages.props` removido.
+- Cada `<PackageReference>`, em todos os `.csproj` (`Application`,
+  `Persistence`, `Desktop`, e os 3 projetos de teste), passou a incluir
+  `Version="..."` explícita, com os mesmos números de versão que
+  estavam antes centralizados.
+
+Esta abordagem é menos elegante para manter consistência de versões à
+medida que o projeto cresce, mas é **garantidamente mais robusta** —
+não depende de nenhum mecanismo de descoberta automática de ficheiros
+que possa variar entre versões de SDK/NuGet ou configurações de
+ambiente. Se o Central Package Management vier a ser reconsiderado no
+futuro, o primeiro passo é reproduzir o erro numa máquina com SDK
+disponível e confirmar a causa exata antes de reintroduzi-lo.
+
+### Pendente para validar (primeira execução numa máquina real)
+
+- [ ] Correr novamente `dotnet restore` — deve já não apresentar `NU1015`.
+- [ ] `dotnet test --filter KiVenda.Application.Tests` — confirmar que a suite corre.
+- [ ] `dotnet test` (sem filtro) — confirmar que as 3 suites (Core, Application, Persistence) passam.
+
+---
+
+## Correção Pós-Fase 3 (parte 2) — CPM herdado de fora do repositório
+
+**O que aconteceu:** depois de remover o `Directory.Packages.props` do
+repositório, o erro mudou de `NU1015` ("falta a versão") para
+**`NU1008`** ("não pode ter versão — projetos com Central Package
+Management têm de definir a versão num `PackageVersion`"). Isto é o
+erro exatamente oposto ao anterior, e só acontece se o MSBuild **ainda
+está a encontrar um `Directory.Packages.props`** — só que agora vindo
+de fora do repositório.
+
+**Diagnóstico:** o MSBuild procura `Directory.Packages.props` subindo a
+árvore de diretórios a partir de cada projeto, **sem parar na raiz do
+repositório** — só para quando encontra o ficheiro ou chega à raiz do
+sistema de ficheiros. Se existir um `Directory.Packages.props` nalgum
+diretório acima de `~/Project/KiVenda` (por exemplo em `~/Project/` ou
+na própria home), o MSBuild vai encontrá-lo e ativar CPM para todos os
+projetos abaixo dele — incluindo o KiVenda — mesmo sem esse ficheiro
+fazer parte deste repositório. Para confirmar onde está:
+
+```bash
+find ~ -maxdepth 6 -iname 'Directory.Packages.props' 2>/dev/null
+```
+
+**Correção aplicada:** em vez de depender de encontrar e remover (ou
+não poder remover, se for de outro projeto) esse ficheiro externo,
+adicionámos **`Directory.Build.targets`** na raiz do repositório com:
+
+```xml
+<PropertyGroup>
+  <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+</PropertyGroup>
+```
+
+`Directory.Build.targets` é importado pelo MSBuild **depois** de tudo
+o resto, incluindo depois de qualquer `Directory.Packages.props`
+externo — por isso esta definição vence sempre, independentemente do
+que exista fora do repositório. Esta correção é robusta mesmo que o
+ficheiro externo continue lá (não depende de o utilizador o encontrar
+ou apagar).
+
+> ⚠️ **Atualização:** esta correção com `Directory.Build.targets` **não
+> resolveu** o problema na prática. O `dotnet restore` usa uma
+> avaliação estática mais leve (focada em `PackageReference`/`PackageVersion`)
+> que, ao que tudo indica, não chega a processar `Directory.Build.targets`
+> — só ficheiros `.props`. A causa real, descoberta a seguir com
+> `find ~ -iname 'Directory.Packages.props'`, nem sequer era um
+> ficheiro ancestral fora do repositório: era **o próprio ficheiro
+> antigo, ainda fisicamente presente dentro do repositório**
+> (`~/Project/KiVenda/Directory.Packages.props`). A extração de um zip
+> por cima de uma pasta já existente acrescenta/sobrescreve ficheiros,
+> mas **não apaga** ficheiros que existiam no disco e deixaram de estar
+> no zip — por isso o ficheiro antigo sobreviveu a várias "correções".
+> A solução foi simplesmente apagá-lo à mão (`rm Directory.Packages.props`).
+> `Directory.Build.targets` foi mantido no repositório como proteção
+> adicional para o cenário (diferente) de um `Directory.Packages.props`
+> genuinamente ancestral e fora do controlo do repositório, mesmo sem
+> garantia de efeito durante `dotnet restore`.
+
+### Pendente para validar (primeira execução numa máquina real)
+
+- [ ] Correr `dotnet restore` novamente — não deve haver `NU1008` nem `NU1015`.
+- [ ] `dotnet test --filter KiVenda.Application.Tests` — confirmar que a suite corre.
+- [ ] `dotnet test` (sem filtro) — confirmar que as 3 suites (Core, Application, Persistence) passam.
 
 ---
 

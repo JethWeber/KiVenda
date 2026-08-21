@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace KiVenda.Desktop;
 
-public partial class App : Application
+public partial class App : Avalonia.Application
 {
     /// <summary>
     /// Composition root da aplicação. Exposto como estático por simplicidade

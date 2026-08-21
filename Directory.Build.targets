@@ -1,0 +1,27 @@
+<Project>
+
+  <!--
+    Directory.Build.targets é importado pelo MSBuild DEPOIS de tudo o
+    resto (incluindo qualquer Directory.Packages.props encontrado ao
+    subir a árvore de diretórios a partir de cada projeto — o MSBuild
+    não para na raiz deste repositório, continua a subir até encontrar
+    um ficheiro com esse nome ou chegar à raiz do sistema de ficheiros).
+
+    Isto causou um erro real (NU1008) numa máquina onde existia um
+    Directory.Packages.props fora do repositório do KiVenda, ativando
+    Central Package Management sem que nenhum PackageVersion
+    correspondesse aos pacotes deste projeto — ver README, secção
+    "Correção Pós-Fase 3".
+
+    Por ser importado por último, esta definição vence qualquer
+    ManagePackageVersionsCentrally=true herdado de fora do repositório,
+    forçando este projeto a usar sempre as versões explícitas definidas
+    em cada .csproj, independentemente do que exista noutros diretórios
+    da máquina onde o repositório for clonado.
+  -->
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+</Project>
