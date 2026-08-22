@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels"
+             x:Class="KiVenda.Desktop.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Width="340">
+        <StackPanel Spacing="16">
+
+            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                <TextBlock Text="KiVenda" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" />
+                <TextBlock Text="Inicie sessão para continuar" Opacity="0.7" HorizontalAlignment="Center" />
+            </StackPanel>
+
+            <StackPanel Spacing="6">
+                <TextBlock Text="Utilizador" />
+                <TextBox Text="{Binding NomeUtilizador}" Watermark="ex.: gerente" />
+            </StackPanel>
+
+            <StackPanel Spacing="6">
+                <TextBlock Text="Password" />
+                <TextBox Text="{Binding Senha}" PasswordChar="•" />
+            </StackPanel>
+
+            <!--
+                Sem conversor dedicado: o TextBlock fica sempre presente
+                (texto vazio quando não há erro), para não depender de
+                um StringConverters.IsNotNullOrEmpty mapeado por xmlns
+                nesta fase inicial da UI.
+            -->
+            <TextBlock Text="{Binding MensagemErro}"
+                       Foreground="Red"
+                       TextWrapping="Wrap" />
+
+            <Button Content="Entrar"
+                    Command="{Binding EntrarCommand}"
+                    IsEnabled="{Binding !AEntrar}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center" />
+
+        </StackPanel>
+    </Grid>
+
+</UserControl>

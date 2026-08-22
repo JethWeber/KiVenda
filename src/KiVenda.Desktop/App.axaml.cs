@@ -1,10 +1,21 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using KiVenda.Application.Abstractions.Auth;
+using KiVenda.Application.DependencyInjection;
+using KiVenda.Desktop.Autenticacao;
 using KiVenda.Desktop.ViewModels;
 using KiVenda.Desktop.Views;
+using KiVenda.Infrastructure.Caminhos;
+using KiVenda.Infrastructure.DependencyInjection;
+using KiVenda.Persistence;
+using KiVenda.Persistence.DependencyInjection;
+using KiVenda.Persistence.Seed;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace KiVenda.Desktop;
 
@@ -26,6 +37,17 @@ public partial class App : Avalonia.Application
     {
         Services = ConfigureServices();
 
+        // Ponto de arranque único: garante que a base de dados existe e
+        // está semeada (unidades de medida, categoria "Geral", utilizador
+        // Gerente inicial) antes de qualquer ecrã aparecer — suporta o
+        // princípio "instalar e vender em 5 minutos" (Secção 3).
+        //
+        // Chamada bloqueante deliberada: neste ponto exato o loop de
+        // mensagens do Avalonia ainda não arrancou (estamos antes de
+        // StartWithClassicDesktopLifetime terminar), por isso não há
+        // risco de deadlock por sincronizar sobre código assíncrono aqui.
+        InicializarBaseDeDadosAsync().GetAwaiter().GetResult();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow
@@ -41,18 +63,43 @@ public partial class App : Avalonia.Application
     {
         var services = new ServiceCollection();
 
-        // Fase 0: apenas o necessário para a janela inicial abrir.
-        //
-        // A partir das fases seguintes, este método passará a delegar em
-        // extension methods dedicados por camada, por exemplo:
-        //
-        //   services.AddCore();
-        //   services.AddApplicationLayer();   // Fase 3
-        //   services.AddInfrastructure();     // Fase 4
-        //   services.AddPersistence();        // Fase 2
-        //   services.AddDesktopViewModels();  // Fase 6+
-        services.AddSingleton<MainWindowViewModel>();
+        services.AddPersistence(CaminhosAplicacao.CaminhoBaseDeDados);
+        services.AddApplicationUseCases();
+        services.AddInfrastructure();
+
+        // Sessão de utilizador: registada como singleton concreto (para
+        // que LoginViewModel/BemVindoViewModel possam chamar
+        // IniciarSessao/TerminarSessao, que não fazem parte do contrato
+        // IContextoAutenticacao) e também exposta através do contrato,
+        // resolvendo sempre a MESMA instância.
+        services.AddSingleton<SessaoUtilizadorAtual>();
+        services.AddSingleton<IContextoAutenticacao>(sp => sp.GetRequiredService<SessaoUtilizadorAtual>());
+
+        services.AddTransient<LoginViewModel>();
+        services.AddTransient<MainWindowViewModel>();
 
         return services.BuildServiceProvider();
+    }
+
+    private static async Task InicializarBaseDeDadosAsync()
+    {
+        Log.Information("A preparar a base de dados local...");
+
+        await using var scope = Services.CreateAsyncScope();
+        var contexto = scope.ServiceProvider.GetRequiredService<KiVendaDbContext>();
+
+        // Migração real (dotnet ef migrations add InicialCreate) ainda
+        // pendente — ver Fase 2 do plano de implementação. EnsureCreated
+        // já é suficiente para a app arrancar e para o seed funcionar.
+        await contexto.Database.EnsureCreatedAsync();
+
+        var senhaHasher = scope.ServiceProvider.GetRequiredService<ISenhaHasher>();
+
+        // Password inicial do Gerente semeado na primeira execução.
+        // TODO (Fase 11): forçar troca desta password no primeiro login,
+        // em vez de a deixar fixa indefinidamente.
+        await KiVendaDbSeeder.SeedAsync(contexto, senhaHasher.GerarHash("admin123"));
+
+        Log.Information("Base de dados pronta.");
     }
 }

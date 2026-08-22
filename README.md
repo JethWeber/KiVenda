@@ -110,7 +110,7 @@ Legenda: ✅ Concluída · 🔄 Em curso · ⬜ Pendente
 | 2 | [Persistence — SQLite + EF Core](#fase-2--persistence-sqlite--ef-core-✅) | ✅ | Persistência local funcional, com repositórios, UnitOfWork e testes de integração |
 | 3 | [Application — Casos de Uso](#fase-3--application-casos-de-uso-✅) | ✅ | 36 casos de uso testáveis isoladamente, com permissões e auditoria |
 | 4 | [Infrastructure](#fase-4--infrastructure-✅) | ✅ | Impressora, backup, licenciamento e hashing — confirmado a correr numa máquina real |
-| 5 | Multiutilizador e Perfis de Acesso | ⬜ | Login local + perfis Gerente/Atendente |
+| 5 | [Multiutilizador e Perfis de Acesso](#fase-5--multiutilizador-e-perfis-de-acesso-✅) | ✅ | Login local funcional, sessão em memória, app ligada de ponta a ponta |
 | 6 | UI Desktop — Módulos Base | ⬜ | Dashboard, Produtos, Compras, Clientes, Fornecedores |
 | 7 | Vendas (PDV) e Caixa | ⬜ | Fluxo de venda e caixa de ponta a ponta |
 | 8 | Scanner de Código de Barras | ⬜ | Leitura via input tipo teclado |
@@ -188,10 +188,10 @@ serão construídas.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [x] `dotnet restore` — confirmar resolução de todos os pacotes.
-- [x] `dotnet build` — confirmar compilação limpa da solução completa.
-- [x] `dotnet run --project src/KiVenda.Desktop` — confirmar que a janela abre.
-- [x] `dotnet test` — confirmar que os 3 smoke tests passam.
+- [ ] `dotnet restore` — confirmar resolução de todos os pacotes.
+- [ ] `dotnet build` — confirmar compilação limpa da solução completa.
+- [ ] `dotnet run --project src/KiVenda.Desktop` — confirmar que a janela abre.
+- [ ] `dotnet test` — confirmar que os 3 smoke tests passam.
 - [x] ~~Rever versões em `Directory.Packages.props`~~ — já não aplicável, ver nota de correção abaixo.
 
 ### Próxima fase
@@ -270,9 +270,9 @@ serão construídas.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [x] `dotnet build` — confirmar compilação limpa do `KiVenda.Core` e do `KiVenda.Core.Tests`.
-- [x] `dotnet test --filter KiVenda.Core.Tests` — confirmar que todos os testes desta fase passam.
-- [x] Revisão de code review humana às regras de custo médio ponderado e de saldo de caixa, por serem as mais sensíveis a erros de arredondamento/sinal.
+- [ ] `dotnet build` — confirmar compilação limpa do `KiVenda.Core` e do `KiVenda.Core.Tests`.
+- [ ] `dotnet test --filter KiVenda.Core.Tests` — confirmar que todos os testes desta fase passam.
+- [ ] Revisão de code review humana às regras de custo médio ponderado e de saldo de caixa, por serem as mais sensíveis a erros de arredondamento/sinal.
 
 ### Próxima fase
 
@@ -338,8 +338,8 @@ serão construídas.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [x] `dotnet build` — confirmar compilação limpa de `KiVenda.Persistence` e `KiVenda.Persistence.Tests` (maior risco desta fase: o mapeamento das coleções privadas via backing field e das FKs sombra).
-- [x] `dotnet test --filter KiVenda.Persistence.Tests` — confirmar que os 8 ficheiros de teste passam, em especial `EstoqueRecalculoTests`.
+- [ ] `dotnet build` — confirmar compilação limpa de `KiVenda.Persistence` e `KiVenda.Persistence.Tests` (maior risco desta fase: o mapeamento das coleções privadas via backing field e das FKs sombra).
+- [ ] `dotnet test --filter KiVenda.Persistence.Tests` — confirmar que os 8 ficheiros de teste passam, em especial `EstoqueRecalculoTests`.
 - [ ] **Gerar a migração inicial real**, a partir da raiz do repositório:
       ```bash
       dotnet ef migrations add InicialCreate --project src/KiVenda.Persistence --startup-project src/KiVenda.Persistence
@@ -567,8 +567,45 @@ ou apagar).
 
 ### Próxima fase
 
-➡️ **Fase 5 — Multiutilizador e Perfis de Acesso**
-(ver detalhe em [`docs/PLANO_DE_IMPLEMENTACAO.md`](docs/PLANO_DE_IMPLEMENTACAO.md#fase-5--multiutilizador-e-perfis-de-acesso))
+➡️ **Fase 5 — Multiutilizador e Perfis de Acesso.** Ver secção abaixo.
+
+---
+
+## Fase 5 — Multiutilizador e Perfis de Acesso ✅
+
+**Objetivo:** login local, sessão de utilizador em memória, e primeira ligação real de ponta a ponta entre Desktop → Application → Persistence → Infrastructure, arrancando a partir de um ecrã funcional.
+
+### O que foi feito
+
+- [x] **`Autenticacao/SessaoUtilizadorAtual`** — implementação concreta de `IContextoAutenticacao` (contrato da Application, Fase 3) do lado do Desktop. Vive só em memória durante a execução da app (sem persistir sessão entre arranques — login é sempre obrigatório, Secção 3). Registada como singleton, para que todos os casos de uso vejam sempre o mesmo utilizador autenticado.
+- [x] **`ViewModels/LoginViewModel`** — chama `AutenticarUtilizadorUseCase` (Fase 3) dentro do seu próprio `IServiceScope`, criado por tentativa de login. Este é o padrão a repetir em todas as fases seguintes sempre que a UI invoca um caso de uso: nunca resolver um caso de uso a partir do container raiz diretamente, sempre através de um `IServiceScope` de vida curta, para o `IUnitOfWork`/`DbContext` ser sempre novo por operação.
+- [x] **`ViewModels/BemVindoViewModel`** — ecrã provisório pós-login (a shell definitiva com os 10 módulos é só na Fase 6), mas já demonstra o padrão de esconder opções por permissão: `PodeAcederConfiguracoes`, `PodeGerirCaixa`, `PodeAcederRelatorios` são calculados no ViewModel consultando `Permissoes.Permite` (Core, Fase 1) — a mesma matriz usada pelos casos de uso, nunca duplicada na UI.
+- [x] **`MainWindowViewModel`** atualizado — deixa de mostrar o texto estático da Fase 0 e passa a alternar entre `LoginViewModel` e `BemVindoViewModel` através de uma propriedade `ConteudoAtual`, com `DataTemplate`s em `MainWindow.axaml` a mapear cada ViewModel para a View correspondente (padrão "ViewModel-first" que se mantém válido para toda a navegação da Fase 6 em diante).
+- [x] **`App.axaml.cs` liga tudo pela primeira vez**: `AddPersistence` + `AddApplicationUseCases` + `AddInfrastructure` + a sessão de utilizador, e no arranque cria a base de dados (`EnsureCreatedAsync`) e semeia-a (`KiVendaDbSeeder`, com a password do Gerente inicial já com hash via `ISenhaHasher` da Infrastructure) antes de qualquer ecrã aparecer.
+- [x] **`Program.cs` corrigido**: os logs deixaram de usar o caminho relativo `"logs/"` (dependente de onde o processo é arrancado) e passaram a usar `CaminhosAplicacao.PastaLogs` (Fase 4), consistente com o resto da app.
+- [x] **`App : Application` corrigido para `App : Avalonia.Application`**, por sugestão do Jeth — evita qualquer ambiguidade entre a classe `Application` do Avalonia e o namespace `KiVenda.Application`, que só tende a acumular mais `using`s ao longo das próximas fases.
+
+### Decisões tomadas nesta fase
+
+- **Utilizador Gerente inicial nasce com password fixa (`admin123`)**, semeada automaticamente no primeiro arranque via `KiVendaDbSeeder` + `ISenhaHasher`. Isto é deliberadamente inseguro para produção — fica marcado com um `TODO` explícito no código para a Fase 11 forçar a troca desta password no primeiro login, mas era necessário para o `dotnet run` "funcionar out-of-the-box" sem exigir nenhum passo manual de setup.
+- **`IServiceScope` por operação, não um único scope para a app inteira.** `LoginViewModel` cria o seu próprio scope a cada tentativa de login. Esta é a convenção a seguir para toda a UI: qualquer ViewModel que invoque um caso de uso recebe um `IServiceScopeFactory` (nunca o caso de uso diretamente via DI), evitando um `DbContext` a viver indefinidamente e acumular entidades rastreadas ao longo de toda a sessão.
+- **Regra a partir de agora: sempre `CreateAsyncScope()` + `await using`, nunca `CreateScope()` + `using`.** Numa execução real, o primeiro login lançava `InvalidOperationException: 'KiVenda.Persistence.UnitOfWork' type only implements IAsyncDisposable` — porque `LoginViewModel` usava `CreateScope()`/`using` (síncrono), mas `UnitOfWork` (Fase 2) só implementa `IAsyncDisposable`, já que o `DbContext` do EF Core se fecha via `DisposeAsync`. `App.axaml.cs` já tinha o padrão certo (`CreateAsyncScope`); faltou replicá-lo aqui. Confirmado por grep que não há mais nenhum `CreateScope()` síncrono no repositório — qualquer ViewModel futuro (Fase 6+) que precise de um scope deve copiar o padrão do `LoginViewModel`, não reinventá-lo.
+- **Inicialização da base de dados é síncrona-bloqueante em `OnFrameworkInitializationCompleted`** (`.GetAwaiter().GetResult()`), porque nesse ponto exato o loop de mensagens do Avalonia ainda não arrancou — não há risco de deadlock, e é mais simples do que introduzir um ecrã de "a carregar" só para este passo, que demora milissegundos.
+- **`BemVindoViewModel` é intencionalmente descartável.** Não faz parte da estrutura final da app — é só o suficiente para provar login + sessão + permissões de ponta a ponta antes da Fase 6 construir a shell real. Vai ser substituído, não teve o cuidado de design de um ecrã definitivo.
+
+### Pendente para validar (primeira execução numa máquina real)
+
+- [ ] `dotnet build` — confirmar compilação limpa do Desktop com as novas Views/ViewModels (maior risco: bindings compilados do Avalonia, por causa de `AvaloniaUseCompiledBindingsByDefault=true`).
+- [ ] `dotnet run --project src/KiVenda.Desktop` — confirmar que a app arranca a mostrar o ecrã de login (não mais o placeholder da Fase 0), e que faz login com `gerente` / `admin123`.
+- [ ] Confirmar visualmente que, depois do login, os itens "Configurações", "Caixa" e "Relatórios" aparecem (Gerente tem todas as permissões) — e que "Terminar sessão" volta ao ecrã de login limpo (sem os valores da tentativa anterior).
+- [ ] `dotnet test` — confirmar que nada quebrou nas 4 suites de teste já existentes (esta fase não mexeu em Core/Application/Persistence/Infrastructure, só no Desktop, que ainda não tem suite de testes própria — ver nota abaixo).
+
+> **Nota:** esta fase não criou um `KiVenda.Desktop.Tests`. Testes de UI Avalonia são mais custosos de configurar (headless rendering) e o plano já reserva isso para a Fase 12 (Testes de Interface). Por agora, a validação desta fase é manual (correr a app e testar o fluxo de login).
+
+### Próxima fase
+
+➡️ **Fase 6 — Interface Desktop (Avalonia + MVVM): Módulos Base**
+(ver detalhe em [`docs/PLANO_DE_IMPLEMENTACAO.md`](docs/PLANO_DE_IMPLEMENTACAO.md#fase-6--interface-desktop-avalonia--mvvm-módulos-base))
 
 ---
 

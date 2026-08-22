@@ -1,5 +1,6 @@
 using System;
 using Avalonia;
+using KiVenda.Infrastructure.Caminhos;
 using Serilog;
 
 namespace KiVenda.Desktop;
@@ -39,11 +40,17 @@ internal static class Program
 
     private static void ConfigureLogging()
     {
+        // Pasta de dados da aplicação (Fase 4: KiVenda.Infrastructure),
+        // em vez de um caminho relativo — "logs/" dependia de onde o
+        // processo era arrancado (ex.: `dotnet run` vs. duplo-clique no
+        // executável instalado), o que não é fiável para uma app Desktop.
+        var caminhoLog = System.IO.Path.Combine(CaminhosAplicacao.PastaLogs, "kivenda-.log");
+
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.Console()
             .WriteTo.File(
-                path: "logs/kivenda-.log",
+                path: caminhoLog,
                 rollingInterval: RollingInterval.Day,
                 retainedFileCountLimit: 14)
             .CreateLogger();

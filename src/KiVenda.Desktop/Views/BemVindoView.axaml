@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels"
+             x:Class="KiVenda.Desktop.Views.BemVindoView"
+             x:DataType="vm:BemVindoViewModel">
+
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel Spacing="12" HorizontalAlignment="Center">
+
+            <TextBlock Text="{Binding NomeUtilizador, StringFormat='Bem-vindo, {0}!'}"
+                       FontSize="24"
+                       FontWeight="SemiBold"
+                       HorizontalAlignment="Center" />
+
+            <TextBlock Text="{Binding Perfil, StringFormat='Perfil: {0}'}"
+                       Opacity="0.7"
+                       HorizontalAlignment="Center" />
+
+            <!--
+                Exemplo do padrão de esconder opções por permissão que
+                será usado no menu real (Fase 6) — cada item consulta o
+                seu próprio "PodeX" calculado no ViewModel a partir da
+                mesma matriz de permissões dos casos de uso.
+            -->
+            <StackPanel Spacing="4" Margin="0,12,0,0">
+                <TextBlock Text="Configurações" IsVisible="{Binding PodeAcederConfiguracoes}" />
+                <TextBlock Text="Caixa" IsVisible="{Binding PodeGerirCaixa}" />
+                <TextBlock Text="Relatórios" IsVisible="{Binding PodeAcederRelatorios}" />
+            </StackPanel>
+
+            <Button Content="Terminar sessão"
+                    Command="{Binding TerminarSessaoCommand}"
+                    HorizontalAlignment="Center"
+                    Margin="0,12,0,0" />
+
+        </StackPanel>
+    </Grid>
+
+</UserControl>
