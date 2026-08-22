@@ -30,6 +30,17 @@
     <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+
+    <!--
+      Overrides de segurança para dependências transitivas vulneráveis:
+      - SQLitePCLRaw.lib.e_sqlite3 2.1.10 (via EF Core Sqlite, consumido
+        através de KiVenda.Persistence): CVE-2025-6965 / GHSA-2m69-gcr7-jv3q.
+      - Tmds.DBus.Protocol 0.20.0 (via Avalonia, integração D-Bus no
+        Linux — clipboard/notificações): GHSA-xrw6-gwf8-vvr9.
+      Ver README, secção "Correção Pós-Fase 3".
+    -->
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
   </ItemGroup>
 
   <ItemGroup>

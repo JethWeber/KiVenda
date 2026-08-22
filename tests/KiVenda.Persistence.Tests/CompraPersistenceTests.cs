@@ -1,5 +1,6 @@
 using FluentAssertions;
 using KiVenda.Core.Compras;
+using KiVenda.Core.Enums;
 using KiVenda.Core.Fornecedores;
 using KiVenda.Core.Produtos;
 using KiVenda.Core.Utilizadores;

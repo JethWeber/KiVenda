@@ -11,14 +11,12 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
-    <!-- Ver KiVenda.Persistence.csproj: mesmo override de segurança, necessário
-         aqui também porque este projeto referencia o pacote diretamente. -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\KiVenda.Persistence\KiVenda.Persistence.csproj" />
+    <ProjectReference Include="..\..\src\KiVenda.Infrastructure\KiVenda.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

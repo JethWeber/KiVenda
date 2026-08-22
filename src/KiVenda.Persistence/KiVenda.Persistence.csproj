@@ -19,6 +19,19 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+
+    <!--
+      Override explícito da dependência transitiva vulnerável trazida por
+      Microsoft.EntityFrameworkCore.Sqlite 9.0.0 (que resolve
+      SQLitePCLRaw.lib.e_sqlite3 2.1.10, afetado por CVE-2025-6965 /
+      GHSA-2m69-gcr7-jv3q — falha de corrupção de memória em versões do
+      SQLite anteriores à 3.50.2). O EF Core ainda não corrigiu isto na
+      sua própria árvore de dependências (ver dotnet/efcore#38257), pelo
+      que a correção reconhecida pela comunidade é fixar esta versão
+      diretamente. A partir da versão 3.x, o número de versão deste
+      pacote passou a acompanhar a versão do SQLite embutido.
+    -->
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
   </ItemGroup>
 
 </Project>

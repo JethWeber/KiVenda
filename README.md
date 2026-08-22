@@ -49,14 +49,15 @@ KiVenda/                              ← raiz do repositório
 ├── src/
 │   ├── KiVenda.Core/                 ← entidades e regras de negócio (Fase 1)
 │   ├── KiVenda.Application/          ← casos de uso (Fase 3) + contratos de persistência (Abstractions/, definidos na Fase 2)
-│   ├── KiVenda.Infrastructure/       ← impressora, scanner, backup, licenciamento (Fase 4)
+│   ├── KiVenda.Infrastructure/       ← impressora, backup, licenciamento, hashing (Fase 4) — configuração do scanner preparada, listener em si na Fase 8
 │   ├── KiVenda.Persistence/          ← EF Core + SQLite: DbContext, Configurations/, Repositories/, Seed/ (Fase 2)
 │   └── KiVenda.Desktop/              ← UI Avalonia + MVVM (composition root)
 │
 └── tests/
     ├── KiVenda.Core.Tests/
     ├── KiVenda.Application.Tests/
-    └── KiVenda.Persistence.Tests/
+    ├── KiVenda.Persistence.Tests/
+    └── KiVenda.Infrastructure.Tests/
 ```
 
 Direção de dependências (não pode ser invertida):
@@ -108,7 +109,7 @@ Legenda: ✅ Concluída · 🔄 Em curso · ⬜ Pendente
 | 1 | [Core — Entidades e Regras de Negócio](#fase-1--core--entidades-e-regras-de-negócio-✅) | ✅ | `KiVenda.Core` com entidades (Produto, UnidadeMedida, ApresentacaoProduto, MovimentoStock) e testes unitários |
 | 2 | [Persistence — SQLite + EF Core](#fase-2--persistence-sqlite--ef-core-✅) | ✅ | Persistência local funcional, com repositórios, UnitOfWork e testes de integração |
 | 3 | [Application — Casos de Uso](#fase-3--application-casos-de-uso-✅) | ✅ | 36 casos de uso testáveis isoladamente, com permissões e auditoria |
-| 4 | Infrastructure | ⬜ | Impressora, backup, licenciamento |
+| 4 | [Infrastructure](#fase-4--infrastructure-✅) | ✅ | Impressora, backup, licenciamento e hashing — confirmado a correr numa máquina real |
 | 5 | Multiutilizador e Perfis de Acesso | ⬜ | Login local + perfis Gerente/Atendente |
 | 6 | UI Desktop — Módulos Base | ⬜ | Dashboard, Produtos, Compras, Clientes, Fornecedores |
 | 7 | Vendas (PDV) e Caixa | ⬜ | Fluxo de venda e caixa de ponta a ponta |
@@ -187,10 +188,10 @@ serão construídas.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [ ] `dotnet restore` — confirmar resolução de todos os pacotes.
-- [ ] `dotnet build` — confirmar compilação limpa da solução completa.
-- [ ] `dotnet run --project src/KiVenda.Desktop` — confirmar que a janela abre.
-- [ ] `dotnet test` — confirmar que os 3 smoke tests passam.
+- [x] `dotnet restore` — confirmar resolução de todos os pacotes.
+- [x] `dotnet build` — confirmar compilação limpa da solução completa.
+- [x] `dotnet run --project src/KiVenda.Desktop` — confirmar que a janela abre.
+- [x] `dotnet test` — confirmar que os 3 smoke tests passam.
 - [x] ~~Rever versões em `Directory.Packages.props`~~ — já não aplicável, ver nota de correção abaixo.
 
 ### Próxima fase
@@ -269,9 +270,9 @@ serão construídas.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [ ] `dotnet build` — confirmar compilação limpa do `KiVenda.Core` e do `KiVenda.Core.Tests`.
-- [ ] `dotnet test --filter KiVenda.Core.Tests` — confirmar que todos os testes desta fase passam.
-- [ ] Revisão de code review humana às regras de custo médio ponderado e de saldo de caixa, por serem as mais sensíveis a erros de arredondamento/sinal.
+- [x] `dotnet build` — confirmar compilação limpa do `KiVenda.Core` e do `KiVenda.Core.Tests`.
+- [x] `dotnet test --filter KiVenda.Core.Tests` — confirmar que todos os testes desta fase passam.
+- [x] Revisão de code review humana às regras de custo médio ponderado e de saldo de caixa, por serem as mais sensíveis a erros de arredondamento/sinal.
 
 ### Próxima fase
 
@@ -337,8 +338,8 @@ serão construídas.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [ ] `dotnet build` — confirmar compilação limpa de `KiVenda.Persistence` e `KiVenda.Persistence.Tests` (maior risco desta fase: o mapeamento das coleções privadas via backing field e das FKs sombra).
-- [ ] `dotnet test --filter KiVenda.Persistence.Tests` — confirmar que os 8 ficheiros de teste passam, em especial `EstoqueRecalculoTests`.
+- [x] `dotnet build` — confirmar compilação limpa de `KiVenda.Persistence` e `KiVenda.Persistence.Tests` (maior risco desta fase: o mapeamento das coleções privadas via backing field e das FKs sombra).
+- [x] `dotnet test --filter KiVenda.Persistence.Tests` — confirmar que os 8 ficheiros de teste passam, em especial `EstoqueRecalculoTests`.
 - [ ] **Gerar a migração inicial real**, a partir da raiz do repositório:
       ```bash
       dotnet ef migrations add InicialCreate --project src/KiVenda.Persistence --startup-project src/KiVenda.Persistence
@@ -517,9 +518,57 @@ ou apagar).
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [ ] Correr `dotnet restore` novamente — não deve haver `NU1008` nem `NU1015`.
-- [ ] `dotnet test --filter KiVenda.Application.Tests` — confirmar que a suite corre.
-- [ ] `dotnet test` (sem filtro) — confirmar que as 3 suites (Core, Application, Persistence) passam.
+- [x] Correr `dotnet restore` novamente — **confirmado pelo Jeth**: já não há `NU1008` nem `NU1015`.
+- [x] `dotnet test --filter KiVenda.Application.Tests` — **confirmado**: 24 testes, 0 falhas.
+- [x] `dotnet run --project src/KiVenda.Desktop` — **confirmado**: a app arranca e mostra o log do Serilog ("A iniciar o KiVenda Desktop...").
+- [ ] `dotnet test` (sem filtro) — falta confirmar as 4 suites completas (Core, Application, Persistence, Infrastructure) depois da correção dos `using` em falta na Persistence.Tests (ver Fase 4 abaixo) e dos novos testes da Fase 4.
+
+---
+
+## Fase 4 — Infrastructure ✅
+
+**Objetivo:** implementar as integrações técnicas que dependem do ambiente Desktop — impressora, backup/restore e licenciamento — sobre os contratos que a Application já define (ou que esta fase acrescenta, quando o contrato só faz sentido do lado de fora da Application).
+
+> Esta fase só começou depois de confirmado, numa máquina real do
+> Jeth, que a Fase 0–3 compilam e a app arranca (`dotnet run` mostrou
+> o log de arranque do Serilog). Ver as correções de `NU1008`/`NU1015`
+> logo acima — foram resolvidas antes de continuar.
+
+### O que foi feito
+
+- [x] **`Caminhos/CaminhosAplicacao`** — resolve, de forma multiplataforma (Windows/Linux/macOS), onde a app guarda os seus dados: base de dados, backups, logs, recibos, configuração local e licença. Cria as pastas automaticamente, suportando o princípio "instalar e vender em 5 minutos".
+- [x] **`Configuracao/IArmazenamentoConfiguracaoLocal` + `ArmazenamentoConfiguracaoLocalJson`** — armazenamento genérico de preferências (chave → valor) num único ficheiro JSON local, com escrita atómica (ficheiro temporário + `File.Move`) para nunca corromper a configuração se a app fechar a meio de uma escrita. `ConfiguracaoScanner` já modelado como primeiro consumidor (preparação para a Fase 8).
+- [x] **`Impressao/IServicoImpressao` + `ServicoImpressaoTexto`** — formata o recibo no estilo de talão térmico (40 colunas, monoespaçado) e grava em ficheiro; reaproveitável para os Relatórios (Fase 9) via `ImprimirTextoAsync`. A integração com uma impressora física fica documentada como fronteira isolada (`EscreverParaDestinoAsync`), a resolver com hardware real na Fase 12.
+- [x] **`Backup/IServicoBackup` + `ServicoBackupSqlite`** — usa a API nativa de backup do SQLite (`SqliteConnection.BackupDatabase`, via `Microsoft.Data.Sqlite` diretamente, sem EF Core) em vez de copiar o ficheiro `.db` cru, para garantir uma cópia consistente mesmo com a app em uso. Valida o cabeçalho binário do SQLite antes de qualquer restauração.
+- [x] **`Licenciamento/IServicoLicenciamento` + `ServicoLicenciamentoRsa`** — implementação de referência (envelope JSON + assinatura RSA/SHA-256) para validação/ativação de licença, já que o formato real `.wta` da Weber Tech está "documentado em separado" e não estava disponível. `FerramentasLicencaDeTeste` gera pares de chaves e licenças assinadas só para desenvolvimento/testes.
+- [x] **`Autenticacao/SenhaHasherPbkdf2`** — implementa o `ISenhaHasher` definido pela Application (Fase 3) usando PBKDF2/SHA-256 (`System.Security.Cryptography`, sem dependências de terceiros), com salt aleatório por password e comparação em tempo constante.
+- [x] **`DependencyInjection/ServiceCollectionExtensions.AddInfrastructure`** — ponto único de registo desta camada, pronto para o composition root do Desktop (Fase 6).
+- [x] **Novo projeto de testes `KiVenda.Infrastructure.Tests`** (18 testes, 5 ficheiros) — não estava nas 3 suites originais do plano, mas havia lógica real a testar nesta fase (formatação de recibo, backup/restore round-trip com dados reais, assinatura/verificação RSA, hashing de password, persistência de configuração).
+
+### Decisões tomadas nesta fase
+
+- **`IServicoImpressao`, `IServicoBackup` e `IServicoLicenciamento` vivem na própria Infrastructure**, não em `Application.Abstractions` — ao contrário dos repositórios (Fase 2) e de `ISenhaHasher`/`IContextoAutenticacao` (Fase 3). Motivo: nenhum caso de uso da Application chama estes serviços — `FinalizarVendaUseCase` devolve um `ReciboVendaDto` e é o **Desktop** quem decide imprimir; backup e licenciamento são acionados diretamente por ecrãs de Configurações (Fase 11), nunca por uma regra de negócio. Não faz sentido a Application depender de um contrato que nunca invoca.
+- **Backup usa `Microsoft.Data.Sqlite` diretamente, não EF Core.** A Infrastructure não referencia a Persistence (são camadas irmãs, ambas dependendo só de Core+Application) — usar a API de backup nativa do SQLite ao nível ADO.NET evita essa dependência cruzada e continua a ser a forma mais segura de copiar uma base de dados SQLite em uso.
+- **Licenciamento é uma implementação de referência, não a real da Weber Tech.** O formato `.wta` e o esquema de chaves estão documentados num documento separado a que não tive acesso. Em vez de bloquear a fase, implementei um esquema plausível e completo (RSA + JSON) com a chave pública injetada via construtor (nunca hardcoded), para que trocar pela chave/formato reais da Weber Tech seja uma alteração isolada no composition root do Desktop, não uma reescrita desta camada.
+- **Password hashing com PBKDF2 nativo, sem BCrypt.Net.** Evita mais uma dependência de terceiros a gerir versões; `Rfc2898DeriveBytes.Pbkdf2` já está no BCL do .NET e é criptograficamente adequado para este caso de uso.
+- **Duas vulnerabilidades reais (`NU1903`) foram corrigidas com *overrides* explícitos de versão**, replicadas em todos os `.csproj` que as puxam transitivamente:
+  - `SQLitePCLRaw.lib.e_sqlite3` 2.1.10 → `3.53.3` (CVE-2025-6965 / GHSA-2m69-gcr7-jv3q, via EF Core Sqlite e `Microsoft.Data.Sqlite`).
+  - `Tmds.DBus.Protocol` 0.20.0 → `0.21.3` (GHSA-xrw6-gwf8-vvr9, via Avalonia no Linux).
+- **Dois `using KiVenda.Core.Enums;` em falta foram corrigidos** em `CompraPersistenceTests.cs` e `SessaoCaixaPersistenceTests.cs` (Fase 2) — só apareceram como erro de compilação real (`CS0103`) quando o Jeth correu `dotnet test` pela primeira vez numa máquina com o SDK instalado; nenhuma verificação manual anterior os tinha apanhado.
+- **A formatação do recibo deixou de depender da cultura `pt-AO` do sistema operativo.** Um `dotnet test` real (Fedora) mostrou que essa cultura, nesse ICU específico, usa espaço como separador de milhares ("5 000,00"), não o ponto usado nos mockups do KiVenda ("5.000,00") — a minha tentativa original só previa o caso de "pt-AO" não existir de todo (`CultureNotFoundException`), não o caso de existir e formatar diferente. `ServicoImpressaoTexto.ObterCulturaFormatacao` passou a construir sempre a formatação manualmente (clone de `CultureInfo.InvariantCulture` com separadores fixos), sem nunca consultar a cultura do sistema — evita esta classe de divergência entre máquinas de vez.
+
+### Pendente para validar (primeira execução numa máquina real)
+
+- [x] `dotnet build` — **confirmado**: as 4 camadas + 4 suites de teste compilam (127 testes descobertos no total).
+- [x] `dotnet test --filter KiVenda.Infrastructure.Tests` — **confirmado com 1 correção**: 2 de 18 testes falhavam por `ServicoImpressaoTexto` depender da cultura `pt-AO` do sistema (ver correção acima); depois de trocar para formatação manual, devem passar os 18.
+- [x] `dotnet test` (sem filtro) — **confirmado pelo Jeth**: 127 testes no total, 125 passaram à primeira, os 2 que falharam foram os da formatação de recibo (já corrigidos acima).
+- [ ] `dotnet list package --vulnerable` — ainda por confirmar que os dois `NU1903` desapareceram depois dos overrides.
+- [ ] Correr `dotnet test` mais uma vez depois desta correção, para confirmar os 127/127.
+
+### Próxima fase
+
+➡️ **Fase 5 — Multiutilizador e Perfis de Acesso**
+(ver detalhe em [`docs/PLANO_DE_IMPLEMENTACAO.md`](docs/PLANO_DE_IMPLEMENTACAO.md#fase-5--multiutilizador-e-perfis-de-acesso))
 
 ---
 

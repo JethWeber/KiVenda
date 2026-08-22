@@ -1,5 +1,6 @@
 using FluentAssertions;
 using KiVenda.Core.Caixa;
+using KiVenda.Core.Enums;
 using KiVenda.Core.Utilizadores;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
