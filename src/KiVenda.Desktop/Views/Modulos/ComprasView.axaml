@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vmm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:compras="using:KiVenda.Application.Compras"
+             xmlns:fornecedores="using:KiVenda.Application.Fornecedores"
+             xmlns:produtos="using:KiVenda.Application.Produtos"
+             x:Class="KiVenda.Desktop.Views.Modulos.ComprasView"
+             x:DataType="vmm:ComprasViewModel">
+
+    <StackPanel Spacing="20">
+
+        <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Grid.Column="0" Spacing="2">
+                <TextBlock Classes="titulo-pagina" Text="Compras" />
+                <TextBlock Classes="subtitulo" Text="Cada compra dá entrada automática de stock" />
+            </StackPanel>
+            <Button Grid.Column="1" Content="+ Nova Compra" Classes="primario" Command="{Binding AbrirFormularioCommand}" />
+        </Grid>
+
+        <TextBlock Classes="erro" Text="{Binding MensagemErro}" IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+        <Border Classes="cartao" IsVisible="{Binding FormularioAberto}">
+            <StackPanel Spacing="14">
+                <TextBlock Text="Nova Compra" FontWeight="Bold" FontSize="16" />
+                <TextBlock Classes="subtitulo" Text="Um item por compra nesta versão — usa sempre a apresentação padrão do produto." TextWrapping="Wrap" />
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Fornecedor" />
+                        <ComboBox ItemsSource="{Binding Fornecedores}" SelectedItem="{Binding FornecedorSelecionado}" HorizontalAlignment="Stretch">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="fornecedores:FornecedorDto">
+                                    <TextBlock Text="{Binding Nome}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Produto" />
+                        <ComboBox ItemsSource="{Binding Produtos}" SelectedItem="{Binding ProdutoSelecionado}" HorizontalAlignment="Stretch">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="produtos:ProdutoDto">
+                                    <TextBlock Text="{Binding Nome}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Quantidade" />
+                        <TextBox Text="{Binding Quantidade}" Watermark="ex.: 1" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Custo total (Kz)" />
+                        <TextBox Text="{Binding CustoTotal}" Watermark="ex.: 27500" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Classes="erro" Text="{Binding MensagemErroFormulario}" IsVisible="{Binding MensagemErroFormulario, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Content="Guardar" Classes="primario" Command="{Binding GuardarCommand}" IsEnabled="{Binding !AGuardar}" />
+                    <Button Content="Cancelar" Classes="secundario" Command="{Binding FecharFormularioCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Classes="cartao" Padding="0">
+            <StackPanel>
+                <Grid ColumnDefinitions="1.5*,1*,1*" Margin="20,16,20,12">
+                    <TextBlock Grid.Column="0" Text="DATA" Classes="subtitulo" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="ITENS" Classes="subtitulo" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="2" Text="CUSTO TOTAL" Classes="subtitulo" FontWeight="SemiBold" />
+                </Grid>
+                <ItemsControl ItemsSource="{Binding Itens}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="compras:CompraDto">
+                            <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,14">
+                                <Grid ColumnDefinitions="1.5*,1*,1*">
+                                    <TextBlock Grid.Column="0" Text="{Binding Data, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Itens.Count}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding CustoTotal, Converter={StaticResource ValorKzConverter}, ConverterParameter=2}"
+                                               Foreground="{StaticResource SucessoBrush}" FontWeight="Medium" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+    </StackPanel>
+
+</UserControl>

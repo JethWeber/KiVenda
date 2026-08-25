@@ -1,0 +1,64 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!--
+    Paleta extraída dos mockups (Dashboard, Caixa, Produtos, Vendas):
+    verde como cor de marca (logótipo, botões primários, cartão "Caixa
+    Aberto", item de menu ativo), fundo cinza muito claro, cartões
+    brancos com cantos arredondados, badges de estado com fundo suave.
+  -->
+
+  <!-- Marca / Verde -->
+  <Color x:Key="VerdeEscuroColor">#14532D</Color>
+  <Color x:Key="VerdePrimarioColor">#15803D</Color>
+  <Color x:Key="VerdeClaroColor">#16A34A</Color>
+  <Color x:Key="VerdeSuaveColor">#DCFCE7</Color>
+  <Color x:Key="VerdeSuaveClaroColor">#F0FDF4</Color>
+
+  <SolidColorBrush x:Key="VerdeEscuroBrush" Color="{StaticResource VerdeEscuroColor}" />
+  <SolidColorBrush x:Key="VerdePrimarioBrush" Color="{StaticResource VerdePrimarioColor}" />
+  <SolidColorBrush x:Key="VerdeClaroBrush" Color="{StaticResource VerdeClaroColor}" />
+  <SolidColorBrush x:Key="VerdeSuaveBrush" Color="{StaticResource VerdeSuaveColor}" />
+  <SolidColorBrush x:Key="VerdeSuaveClaroBrush" Color="{StaticResource VerdeSuaveClaroColor}" />
+
+  <LinearGradientBrush x:Key="VerdeGradienteBrush" StartPoint="0%,0%" EndPoint="100%,100%">
+    <GradientStop Color="{StaticResource VerdeEscuroColor}" Offset="0" />
+    <GradientStop Color="{StaticResource VerdePrimarioColor}" Offset="1" />
+  </LinearGradientBrush>
+
+  <!-- Neutros -->
+  <Color x:Key="FundoPaginaColor">#F8FAFC</Color>
+  <Color x:Key="SuperficieColor">#FFFFFF</Color>
+  <Color x:Key="BordaColor">#E5E7EB</Color>
+  <Color x:Key="TextoPrimarioColor">#111827</Color>
+  <Color x:Key="TextoSecundarioColor">#6B7280</Color>
+
+  <SolidColorBrush x:Key="FundoPaginaBrush" Color="{StaticResource FundoPaginaColor}" />
+  <SolidColorBrush x:Key="SuperficieBrush" Color="{StaticResource SuperficieColor}" />
+  <SolidColorBrush x:Key="BordaBrush" Color="{StaticResource BordaColor}" />
+  <SolidColorBrush x:Key="TextoPrimarioBrush" Color="{StaticResource TextoPrimarioColor}" />
+  <SolidColorBrush x:Key="TextoSecundarioBrush" Color="{StaticResource TextoSecundarioColor}" />
+
+  <!-- Estados / Badges -->
+  <Color x:Key="SucessoColor">#16A34A</Color>
+  <Color x:Key="SucessoSuaveColor">#DCFCE7</Color>
+  <Color x:Key="PerigoColor">#DC2626</Color>
+  <Color x:Key="PerigoSuaveColor">#FEE2E2</Color>
+  <Color x:Key="AvisoColor">#D97706</Color>
+  <Color x:Key="AvisoSuaveColor">#FEF3C7</Color>
+  <Color x:Key="InfoColor">#2563EB</Color>
+  <Color x:Key="InfoSuaveColor">#DBEAFE</Color>
+  <Color x:Key="NeutroSuaveColor">#F1F5F9</Color>
+
+  <SolidColorBrush x:Key="SucessoBrush" Color="{StaticResource SucessoColor}" />
+  <SolidColorBrush x:Key="SucessoSuaveBrush" Color="{StaticResource SucessoSuaveColor}" />
+  <SolidColorBrush x:Key="PerigoBrush" Color="{StaticResource PerigoColor}" />
+  <SolidColorBrush x:Key="PerigoSuaveBrush" Color="{StaticResource PerigoSuaveColor}" />
+  <SolidColorBrush x:Key="AvisoBrush" Color="{StaticResource AvisoColor}" />
+  <SolidColorBrush x:Key="AvisoSuaveBrush" Color="{StaticResource AvisoSuaveColor}" />
+  <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}" />
+  <SolidColorBrush x:Key="InfoSuaveBrush" Color="{StaticResource InfoSuaveColor}" />
+  <SolidColorBrush x:Key="NeutroSuaveBrush" Color="{StaticResource NeutroSuaveColor}" />
+  <SolidColorBrush x:Key="TextoSuaveCinzaBrush" Color="#475569" />
+
+</ResourceDictionary>

@@ -17,6 +17,8 @@ public sealed record ConsultarHistoricoComprasQuery(Guid ClienteId);
 
 public sealed record VendaResumoDto(Guid VendaId, DateTime Data, decimal Total);
 
+public sealed record ListarClientesQuery(string? TermoPesquisa = null);
+
 /// <summary>
 /// A gestão de clientes não está listada como restrita a nenhum perfil
 /// na tabela de permissões da documentação funcional (Secção 5) — só
@@ -53,6 +55,18 @@ public sealed class EditarClienteUseCase(IUnitOfWork uow, IContextoAutenticacao 
         cliente.EditarDados(comando.Nome, comando.Telefone);
 
         await uow.SaveChangesAsync(cancellationToken);
+    }
+}
+
+public sealed class ListarClientesUseCase(IUnitOfWork uow, IContextoAutenticacao contexto)
+{
+    public async Task<IReadOnlyList<ClienteDto>> ExecutarAsync(ListarClientesQuery query, CancellationToken cancellationToken = default)
+    {
+        PermissaoGuard.Exigir(contexto, Acao.ConsultarProdutosStockClientes);
+
+        var clientes = await uow.Clientes.ListarAsync(query.TermoPesquisa, cancellationToken);
+
+        return clientes.Select(c => new ClienteDto(c.Id, c.Nome, c.Telefone)).ToList();
     }
 }
 

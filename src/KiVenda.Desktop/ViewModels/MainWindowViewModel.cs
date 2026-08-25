@@ -1,28 +1,31 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using KiVenda.Application.Utilizadores;
 using KiVenda.Desktop.Autenticacao;
+using KiVenda.Desktop.ViewModels.Shell;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace KiVenda.Desktop.ViewModels;
 
 /// <summary>
-/// Anfitrião do conteúdo da janela principal. Nesta fase, alterna entre
-/// <see cref="LoginViewModel"/> e <see cref="BemVindoViewModel"/> — a
-/// partir da Fase 6, <see cref="ConteudoAtual"/> passa a alternar entre
-/// a shell definitiva (menu lateral + módulos) e o login, mas o padrão
-/// de navegação por troca de ViewModel mantém-se o mesmo.
+/// Anfitrião do conteúdo da janela principal: alterna entre
+/// <see cref="LoginViewModel"/> e <see cref="ShellViewModel"/> (a shell
+/// definitiva construída na Fase 6, substituindo o placeholder
+/// "BemVindoViewModel" da Fase 5).
 /// </summary>
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly LoginViewModel _loginViewModel;
     private readonly SessaoUtilizadorAtual _sessao;
+    private readonly IServiceScopeFactory _scopeFactory;
 
     [ObservableProperty]
     private ViewModelBase _conteudoAtual;
 
-    public MainWindowViewModel(LoginViewModel loginViewModel, SessaoUtilizadorAtual sessao)
+    public MainWindowViewModel(LoginViewModel loginViewModel, SessaoUtilizadorAtual sessao, IServiceScopeFactory scopeFactory)
     {
         _loginViewModel = loginViewModel;
         _sessao = sessao;
+        _scopeFactory = scopeFactory;
 
         _loginViewModel.LoginBemSucedido += OnLoginBemSucedido;
         _conteudoAtual = _loginViewModel;
@@ -30,17 +33,17 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void OnLoginBemSucedido(object? sender, UtilizadorAutenticadoDto utilizador)
     {
-        var bemVindo = new BemVindoViewModel(utilizador, _sessao);
-        bemVindo.SessaoTerminada += OnSessaoTerminada;
+        var shell = new ShellViewModel(_scopeFactory, _sessao);
+        shell.SessaoTerminada += OnSessaoTerminada;
 
-        ConteudoAtual = bemVindo;
+        ConteudoAtual = shell;
     }
 
     private void OnSessaoTerminada(object? sender, EventArgs e)
     {
-        if (sender is BemVindoViewModel bemVindo)
+        if (sender is ShellViewModel shell)
         {
-            bemVindo.SessaoTerminada -= OnSessaoTerminada;
+            shell.SessaoTerminada -= OnSessaoTerminada;
         }
 
         _loginViewModel.Reiniciar();

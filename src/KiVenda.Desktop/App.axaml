@@ -1,10 +1,25 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:KiVenda.Desktop.Converters"
              x:Class="KiVenda.Desktop.App"
              RequestedThemeVariant="Default">
 
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://KiVenda.Desktop/Styling/Cores.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <conv:ValorKzConverter x:Key="ValorKzConverter" />
+            <conv:EstadoStockParaTextoConverter x:Key="EstadoStockParaTextoConverter" />
+            <conv:EstadoStockParaCorFundoConverter x:Key="EstadoStockParaCorFundoConverter" />
+            <conv:EstadoStockParaCorTextoConverter x:Key="EstadoStockParaCorTextoConverter" />
+        </ResourceDictionary>
+    </Application.Resources>
+
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://KiVenda.Desktop/Styling/Estilos.axaml" />
     </Application.Styles>
 
 </Application>

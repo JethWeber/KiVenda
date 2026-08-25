@@ -34,6 +34,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<CriarApresentacaoProdutoUseCase>();
         services.AddScoped<EditarApresentacaoProdutoUseCase>();
         services.AddScoped<ListarProdutosUseCase>();
+        services.AddScoped<ListarCategoriasUseCase>();
+        services.AddScoped<ListarUnidadesMedidaUseCase>();
 
         // Stock
         services.AddScoped<RegistarEntradaStockUseCase>();
@@ -64,16 +66,19 @@ public static class ServiceCollectionExtensions
         // Clientes
         services.AddScoped<CriarClienteUseCase>();
         services.AddScoped<EditarClienteUseCase>();
+        services.AddScoped<ListarClientesUseCase>();
         services.AddScoped<ConsultarHistoricoComprasUseCase>();
 
         // Fornecedores
         services.AddScoped<CriarFornecedorUseCase>();
         services.AddScoped<EditarFornecedorUseCase>();
+        services.AddScoped<ListarFornecedoresUseCase>();
 
         // Relatórios
         services.AddScoped<GerarRelatorioDiarioUseCase>();
         services.AddScoped<GerarRelatorioMensalUseCase>();
         services.AddScoped<GerarRelatorioStockUseCase>();
+        services.AddScoped<ObterResumoDashboardUseCase>();
 
         // Utilizadores
         services.AddScoped<CriarUtilizadorUseCase>();

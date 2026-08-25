@@ -1,27 +1,29 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:KiVenda.Desktop.ViewModels"
+        xmlns:vms="using:KiVenda.Desktop.ViewModels.Shell"
         xmlns:views="using:KiVenda.Desktop.Views"
+        xmlns:viewsShell="using:KiVenda.Desktop.Views.Shell"
         x:Class="KiVenda.Desktop.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="KiVenda Desktop"
-        Width="900" Height="600"
-        WindowStartupLocation="CenterScreen">
+        Width="1280" Height="800"
+        MinWidth="1024" MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource FundoPaginaBrush}">
 
     <Window.DataTemplates>
         <!--
             Mapeamento ViewModel -> View (padrão "ViewModel-first" do
             MVVM): o ContentControl abaixo só conhece o ViewModel atual
             (MainWindowViewModel.ConteudoAtual); é este mapeamento que
-            decide qual View desenhar para cada tipo. A partir da Fase 6,
-            cada novo ecrã só precisa de um DataTemplate aqui — nenhuma
-            lógica de navegação nova.
+            decide qual View desenhar para cada tipo.
         -->
         <DataTemplate DataType="vm:LoginViewModel">
             <views:LoginView />
         </DataTemplate>
-        <DataTemplate DataType="vm:BemVindoViewModel">
-            <views:BemVindoView />
+        <DataTemplate DataType="vms:ShellViewModel">
+            <viewsShell:ShellView />
         </DataTemplate>
     </Window.DataTemplates>
 

@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vmm="using:KiVenda.Desktop.ViewModels.Modulos"
+             x:Class="KiVenda.Desktop.Views.Modulos.DashboardView"
+             x:DataType="vmm:DashboardViewModel">
+
+    <StackPanel Spacing="20">
+
+        <StackPanel Spacing="2">
+            <TextBlock Classes="titulo-pagina" Text="{Binding NomeUtilizador, StringFormat='Bom dia, {0}'}" />
+            <TextBlock Classes="subtitulo" Text="Resumo rápido do dia. Sem complicações." />
+        </StackPanel>
+
+        <TextBlock Classes="erro" Text="{Binding MensagemErro}" IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+        <Border Classes="cartao-verde" IsVisible="{Binding CaixaFechado}">
+            <StackPanel Spacing="4">
+                <TextBlock Text="CAIXA FECHADO" Foreground="White" FontWeight="Bold" FontSize="13" Opacity="0.85" />
+                <TextBlock Text="Abra o caixa no módulo Caixa para começar a vender." Foreground="White" Opacity="0.9" />
+            </StackPanel>
+        </Border>
+
+        <WrapPanel ItemSpacing="16" LineSpacing="16">
+
+            <Border Classes="cartao-estatistica" Width="220">
+                <StackPanel Spacing="6">
+                    <TextBlock Classes="subtitulo" Text="VENDAS DE HOJE" />
+                    <TextBlock Text="{Binding VendasDeHojeTexto}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextoPrimarioBrush}" />
+                </StackPanel>
+            </Border>
+
+            <Border Classes="cartao-estatistica" Width="220">
+                <StackPanel Spacing="6">
+                    <TextBlock Classes="subtitulo" Text="CAIXA ATUAL" />
+                    <TextBlock Text="{Binding CaixaAtualTexto}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextoPrimarioBrush}" />
+                </StackPanel>
+            </Border>
+
+            <Border Classes="cartao-estatistica" Width="220">
+                <StackPanel Spacing="6">
+                    <TextBlock Classes="subtitulo" Text="LUCRO ESTIMADO" />
+                    <TextBlock Text="{Binding LucroEstimadoTexto}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource SucessoBrush}" />
+                </StackPanel>
+            </Border>
+
+            <Border Classes="cartao-estatistica" Width="220">
+                <StackPanel Spacing="6">
+                    <TextBlock Classes="subtitulo" Text="STOCK BAIXO / SEM STOCK" />
+                    <TextBlock Text="{Binding StockBaixoTexto}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource PerigoBrush}" />
+                </StackPanel>
+            </Border>
+
+            <Border Classes="cartao-estatistica" Width="220">
+                <StackPanel Spacing="6">
+                    <TextBlock Classes="subtitulo" Text="VENDAS REALIZADAS" />
+                    <TextBlock Text="{Binding VendasRealizadasTexto}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextoPrimarioBrush}" />
+                </StackPanel>
+            </Border>
+
+        </WrapPanel>
+
+        <Button Content="Atualizar" Classes="secundario" Command="{Binding CarregarCommand}" IsEnabled="{Binding !ACarregar}" HorizontalAlignment="Left" />
+
+    </StackPanel>
+
+</UserControl>

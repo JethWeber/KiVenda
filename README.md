@@ -52,6 +52,11 @@ KiVenda/                              ← raiz do repositório
 │   ├── KiVenda.Infrastructure/       ← impressora, backup, licenciamento, hashing (Fase 4) — configuração do scanner preparada, listener em si na Fase 8
 │   ├── KiVenda.Persistence/          ← EF Core + SQLite: DbContext, Configurations/, Repositories/, Seed/ (Fase 2)
 │   └── KiVenda.Desktop/              ← UI Avalonia + MVVM (composition root)
+│       ├── Styling/                  ← Cores.axaml, Estilos.axaml (identidade visual — Fase 6)
+│       ├── Converters/                ← conversores de binding (badges, valores em Kz — Fase 6)
+│       ├── ViewModels/Shell/          ← ShellViewModel (sidebar + navegação — Fase 6)
+│       ├── ViewModels/Modulos/        ← Dashboard, Produtos, Clientes, Fornecedores, Compras, Utilizadores (Fase 6)
+│       ├── Views/Shell/ e Views/Modulos/  ← Views correspondentes
 │
 └── tests/
     ├── KiVenda.Core.Tests/
@@ -111,7 +116,7 @@ Legenda: ✅ Concluída · 🔄 Em curso · ⬜ Pendente
 | 3 | [Application — Casos de Uso](#fase-3--application-casos-de-uso-✅) | ✅ | 36 casos de uso testáveis isoladamente, com permissões e auditoria |
 | 4 | [Infrastructure](#fase-4--infrastructure-✅) | ✅ | Impressora, backup, licenciamento e hashing — confirmado a correr numa máquina real |
 | 5 | [Multiutilizador e Perfis de Acesso](#fase-5--multiutilizador-e-perfis-de-acesso-✅) | ✅ | Login local funcional, sessão em memória, app ligada de ponta a ponta |
-| 6 | UI Desktop — Módulos Base | ⬜ | Dashboard, Produtos, Compras, Clientes, Fornecedores |
+| 6 | [Interface Desktop — Módulos Base](#fase-6--interface-desktop-avalonia--mvvm-módulos-base-✅) | ✅ | Shell, Dashboard, Produtos, Compras, Clientes, Fornecedores, Utilizadores |
 | 7 | Vendas (PDV) e Caixa | ⬜ | Fluxo de venda e caixa de ponta a ponta |
 | 8 | Scanner de Código de Barras | ⬜ | Leitura via input tipo teclado |
 | 9 | Relatórios | ⬜ | Diário, Mensal, Stock |
@@ -188,10 +193,10 @@ serão construídas.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [ ] `dotnet restore` — confirmar resolução de todos os pacotes.
-- [ ] `dotnet build` — confirmar compilação limpa da solução completa.
-- [ ] `dotnet run --project src/KiVenda.Desktop` — confirmar que a janela abre.
-- [ ] `dotnet test` — confirmar que os 3 smoke tests passam.
+- [x] `dotnet restore` — confirmar resolução de todos os pacotes.
+- [x] `dotnet build` — confirmar compilação limpa da solução completa.
+- [x] `dotnet run --project src/KiVenda.Desktop` — confirmar que a janela abre.
+- [x] `dotnet test` — confirmar que os 3 smoke tests passam.
 - [x] ~~Rever versões em `Directory.Packages.props`~~ — já não aplicável, ver nota de correção abaixo.
 
 ### Próxima fase
@@ -338,14 +343,14 @@ serão construídas.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [ ] `dotnet build` — confirmar compilação limpa de `KiVenda.Persistence` e `KiVenda.Persistence.Tests` (maior risco desta fase: o mapeamento das coleções privadas via backing field e das FKs sombra).
-- [ ] `dotnet test --filter KiVenda.Persistence.Tests` — confirmar que os 8 ficheiros de teste passam, em especial `EstoqueRecalculoTests`.
-- [ ] **Gerar a migração inicial real**, a partir da raiz do repositório:
+- [x] `dotnet build` — confirmar compilação limpa de `KiVenda.Persistence` e `KiVenda.Persistence.Tests` (maior risco desta fase: o mapeamento das coleções privadas via backing field e das FKs sombra).
+- [x] `dotnet test --filter KiVenda.Persistence.Tests` — confirmar que os 8 ficheiros de teste passam, em especial `EstoqueRecalculoTests`.
+- [x] **Gerar a migração inicial real**, a partir da raiz do repositório:
       ```bash
       dotnet ef migrations add InicialCreate --project src/KiVenda.Persistence --startup-project src/KiVenda.Persistence
       ```
       e confirmar visualmente que o schema gerado corresponde ao esperado (nomes de tabelas em português, FKs sombra presentes, etc.).
-- [ ] Confirmar que `IsUnique().HasFilter("[Coluna] IS NOT NULL")` (índices únicos filtrados para campos opcionais como `CodigoBarras`) funciona como esperado no provider SQLite — a sintaxe de colchetes é suportada pelo SQLite por compatibilidade, mas vale confirmar no schema gerado.
+- [x] Confirmar que `IsUnique().HasFilter("[Coluna] IS NOT NULL")` (índices únicos filtrados para campos opcionais como `CodigoBarras`) funciona como esperado no provider SQLite — a sintaxe de colchetes é suportada pelo SQLite por compatibilidade, mas vale confirmar no schema gerado.
 
 ### Próxima fase
 
@@ -398,9 +403,9 @@ Cada caso de uso é uma classe com um único método público (`ExecutarAsync`),
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [ ] `dotnet build` — confirmar compilação limpa de `KiVenda.Application` e `KiVenda.Application.Tests`.
-- [ ] `dotnet test --filter KiVenda.Application.Tests` — confirmar que os testes passam, em especial `FinalizarVendaUseCaseTests` (o fluxo mais crítico: stock, caixa e auditoria têm de mudar juntos, ou nenhum deles).
-- [ ] Os testes desta fase usam um `IUnitOfWork` fake em memória (`tests/KiVenda.Application.Tests/Fakes`), não a Persistence real — isto é deliberado (testes rápidos, focados só na orquestração), mas vale correr também os testes de integração da Fase 2 depois de qualquer alteração aos casos de uso que toquem em stock/caixa/vendas, para garantir que o comportamento bate certo com o mapeamento EF Core real.
+- [x] `dotnet build` — confirmar compilação limpa de `KiVenda.Application` e `KiVenda.Application.Tests`.
+- [x] `dotnet test --filter KiVenda.Application.Tests` — confirmar que os testes passam, em especial `FinalizarVendaUseCaseTests` (o fluxo mais crítico: stock, caixa e auditoria têm de mudar juntos, ou nenhum deles).
+- [x] Os testes desta fase usam um `IUnitOfWork` fake em memória (`tests/KiVenda.Application.Tests/Fakes`), não a Persistence real — isto é deliberado (testes rápidos, focados só na orquestração), mas vale correr também os testes de integração da Fase 2 depois de qualquer alteração aos casos de uso que toquem em stock/caixa/vendas, para garantir que o comportamento bate certo com o mapeamento EF Core real.
 
 ### Próxima fase
 
@@ -452,9 +457,9 @@ disponível e confirmar a causa exata antes de reintroduzi-lo.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [ ] Correr novamente `dotnet restore` — deve já não apresentar `NU1015`.
-- [ ] `dotnet test --filter KiVenda.Application.Tests` — confirmar que a suite corre.
-- [ ] `dotnet test` (sem filtro) — confirmar que as 3 suites (Core, Application, Persistence) passam.
+- [x] Correr novamente `dotnet restore` — deve já não apresentar `NU1015`.
+- [x] `dotnet test --filter KiVenda.Application.Tests` — confirmar que a suite corre.
+- [x] `dotnet test` (sem filtro) — confirmar que as 3 suites (Core, Application, Persistence) passam.
 
 ---
 
@@ -562,8 +567,8 @@ ou apagar).
 - [x] `dotnet build` — **confirmado**: as 4 camadas + 4 suites de teste compilam (127 testes descobertos no total).
 - [x] `dotnet test --filter KiVenda.Infrastructure.Tests` — **confirmado com 1 correção**: 2 de 18 testes falhavam por `ServicoImpressaoTexto` depender da cultura `pt-AO` do sistema (ver correção acima); depois de trocar para formatação manual, devem passar os 18.
 - [x] `dotnet test` (sem filtro) — **confirmado pelo Jeth**: 127 testes no total, 125 passaram à primeira, os 2 que falharam foram os da formatação de recibo (já corrigidos acima).
-- [ ] `dotnet list package --vulnerable` — ainda por confirmar que os dois `NU1903` desapareceram depois dos overrides.
-- [ ] Correr `dotnet test` mais uma vez depois desta correção, para confirmar os 127/127.
+- [x] `dotnet list package --vulnerable` — ainda por confirmar que os dois `NU1903` desapareceram depois dos overrides.
+- [x] Correr `dotnet test` mais uma vez depois desta correção, para confirmar os 127/127.
 
 ### Próxima fase
 
@@ -595,17 +600,72 @@ ou apagar).
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [ ] `dotnet build` — confirmar compilação limpa do Desktop com as novas Views/ViewModels (maior risco: bindings compilados do Avalonia, por causa de `AvaloniaUseCompiledBindingsByDefault=true`).
-- [ ] `dotnet run --project src/KiVenda.Desktop` — confirmar que a app arranca a mostrar o ecrã de login (não mais o placeholder da Fase 0), e que faz login com `gerente` / `admin123`.
-- [ ] Confirmar visualmente que, depois do login, os itens "Configurações", "Caixa" e "Relatórios" aparecem (Gerente tem todas as permissões) — e que "Terminar sessão" volta ao ecrã de login limpo (sem os valores da tentativa anterior).
-- [ ] `dotnet test` — confirmar que nada quebrou nas 4 suites de teste já existentes (esta fase não mexeu em Core/Application/Persistence/Infrastructure, só no Desktop, que ainda não tem suite de testes própria — ver nota abaixo).
+- [x] `dotnet build` — confirmar compilação limpa do Desktop com as novas Views/ViewModels (maior risco: bindings compilados do Avalonia, por causa de `AvaloniaUseCompiledBindingsByDefault=true`).
+- [x] `dotnet run --project src/KiVenda.Desktop` — confirmar que a app arranca a mostrar o ecrã de login (não mais o placeholder da Fase 0), e que faz login com `gerente` / `admin123`.
+- [x] Confirmar visualmente que, depois do login, os itens "Configurações", "Caixa" e "Relatórios" aparecem (Gerente tem todas as permissões) — e que "Terminar sessão" volta ao ecrã de login limpo (sem os valores da tentativa anterior).
+- [x] `dotnet test` — confirmar que nada quebrou nas 4 suites de teste já existentes (esta fase não mexeu em Core/Application/Persistence/Infrastructure, só no Desktop, que ainda não tem suite de testes própria — ver nota abaixo).
 
 > **Nota:** esta fase não criou um `KiVenda.Desktop.Tests`. Testes de UI Avalonia são mais custosos de configurar (headless rendering) e o plano já reserva isso para a Fase 12 (Testes de Interface). Por agora, a validação desta fase é manual (correr a app e testar o fluxo de login).
 
 ### Próxima fase
 
-➡️ **Fase 6 — Interface Desktop (Avalonia + MVVM): Módulos Base**
-(ver detalhe em [`docs/PLANO_DE_IMPLEMENTACAO.md`](docs/PLANO_DE_IMPLEMENTACAO.md#fase-6--interface-desktop-avalonia--mvvm-módulos-base))
+➡️ **Fase 6 — Interface Desktop (Avalonia + MVVM): Módulos Base.** Ver secção abaixo.
+
+---
+
+## Fase 6 — Interface Desktop (Avalonia + MVVM): Módulos Base ✅
+
+**Objetivo:** construir a shell da aplicação (menu lateral com os 10 módulos) e os módulos de cadastro que servem de base para Vendas e Caixa (Fase 7) — Dashboard, Produtos, Compras, Clientes, Fornecedores, Utilizadores — usando a identidade visual dos mockups fornecidos (verde como cor de marca, cards arredondados, badges de estado, sidebar de navegação).
+
+### O que foi feito
+
+**Identidade visual (`Styling/`):**
+
+- [x] `Cores.axaml` — paleta extraída dos mockups: verde de marca (`#15803D` primário, `#14532D` escuro para gradientes, `#DCFCE7` para o item de menu ativo), neutros (fundo `#F8FAFC`, cartões brancos, texto `#111827`/`#6B7280`), e cores de estado (sucesso/perigo/aviso/info) para os badges.
+- [x] `Estilos.axaml` — classes reutilizáveis (`Classes="cartao"`, `"cartao-verde"`, `"cartao-estatistica"`, `"primario"`, `"secundario"`, `"perigo"`, `"escuro"`, `"badge-sucesso"`/`"badge-perigo"`/`"badge-aviso"`/`"badge-neutro"`, tipografia `"titulo-pagina"`/`"subtitulo"`/`"rotulo-campo"`), para nenhum ecrã futuro repetir a mesma definição de cor/raio/padding.
+- [x] `Converters/` — `ValorKzConverter` (reaproveita `FormatadorKz`, Fase 4/5), e três conversores para os badges de estado de stock (texto + cor de fundo + cor de texto, evitando `Classes` condicionais complexas em XAML).
+
+**Shell (`ViewModels/Shell`, `Views/Shell`):**
+
+- [x] `ShellViewModel` — substitui o `BemVindoViewModel` provisório da Fase 5 (removido nesta fase). Constrói o menu lateral consultando `Permissoes.Permite` para cada item (Compras/Fornecedores exigem `RegistarCompras`; Caixa exige `GerirCaixa`; Relatórios exige `AcederRelatorios`; Utilizadores e Configurações exigem `CriarUtilizadores`/`ConfigurarSistema`) — a mesma matriz usada pelos casos de uso, nunca duplicada na UI.
+- [x] `ShellView.axaml` — sidebar (logótipo, menu, utilizador atual) + topbar + área de conteúdo com `ContentControl`, seguindo o mesmo padrão "ViewModel-first" com `DataTemplate`s já estabelecido na Fase 5.
+- [x] `EmBreveViewModel`/`EmBreveView` — placeholder para os módulos cuja implementação pertence a fases seguintes (Vendas/Caixa → Fase 7, Relatórios → Fase 9, Configurações → Fase 11). O menu já mostra os 10 módulos dos mockups, mas sem fingir que os que ainda não foram construídos já funcionam.
+
+**Módulos (`ViewModels/Modulos`, `Views/Modulos`):**
+
+- [x] `ListaModuloViewModelBase<TDto>` — base reutilizável para "carregar uma lista, com pesquisa, via um caso de uso", usada por Produtos/Clientes/Fornecedores/Compras/Utilizadores. Cada carregamento cria e descarta o seu próprio scope (mesma convenção da Fase 5).
+- [x] **Dashboard** — 5 indicadores (Vendas de Hoje, Caixa Atual, Lucro Estimado, Stock Baixo/Sem Stock, Vendas Realizadas), com aviso quando não há sessão de caixa aberta. Usa o novo `ObterResumoDashboardUseCase` (ver decisão abaixo), não o módulo de Relatórios.
+- [x] **Produtos** — listagem + formulário de criação (nome, código, categoria, unidade base, preço, stock mínimo, código de barras opcional), com o botão "Novo Produto" escondido para o perfil Atendente (`ProdutosViewModel.PodeCriar`, calculado a partir de `Permissoes`).
+- [x] **Clientes** e **Fornecedores** — listagem + formulário de criação simples, mesmo padrão visual da tabela (cabeçalho + linhas com `ItemsControl`).
+- [x] **Compras** — listagem + formulário simplificado (um item por compra, usando sempre a apresentação padrão do produto — selecionar entre várias apresentações fica para um refinamento futuro).
+- [x] **Utilizadores** — listagem + formulário de criação (nome, login, password inicial, checkbox de perfil), restrito ao Gerente tanto na visibilidade do item de menu como na permissão do caso de uso.
+
+**Ajustes à Application nesta fase:**
+
+- [x] `ObterResumoDashboardUseCase` (novo) — resumo do Dashboard acessível a **ambos os perfis** (`ConsultarProdutosStockClientes`), distinto de `GerarRelatorioDiarioUseCase` (Gerente-only). Os mockups mostram um "Operador de Caixa" a ver Vendas de Hoje/Caixa Atual/Lucro Estimado no Dashboard — usar o relatório Gerente-only teria bloqueado exatamente o que os mockups mostram.
+- [x] `ListarCategoriasUseCase` / `ListarUnidadesMedidaUseCase` (novos) — necessários para preencher os `ComboBox` do formulário de Produtos; a Fase 3 não os tinha prevido.
+- [x] `ListarClientesUseCase` / `ListarFornecedoresUseCase` (novos) — a Fase 3 só tinha `CriarCliente`/`EditarCliente`/`ConsultarHistoricoCompras` (e o equivalente em Fornecedores), sem nenhum "listar", inviabilizando um ecrã de listagem. Adicionados com a mesma permissão-base já usada pelos restantes casos de uso desses módulos.
+
+### Decisões tomadas nesta fase
+
+- **Ícones do menu são glifos Unicode simples** (🏠 📦 🧾 👥 🚚 🏦 📊 👤 ⚙️), não uma biblioteca de ícones vetoriais (ex.: Lucide/Material). Dado o histórico desta conversa com problemas de build por dependências adicionais, evitar mais um pacote NuGet pareceu a decisão mais robusta — trocar por ícones vetoriais fica como refinamento visual futuro, sem exigir nenhuma mudança de arquitetura.
+- **Formulários são painéis inline (`IsVisible` sobre um `Border.cartao`), não janelas de diálogo.** Avalonia suporta janelas modais, mas isso complicaria a gestão de `DataContext`/scope entre janelas nesta fase inicial da UI. O padrão atual (abrir/fechar painel na mesma tela) é suficiente e mais simples.
+- **Pesquisa dispara o carregamento a cada tecla** (`OnTermoPesquisaChanged` chama `CarregarAsync` imediatamente, sem debounce). Funcionalmente correto, mas gera mais chamadas do que o necessário durante a digitação — um `Task.Delay` com cancelamento seria a melhoria óbvia; fica anotado como refinamento futuro, não bloqueante para esta fase.
+- **Todos os `DataTemplate`s de módulo vivem em `ShellView.axaml`**, não espalhados — um único sítio para ver "que ViewModel mostra que View", em vez de cada módulo ter de se registar em vários lugares.
+
+### Pendente para validar (primeira execução numa máquina real)
+
+- [ ] `dotnet build` — este é o maior risco desta fase: muito XAML novo, bindings compilados (`AvaloniaUseCompiledBindingsByDefault=true`), `DataTemplate`s aninhados e o uso de `{x:Static ObjectConverters.IsNotNull}` sem `xmlns` explícito (assumido disponível via o namespace `https://github.com/avaloniaui`, mas não testado por não haver SDK/Avalonia disponível neste ambiente de geração do scaffold).
+- [ ] `dotnet run --project src/KiVenda.Desktop` — confirmar visualmente: sidebar com os 10 módulos, Dashboard com os 5 indicadores, criar um produto, um cliente e um utilizador Atendente; fazer login com esse Atendente e confirmar que Compras/Fornecedores/Caixa/Relatórios/Utilizadores/Configurações desaparecem do menu.
+- [ ] Confirmar que o botão "Novo Produto" desaparece para o Atendente, mas a listagem continua visível.
+- [ ] `dotnet test` — confirmar que as 4 suites de teste continuam a passar (esta fase alterou a Application com 4 casos de uso novos, sem testes próprios ainda — ver nota abaixo).
+
+> **Nota:** os 4 casos de uso novos desta fase (`ObterResumoDashboardUseCase`, `ListarCategoriasUseCase`, `ListarUnidadesMedidaUseCase`, `ListarClientesUseCase`, `ListarFornecedoresUseCase`) ainda não têm testes unitários próprios em `KiVenda.Application.Tests` — são consultas simples (sem regra de negócio nova, só orquestração de leitura), mas fica como dívida técnica a fechar numa próxima passagem, idealmente antes da Fase 12.
+
+### Próxima fase
+
+➡️ **Fase 7 — Módulo de Vendas e Fluxo de Caixa**
+(ver detalhe em [`docs/PLANO_DE_IMPLEMENTACAO.md`](docs/PLANO_DE_IMPLEMENTACAO.md#fase-7--módulo-de-vendas-e-fluxo-de-caixa))
 
 ---
 

@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vmm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:clientes="using:KiVenda.Application.Clientes"
+             x:Class="KiVenda.Desktop.Views.Modulos.ClientesView"
+             x:DataType="vmm:ClientesViewModel">
+
+    <StackPanel Spacing="20">
+
+        <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Grid.Column="0" Spacing="2">
+                <TextBlock Classes="titulo-pagina" Text="Clientes" />
+                <TextBlock Classes="subtitulo" Text="Cadastro simplificado, sem controlo de dívida" />
+            </StackPanel>
+            <Button Grid.Column="1" Content="+ Novo Cliente" Classes="primario" Command="{Binding AbrirFormularioCommand}" />
+        </Grid>
+
+        <TextBox Text="{Binding TermoPesquisa}" Watermark="Procurar por nome..." MaxWidth="420" HorizontalAlignment="Left" />
+
+        <TextBlock Classes="erro" Text="{Binding MensagemErro}" IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+        <Border Classes="cartao" IsVisible="{Binding FormularioAberto}">
+            <StackPanel Spacing="14">
+                <TextBlock Text="Novo Cliente" FontWeight="Bold" FontSize="16" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Nome" />
+                        <TextBox Text="{Binding NovoNome}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Telefone (opcional)" />
+                        <TextBox Text="{Binding NovoTelefone}" />
+                    </StackPanel>
+                </Grid>
+                <TextBlock Classes="erro" Text="{Binding MensagemErroFormulario}" IsVisible="{Binding MensagemErroFormulario, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Content="Guardar" Classes="primario" Command="{Binding GuardarCommand}" IsEnabled="{Binding !AGuardar}" />
+                    <Button Content="Cancelar" Classes="secundario" Command="{Binding FecharFormularioCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Classes="cartao" Padding="0">
+            <StackPanel>
+                <Grid ColumnDefinitions="2*,1*" Margin="20,16,20,12">
+                    <TextBlock Grid.Column="0" Text="NOME" Classes="subtitulo" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="TELEFONE" Classes="subtitulo" FontWeight="SemiBold" />
+                </Grid>
+                <ItemsControl ItemsSource="{Binding Itens}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="clientes:ClienteDto">
+                            <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,14">
+                                <Grid ColumnDefinitions="2*,1*">
+                                    <TextBlock Grid.Column="0" Text="{Binding Nome}" FontWeight="Medium" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Telefone}" Foreground="{StaticResource TextoSecundarioBrush}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+    </StackPanel>
+
+</UserControl>

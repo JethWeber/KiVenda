@@ -1,0 +1,83 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vmm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:utilizadores="using:KiVenda.Application.Utilizadores"
+             x:Class="KiVenda.Desktop.Views.Modulos.UtilizadoresView"
+             x:DataType="vmm:UtilizadoresViewModel">
+
+    <StackPanel Spacing="20">
+
+        <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Grid.Column="0" Spacing="2">
+                <TextBlock Classes="titulo-pagina" Text="Utilizadores" />
+                <TextBlock Classes="subtitulo" Text="Gerente/Atendente, cada venda fica associada a quem a fez" />
+            </StackPanel>
+            <Button Grid.Column="1" Content="+ Novo Utilizador" Classes="primario" Command="{Binding AbrirFormularioCommand}" />
+        </Grid>
+
+        <TextBlock Classes="erro" Text="{Binding MensagemErro}" IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+        <Border Classes="cartao" IsVisible="{Binding FormularioAberto}">
+            <StackPanel Spacing="14">
+                <TextBlock Text="Novo Utilizador" FontWeight="Bold" FontSize="16" />
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Nome completo" />
+                        <TextBox Text="{Binding NovoNome}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Nome de utilizador (login)" />
+                        <TextBox Text="{Binding NovoNomeUtilizador}" />
+                    </StackPanel>
+                </Grid>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Password inicial" />
+                        <TextBox Text="{Binding NovaSenha}" PasswordChar="•" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                        <CheckBox Content="Perfil Gerente (desmarcado = Atendente)" IsChecked="{Binding NovoPerfilGerente}" Margin="0,20,0,0" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Classes="erro" Text="{Binding MensagemErroFormulario}" IsVisible="{Binding MensagemErroFormulario, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Content="Guardar" Classes="primario" Command="{Binding GuardarCommand}" IsEnabled="{Binding !AGuardar}" />
+                    <Button Content="Cancelar" Classes="secundario" Command="{Binding FecharFormularioCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Classes="cartao" Padding="0">
+            <StackPanel>
+                <Grid ColumnDefinitions="1.5*,1.5*,1*,1*" Margin="20,16,20,12">
+                    <TextBlock Grid.Column="0" Text="NOME" Classes="subtitulo" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="UTILIZADOR" Classes="subtitulo" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="2" Text="PERFIL" Classes="subtitulo" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="3" Text="ESTADO" Classes="subtitulo" FontWeight="SemiBold" />
+                </Grid>
+                <ItemsControl ItemsSource="{Binding Itens}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="utilizadores:UtilizadorDto">
+                            <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,14">
+                                <Grid ColumnDefinitions="1.5*,1.5*,1*,1*">
+                                    <TextBlock Grid.Column="0" Text="{Binding Nome}" FontWeight="Medium" />
+                                    <TextBlock Grid.Column="1" Text="{Binding NomeUtilizador}" Foreground="{StaticResource TextoSecundarioBrush}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding Perfil}" />
+                                    <Border Grid.Column="3" HorizontalAlignment="Left" Classes="badge badge-sucesso">
+                                        <TextBlock Text="Ativo" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+    </StackPanel>
+
+</UserControl>

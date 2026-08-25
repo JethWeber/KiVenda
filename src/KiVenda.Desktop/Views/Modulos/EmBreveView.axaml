@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vmm="using:KiVenda.Desktop.ViewModels.Modulos"
+             x:Class="KiVenda.Desktop.Views.Modulos.EmBreveView"
+             x:DataType="vmm:EmBreveViewModel">
+
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" MaxWidth="420">
+        <TextBlock Text="{Binding NomeModulo}" Classes="titulo-pagina" HorizontalAlignment="Center" />
+        <TextBlock Text="{Binding Mensagem}" Classes="subtitulo" TextWrapping="Wrap" TextAlignment="Center" />
+    </StackPanel>
+
+</UserControl>

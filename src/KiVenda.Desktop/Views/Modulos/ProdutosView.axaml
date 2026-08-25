@@ -1,0 +1,120 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vmm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:produtos="using:KiVenda.Application.Produtos"
+             x:Class="KiVenda.Desktop.Views.Modulos.ProdutosView"
+             x:DataType="vmm:ProdutosViewModel">
+
+    <StackPanel Spacing="20">
+
+        <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Grid.Column="0" Spacing="2">
+                <TextBlock Classes="titulo-pagina" Text="Gestão de Inventário" />
+                <TextBlock Classes="subtitulo" Text="Produtos / Listagem Geral" />
+            </StackPanel>
+            <Button Grid.Column="1" Content="+ Novo Produto" Classes="primario"
+                    Command="{Binding AbrirFormularioCommand}" IsVisible="{Binding PodeCriar}" />
+        </Grid>
+
+        <TextBox Text="{Binding TermoPesquisa}" Watermark="Procurar por nome ou código..." MaxWidth="420" HorizontalAlignment="Left" />
+
+        <TextBlock Classes="erro" Text="{Binding MensagemErro}" IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+        <!-- Formulário de novo produto -->
+        <Border Classes="cartao" IsVisible="{Binding FormularioAberto}">
+            <StackPanel Spacing="14">
+                <TextBlock Text="Novo Produto" FontWeight="Bold" FontSize="16" />
+
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="16" RowSpacing="12">
+                    <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Nome" />
+                        <TextBox Text="{Binding NovoNome}" Watermark="ex.: Açúcar" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Código interno" />
+                        <TextBox Text="{Binding NovoCodigoInterno}" Watermark="ex.: PRD-001" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Categoria" />
+                        <ComboBox ItemsSource="{Binding Categorias}" SelectedItem="{Binding CategoriaSelecionada}" HorizontalAlignment="Stretch">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="produtos:CategoriaDto">
+                                    <TextBlock Text="{Binding Nome}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Unidade base" />
+                        <ComboBox ItemsSource="{Binding Unidades}" SelectedItem="{Binding UnidadeSelecionada}" HorizontalAlignment="Stretch">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="produtos:UnidadeMedidaDto">
+                                    <TextBlock Text="{Binding Nome}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Preço de venda (por unidade base)" />
+                        <TextBox Text="{Binding NovoPrecoVenda}" Watermark="ex.: 1.5" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="1" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Stock mínimo" />
+                        <TextBox Text="{Binding NovoStockMinimo}" Watermark="ex.: 5000" />
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Spacing="4">
+                    <TextBlock Classes="rotulo-campo" Text="Código de barras (opcional)" />
+                    <TextBox Text="{Binding NovoCodigoBarras}" MaxWidth="320" HorizontalAlignment="Left" />
+                </StackPanel>
+
+                <TextBlock Classes="erro" Text="{Binding MensagemErroFormulario}" IsVisible="{Binding MensagemErroFormulario, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Content="Guardar" Classes="primario" Command="{Binding GuardarCommand}" IsEnabled="{Binding !AGuardar}" />
+                    <Button Content="Cancelar" Classes="secundario" Command="{Binding FecharFormularioCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Tabela -->
+        <Border Classes="cartao" Padding="0">
+            <StackPanel>
+                <Grid ColumnDefinitions="2*,1.3*,1.1*,0.9*,1.1*" Margin="20,16,20,12">
+                    <TextBlock Grid.Column="0" Text="NOME DO PRODUTO" Classes="subtitulo" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="CÓDIGO" Classes="subtitulo" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="2" Text="P. VENDA" Classes="subtitulo" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="3" Text="STOCK" Classes="subtitulo" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="4" Text="ESTADO" Classes="subtitulo" FontWeight="SemiBold" />
+                </Grid>
+
+                <ItemsControl ItemsSource="{Binding Itens}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="produtos:ProdutoDto">
+                            <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,14">
+                                <Grid ColumnDefinitions="2*,1.3*,1.1*,0.9*,1.1*">
+                                    <TextBlock Grid.Column="0" Text="{Binding Nome}" FontWeight="Medium" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Text="{Binding CodigoInterno}" Foreground="{StaticResource TextoSecundarioBrush}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="{Binding PrecoVendaPorUnidadeBase, Converter={StaticResource ValorKzConverter}, ConverterParameter=2}"
+                                               Foreground="{StaticResource SucessoBrush}" FontWeight="Medium" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="3" Text="{Binding EstoqueAtual}" VerticalAlignment="Center" />
+                                    <Border Grid.Column="4" HorizontalAlignment="Left" CornerRadius="999" Padding="10,4"
+                                            Background="{Binding EstadoStock, Converter={StaticResource EstadoStockParaCorFundoConverter}}">
+                                        <TextBlock Text="{Binding EstadoStock, Converter={StaticResource EstadoStockParaTextoConverter}}"
+                                                   Foreground="{Binding EstadoStock, Converter={StaticResource EstadoStockParaCorTextoConverter}}"
+                                                   FontSize="12" FontWeight="SemiBold" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+    </StackPanel>
+
+</UserControl>

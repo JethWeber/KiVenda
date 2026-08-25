@@ -1,0 +1,164 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- ===================== Tipografia ===================== -->
+
+  <Style Selector="TextBlock.titulo-pagina">
+    <Setter Property="FontSize" Value="26" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Foreground" Value="{StaticResource TextoPrimarioBrush}" />
+  </Style>
+
+  <Style Selector="TextBlock.subtitulo">
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Foreground" Value="{StaticResource TextoSecundarioBrush}" />
+  </Style>
+
+  <Style Selector="TextBlock.rotulo-campo">
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="Foreground" Value="{StaticResource TextoPrimarioBrush}" />
+  </Style>
+
+  <Style Selector="TextBlock.erro">
+    <Setter Property="Foreground" Value="{StaticResource PerigoBrush}" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <!-- ===================== Cartões ===================== -->
+
+  <Style Selector="Border.cartao">
+    <Setter Property="Background" Value="{StaticResource SuperficieBrush}" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Padding" Value="20" />
+    <Setter Property="BorderBrush" Value="{StaticResource BordaBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BoxShadow" Value="0 1 3 0 #0F000000" />
+  </Style>
+
+  <Style Selector="Border.cartao-verde">
+    <Setter Property="Background" Value="{StaticResource VerdeGradienteBrush}" />
+    <Setter Property="CornerRadius" Value="16" />
+    <Setter Property="Padding" Value="28" />
+  </Style>
+
+  <Style Selector="Border.cartao-estatistica">
+    <Setter Property="Background" Value="{StaticResource SuperficieBrush}" />
+    <Setter Property="CornerRadius" Value="14" />
+    <Setter Property="Padding" Value="18" />
+    <Setter Property="BorderBrush" Value="{StaticResource BordaBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+
+  <!-- ===================== Botões ===================== -->
+
+  <Style Selector="Button.primario">
+    <Setter Property="Background" Value="{StaticResource VerdePrimarioBrush}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="Padding" Value="16,10" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+  <Style Selector="Button.primario:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource VerdeClaroBrush}" />
+  </Style>
+  <Style Selector="Button.primario:disabled /template/ ContentPresenter">
+    <Setter Property="Opacity" Value="0.6" />
+  </Style>
+
+  <Style Selector="Button.secundario">
+    <Setter Property="Background" Value="{StaticResource SuperficieBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource TextoPrimarioBrush}" />
+    <Setter Property="Padding" Value="16,10" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="BorderBrush" Value="{StaticResource BordaBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+  <Style Selector="Button.secundario:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource NeutroSuaveBrush}" />
+  </Style>
+
+  <Style Selector="Button.perigo">
+    <Setter Property="Background" Value="{StaticResource PerigoSuaveBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource PerigoBrush}" />
+    <Setter Property="Padding" Value="16,10" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+
+  <Style Selector="Button.escuro">
+    <Setter Property="Background" Value="{StaticResource VerdeEscuroBrush}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="Padding" Value="16,10" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+
+  <!-- ===================== Campos de formulário ===================== -->
+
+  <Style Selector="TextBox">
+    <Setter Property="Padding" Value="12,10" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Background" Value="{StaticResource FundoPaginaBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource BordaBrush}" />
+  </Style>
+
+  <Style Selector="ComboBox">
+    <Setter Property="Padding" Value="12,10" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Background" Value="{StaticResource FundoPaginaBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource BordaBrush}" />
+  </Style>
+
+  <!-- ===================== Badges de estado ===================== -->
+
+  <Style Selector="Border.badge">
+    <Setter Property="CornerRadius" Value="999" />
+    <Setter Property="Padding" Value="10,4" />
+  </Style>
+  <Style Selector="Border.badge TextBlock">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <Style Selector="Border.badge-sucesso">
+    <Setter Property="Background" Value="{StaticResource SucessoSuaveBrush}" />
+  </Style>
+  <Style Selector="Border.badge-sucesso TextBlock">
+    <Setter Property="Foreground" Value="{StaticResource SucessoBrush}" />
+  </Style>
+
+  <Style Selector="Border.badge-perigo">
+    <Setter Property="Background" Value="{StaticResource PerigoSuaveBrush}" />
+  </Style>
+  <Style Selector="Border.badge-perigo TextBlock">
+    <Setter Property="Foreground" Value="{StaticResource PerigoBrush}" />
+  </Style>
+
+  <Style Selector="Border.badge-aviso">
+    <Setter Property="Background" Value="{StaticResource AvisoSuaveBrush}" />
+  </Style>
+  <Style Selector="Border.badge-aviso TextBlock">
+    <Setter Property="Foreground" Value="{StaticResource AvisoBrush}" />
+  </Style>
+
+  <Style Selector="Border.badge-neutro">
+    <Setter Property="Background" Value="{StaticResource NeutroSuaveBrush}" />
+  </Style>
+  <Style Selector="Border.badge-neutro TextBlock">
+    <Setter Property="Foreground" Value="{StaticResource TextoSecundarioBrush}" />
+  </Style>
+
+  <!-- Nota: os estilos do menu lateral (item-menu) ficam declarados
+       localmente em ShellView.axaml, junto ao ListBox que os usa —
+       mais simples do que gerir seletores globais para um único ecrã. -->
+
+</Styles>
