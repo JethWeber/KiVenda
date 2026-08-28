@@ -7,17 +7,27 @@ using KiVenda.Core.Utilizadores;
 
 namespace KiVenda.Application.Clientes;
 
-// comandos do use cases para serem chamados nos ViewModel
-public sealed record CriarClienteCommand(string Nome, string Telefone);
-public sealed record EditarClienteCommand(Guid ClienteId, string Nome, string Telefone);
-public sealed record ClienteDto(Guid Id, string Nome, string Telefone);
+public sealed record CriarClienteCommand(string Nome, string? Telefone = null);
+
+public sealed record EditarClienteCommand(Guid ClienteId, string Nome, string? Telefone);
+
+public sealed record ClienteDto(Guid Id, string Nome, string? Telefone);
+
 public sealed record ConsultarHistoricoComprasQuery(Guid ClienteId);
 
-public sealed record VendaResumoDto(Guid Id, DateTime Data, decimal Total);
+public sealed record VendaResumoDto(Guid VendaId, DateTime Data, decimal Total);
+
 public sealed record ListarClientesQuery(string? TermoPesquisa = null);
 
-
-// __
+/// <summary>
+/// A gestão de clientes não está listada como restrita a nenhum perfil
+/// na tabela de permissões da documentação funcional (Secção 5) — só
+/// "Consultar clientes" aparece, sob Atendente. Por isso, criar/editar
+/// cliente exige apenas a permissão-base de acesso ao sistema
+/// (<see cref="Acao.ConsultarProdutosStockClientes"/>, disponível a
+/// ambos os perfis), refletindo o facto de o cadastro de cliente
+/// tipicamente acontecer no meio de uma venda, feita por um Atendente.
+/// </summary>
 public sealed class CriarClienteUseCase(IUnitOfWork uow, IContextoAutenticacao contexto)
 {
     public async Task<Guid> ExecutarAsync(CriarClienteCommand comando, CancellationToken cancellationToken = default)

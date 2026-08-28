@@ -11,6 +11,12 @@
         <DataTemplate DataType="vmm:DashboardViewModel">
             <views:DashboardView />
         </DataTemplate>
+        <DataTemplate DataType="vmm:VendasViewModel">
+            <views:VendasView />
+        </DataTemplate>
+        <DataTemplate DataType="vmm:CaixaViewModel">
+            <views:CaixaView />
+        </DataTemplate>
         <DataTemplate DataType="vmm:ProdutosViewModel">
             <views:ProdutosView />
         </DataTemplate>

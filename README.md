@@ -117,7 +117,7 @@ Legenda: ✅ Concluída · 🔄 Em curso · ⬜ Pendente
 | 4 | [Infrastructure](#fase-4--infrastructure-✅) | ✅ | Impressora, backup, licenciamento e hashing — confirmado a correr numa máquina real |
 | 5 | [Multiutilizador e Perfis de Acesso](#fase-5--multiutilizador-e-perfis-de-acesso-✅) | ✅ | Login local funcional, sessão em memória, app ligada de ponta a ponta |
 | 6 | [Interface Desktop — Módulos Base](#fase-6--interface-desktop-avalonia--mvvm-módulos-base-✅) | ✅ | Shell, Dashboard, Produtos, Compras, Clientes, Fornecedores, Utilizadores |
-| 7 | Vendas (PDV) e Caixa | ⬜ | Fluxo de venda e caixa de ponta a ponta |
+| 7 | [Vendas (PDV) e Caixa](#fase-7--módulo-de-vendas-e-fluxo-de-caixa-✅) | ✅ | Fluxo de venda completo (recibo incluído) e fluxo de caixa completo |
 | 8 | Scanner de Código de Barras | ⬜ | Leitura via input tipo teclado |
 | 9 | Relatórios | ⬜ | Diário, Mensal, Stock |
 | 10 | Auditoria | ⬜ | Log de operações sensíveis |
@@ -193,10 +193,10 @@ serão construídas.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [x] `dotnet restore` — confirmar resolução de todos os pacotes.
-- [x] `dotnet build` — confirmar compilação limpa da solução completa.
-- [x] `dotnet run --project src/KiVenda.Desktop` — confirmar que a janela abre.
-- [x] `dotnet test` — confirmar que os 3 smoke tests passam.
+- [ ] `dotnet restore` — confirmar resolução de todos os pacotes.
+- [ ] `dotnet build` — confirmar compilação limpa da solução completa.
+- [ ] `dotnet run --project src/KiVenda.Desktop` — confirmar que a janela abre.
+- [ ] `dotnet test` — confirmar que os 3 smoke tests passam.
 - [x] ~~Rever versões em `Directory.Packages.props`~~ — já não aplicável, ver nota de correção abaixo.
 
 ### Próxima fase
@@ -343,14 +343,14 @@ serão construídas.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [x] `dotnet build` — confirmar compilação limpa de `KiVenda.Persistence` e `KiVenda.Persistence.Tests` (maior risco desta fase: o mapeamento das coleções privadas via backing field e das FKs sombra).
-- [x] `dotnet test --filter KiVenda.Persistence.Tests` — confirmar que os 8 ficheiros de teste passam, em especial `EstoqueRecalculoTests`.
-- [x] **Gerar a migração inicial real**, a partir da raiz do repositório:
+- [ ] `dotnet build` — confirmar compilação limpa de `KiVenda.Persistence` e `KiVenda.Persistence.Tests` (maior risco desta fase: o mapeamento das coleções privadas via backing field e das FKs sombra).
+- [ ] `dotnet test --filter KiVenda.Persistence.Tests` — confirmar que os 8 ficheiros de teste passam, em especial `EstoqueRecalculoTests`.
+- [ ] **Gerar a migração inicial real**, a partir da raiz do repositório:
       ```bash
       dotnet ef migrations add InicialCreate --project src/KiVenda.Persistence --startup-project src/KiVenda.Persistence
       ```
       e confirmar visualmente que o schema gerado corresponde ao esperado (nomes de tabelas em português, FKs sombra presentes, etc.).
-- [x] Confirmar que `IsUnique().HasFilter("[Coluna] IS NOT NULL")` (índices únicos filtrados para campos opcionais como `CodigoBarras`) funciona como esperado no provider SQLite — a sintaxe de colchetes é suportada pelo SQLite por compatibilidade, mas vale confirmar no schema gerado.
+- [ ] Confirmar que `IsUnique().HasFilter("[Coluna] IS NOT NULL")` (índices únicos filtrados para campos opcionais como `CodigoBarras`) funciona como esperado no provider SQLite — a sintaxe de colchetes é suportada pelo SQLite por compatibilidade, mas vale confirmar no schema gerado.
 
 ### Próxima fase
 
@@ -403,9 +403,9 @@ Cada caso de uso é uma classe com um único método público (`ExecutarAsync`),
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [x] `dotnet build` — confirmar compilação limpa de `KiVenda.Application` e `KiVenda.Application.Tests`.
-- [x] `dotnet test --filter KiVenda.Application.Tests` — confirmar que os testes passam, em especial `FinalizarVendaUseCaseTests` (o fluxo mais crítico: stock, caixa e auditoria têm de mudar juntos, ou nenhum deles).
-- [x] Os testes desta fase usam um `IUnitOfWork` fake em memória (`tests/KiVenda.Application.Tests/Fakes`), não a Persistence real — isto é deliberado (testes rápidos, focados só na orquestração), mas vale correr também os testes de integração da Fase 2 depois de qualquer alteração aos casos de uso que toquem em stock/caixa/vendas, para garantir que o comportamento bate certo com o mapeamento EF Core real.
+- [ ] `dotnet build` — confirmar compilação limpa de `KiVenda.Application` e `KiVenda.Application.Tests`.
+- [ ] `dotnet test --filter KiVenda.Application.Tests` — confirmar que os testes passam, em especial `FinalizarVendaUseCaseTests` (o fluxo mais crítico: stock, caixa e auditoria têm de mudar juntos, ou nenhum deles).
+- [ ] Os testes desta fase usam um `IUnitOfWork` fake em memória (`tests/KiVenda.Application.Tests/Fakes`), não a Persistence real — isto é deliberado (testes rápidos, focados só na orquestração), mas vale correr também os testes de integração da Fase 2 depois de qualquer alteração aos casos de uso que toquem em stock/caixa/vendas, para garantir que o comportamento bate certo com o mapeamento EF Core real.
 
 ### Próxima fase
 
@@ -457,9 +457,9 @@ disponível e confirmar a causa exata antes de reintroduzi-lo.
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [x] Correr novamente `dotnet restore` — deve já não apresentar `NU1015`.
-- [x] `dotnet test --filter KiVenda.Application.Tests` — confirmar que a suite corre.
-- [x] `dotnet test` (sem filtro) — confirmar que as 3 suites (Core, Application, Persistence) passam.
+- [ ] Correr novamente `dotnet restore` — deve já não apresentar `NU1015`.
+- [ ] `dotnet test --filter KiVenda.Application.Tests` — confirmar que a suite corre.
+- [ ] `dotnet test` (sem filtro) — confirmar que as 3 suites (Core, Application, Persistence) passam.
 
 ---
 
@@ -567,8 +567,8 @@ ou apagar).
 - [x] `dotnet build` — **confirmado**: as 4 camadas + 4 suites de teste compilam (127 testes descobertos no total).
 - [x] `dotnet test --filter KiVenda.Infrastructure.Tests` — **confirmado com 1 correção**: 2 de 18 testes falhavam por `ServicoImpressaoTexto` depender da cultura `pt-AO` do sistema (ver correção acima); depois de trocar para formatação manual, devem passar os 18.
 - [x] `dotnet test` (sem filtro) — **confirmado pelo Jeth**: 127 testes no total, 125 passaram à primeira, os 2 que falharam foram os da formatação de recibo (já corrigidos acima).
-- [x] `dotnet list package --vulnerable` — ainda por confirmar que os dois `NU1903` desapareceram depois dos overrides.
-- [x] Correr `dotnet test` mais uma vez depois desta correção, para confirmar os 127/127.
+- [ ] `dotnet list package --vulnerable` — ainda por confirmar que os dois `NU1903` desapareceram depois dos overrides.
+- [ ] Correr `dotnet test` mais uma vez depois desta correção, para confirmar os 127/127.
 
 ### Próxima fase
 
@@ -600,10 +600,10 @@ ou apagar).
 
 ### Pendente para validar (primeira execução numa máquina real)
 
-- [x] `dotnet build` — confirmar compilação limpa do Desktop com as novas Views/ViewModels (maior risco: bindings compilados do Avalonia, por causa de `AvaloniaUseCompiledBindingsByDefault=true`).
-- [x] `dotnet run --project src/KiVenda.Desktop` — confirmar que a app arranca a mostrar o ecrã de login (não mais o placeholder da Fase 0), e que faz login com `gerente` / `admin123`.
-- [x] Confirmar visualmente que, depois do login, os itens "Configurações", "Caixa" e "Relatórios" aparecem (Gerente tem todas as permissões) — e que "Terminar sessão" volta ao ecrã de login limpo (sem os valores da tentativa anterior).
-- [x] `dotnet test` — confirmar que nada quebrou nas 4 suites de teste já existentes (esta fase não mexeu em Core/Application/Persistence/Infrastructure, só no Desktop, que ainda não tem suite de testes própria — ver nota abaixo).
+- [ ] `dotnet build` — confirmar compilação limpa do Desktop com as novas Views/ViewModels (maior risco: bindings compilados do Avalonia, por causa de `AvaloniaUseCompiledBindingsByDefault=true`).
+- [ ] `dotnet run --project src/KiVenda.Desktop` — confirmar que a app arranca a mostrar o ecrã de login (não mais o placeholder da Fase 0), e que faz login com `gerente` / `admin123`.
+- [ ] Confirmar visualmente que, depois do login, os itens "Configurações", "Caixa" e "Relatórios" aparecem (Gerente tem todas as permissões) — e que "Terminar sessão" volta ao ecrã de login limpo (sem os valores da tentativa anterior).
+- [ ] `dotnet test` — confirmar que nada quebrou nas 4 suites de teste já existentes (esta fase não mexeu em Core/Application/Persistence/Infrastructure, só no Desktop, que ainda não tem suite de testes própria — ver nota abaixo).
 
 > **Nota:** esta fase não criou um `KiVenda.Desktop.Tests`. Testes de UI Avalonia são mais custosos de configurar (headless rendering) e o plano já reserva isso para a Fase 12 (Testes de Interface). Por agora, a validação desta fase é manual (correr a app e testar o fluxo de login).
 
@@ -664,8 +664,77 @@ ou apagar).
 
 ### Próxima fase
 
-➡️ **Fase 7 — Módulo de Vendas e Fluxo de Caixa**
-(ver detalhe em [`docs/PLANO_DE_IMPLEMENTACAO.md`](docs/PLANO_DE_IMPLEMENTACAO.md#fase-7--módulo-de-vendas-e-fluxo-de-caixa))
+➡️ **Fase 7 — Módulo de Vendas e Fluxo de Caixa.** Ver secção abaixo.
+
+---
+
+## Correção Pós-Fase 6 — `Grid.ColumnSpacing`/`RowSpacing` e `WrapPanel.ItemSpacing`/`LineSpacing`
+
+**O que aconteceu:** `dotnet run` falhou com `Avalonia error AVLN2000: Unable to
+resolve suitable regular or attached property ColumnSpacing/RowSpacing/
+ItemSpacing/LineSpacing` em 6 ficheiros `.axaml`. Estas propriedades só
+foram adicionadas ao Avalonia na série 11.3 — a versão fixada nos
+`.csproj` (11.2.3) não as tinha.
+
+**Correção aplicada pelo Jeth:** em vez de reescrever todo o XAML para
+não usar essas propriedades, o Jeth atualizou `KiVenda.Desktop.csproj`
+para **Avalonia 11.3.10** (mais os pacotes irmãos — `Avalonia.Desktop`,
+`Avalonia.Themes.Fluent`, `Avalonia.Fonts.Inter`, `Avalonia.Diagnostics`
+— e adicionou `LiveChartsCore.SkiaSharpView.Avalonia` 2.0.5, reservado
+para gráficos numa fase futura, ex.: Relatórios/Dashboard). Sincronizado
+neste repositório.
+
+### Pendente para validar
+
+- [ ] Confirmar que `dotnet run` já não apresenta `AVLN2000`.
+
+---
+
+## Fase 7 — Módulo de Vendas e Fluxo de Caixa ✅
+
+**Objetivo:** o módulo central do sistema (Secção 4.4) — PDV completo, de ponta a ponta — e o fluxo de caixa completo (Secção 4.5): Abrir Caixa → vendas/entradas/saídas → Fechar Caixa, com divergência calculada.
+
+### O que foi feito
+
+**Ajustes à Application nesta fase:**
+
+- [x] `ConsultarVendaUseCase` (novo) — nenhum dos casos de uso de Vendas da Fase 3 (`AdicionarItemVenda`, `RemoverItemVenda`, `AplicarDescontoVenda`) devolve a venda completa, só confirma a operação. Sem uma forma de reconsultar o estado atual da venda, o carrinho do PDV não tinha como se redesenhar depois de cada ação — esta fase acrescentou a consulta em falta.
+- [x] `CancelarVendaUseCase` (novo) — a Secção 4.4 da documentação funcional prevê "Cancelamento de venda em curso", mas a Fase 3 não o tinha implementado.
+
+**PDV (`VendasViewModel` / `VendasView`):**
+
+- [x] Ao entrar no módulo, tenta iniciar uma venda de imediato (via `IniciarVendaUseCase`); se não houver sessão de caixa aberta, mostra um ecrã de aviso em vez do PDV, em vez de deixar a exceção do Core aparecer crua.
+- [x] Pesquisa/grelha de produtos com adicionar ao carrinho num clique; o mesmo campo de pesquisa aceita um código exato e Enter — a base do fluxo de scanner que a Fase 8 vai completar (ativar/desativar, som, etc.).
+- [x] Carrinho com remoção de item, desconto, seleção de método de pagamento (Dinheiro/Multicaixa/TPA) e valor pago (vazio = valor exato do total).
+- [x] Ao finalizar, chama `FinalizarVendaUseCase` e, com sucesso, `IServicoImpressao.ImprimirReciboVendaAsync` (Infrastructure, Fase 4) — a primeira vez que um módulo de UI efetivamente aciona a impressão do recibo.
+- [x] "Cancelar Venda" chama `CancelarVendaUseCase` e reinicia uma venda nova, para o operador continuar a atender sem sair do módulo.
+
+**Caixa (`CaixaViewModel` / `CaixaView`):**
+
+- [x] Ecrã "Caixa Fechado" (com botão Abrir Caixa) ou "Caixa Aberto" (cartão verde com saldo, resumo de entradas/saídas, ações de Suprimento/Sangria/Fechar Caixa e tabela de últimas movimentações), fiel ao mockup enviado.
+- [x] Fecho de caixa mostra a divergência apurada (sobra/falta) de forma explícita, nunca escondida.
+
+**Botões dentro de templates aninhados** (adicionar produto ao carrinho, remover item): usam `Click` + `Tag="{Binding}"` no code-behind, em vez de sintaxe de binding relativo (`$parent[...]`) para alcançar o `Command` do ViewModel do módulo a partir de dentro do `DataTemplate` do item. Mais verboso, mas evita mais uma categoria de erro de binding compilado que já não conseguiríamos testar aqui.
+
+### Decisões tomadas nesta fase
+
+- **Uma apresentação por clique.** Ao adicionar um produto ao carrinho, usa-se sempre a primeira apresentação ativa (mesma simplificação já aceite em Compras, Fase 6). Escolher entre apresentações no ato da venda (ex.: vender "500 g" vs. "1 kg" de açúcar) fica para um refinamento futuro deste ecrã.
+- **Um único método de pagamento por venda nesta fase**, embora `FinalizarVendaCommand` já suporte uma lista de pagamentos (pagamento misto) desde a Fase 3 — a UI simplesmente envia sempre uma lista com um único `PagamentoCommand`. Pagamento misto na UI fica para refinamento futuro; o Core e a Application já não precisam de nenhuma alteração para o suportar.
+- **Dados da loja fixos ("KiVenda") na impressão do recibo**, por a Fase 11 (Configurações → Dados da Loja) ainda não existir. Trocar por dados reais é uma alteração isolada a `VendasViewModel.FinalizarVendaAsync`.
+- **`FormatadorKz` nunca faz o caminho inverso (texto → decimal).** A primeira versão desta fase tentou fazer `TotalTexto.Replace(...)` para recuperar o valor numérico do total — exatamente o tipo de fragilidade que a Fase 4/5 já tinha ensinado a evitar. Corrigido antes de sequer chegar ao utilizador: `VendasViewModel` guarda agora o total como `decimal` à parte (`_totalAtual`), nunca fazendo parsing do texto já formatado.
+
+### Pendente para validar (primeira execução numa máquina real)
+
+- [ ] `dotnet build` — confirmar compilação limpa (mais 2 Views novas, mais complexas: templates aninhados, `Tag`/`Click` no code-behind).
+- [ ] `dotnet run` — abrir sessão de caixa, fazer uma venda completa (adicionar 2-3 produtos, aplicar desconto, receber pagamento), confirmar que aparece um ficheiro em `~/.local/share/KiVenda/recibos/` (Linux) com o recibo formatado.
+- [ ] Confirmar que "Cancelar Venda" limpa o carrinho e permite continuar a vender.
+- [ ] No módulo Caixa: abrir caixa, registar um suprimento e uma sangria, fechar caixa com um saldo diferente do esperado e confirmar que a divergência aparece corretamente (sinal e valor).
+- [ ] `dotnet test` — confirmar que as 4 suites continuam a passar; `ConsultarVendaUseCase` e `CancelarVendaUseCase` também ainda não têm testes próprios (mesma dívida técnica já registada na Fase 6).
+
+### Próxima fase
+
+➡️ **Fase 8 — Scanner de Código de Barras**
+(ver detalhe em [`docs/PLANO_DE_IMPLEMENTACAO.md`](docs/PLANO_DE_IMPLEMENTACAO.md#fase-8--scanner-de-código-de-barras))
 
 ---
 

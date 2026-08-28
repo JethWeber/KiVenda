@@ -55,6 +55,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<RemoverItemVendaUseCase>();
         services.AddScoped<AplicarDescontoVendaUseCase>();
         services.AddScoped<FinalizarVendaUseCase>();
+        services.AddScoped<ConsultarVendaUseCase>();
+        services.AddScoped<CancelarVendaUseCase>();
 
         // Caixa
         services.AddScoped<AbrirCaixaUseCase>();

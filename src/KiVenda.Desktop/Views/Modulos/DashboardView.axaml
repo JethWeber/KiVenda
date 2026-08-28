@@ -8,7 +8,7 @@
 
         <StackPanel Spacing="2">
             <TextBlock Classes="titulo-pagina" Text="{Binding NomeUtilizador, StringFormat='Bom dia, {0}'}" />
-            <TextBlock Classes="subtitulo" Text="Resumo rápido do dia. Sem complicações." />
+            <TextBlock Classes="subtitulo" Text="Resumo rápido do dia — sem complicações." />
         </StackPanel>
 
         <TextBlock Classes="erro" Text="{Binding MensagemErro}" IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />

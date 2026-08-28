@@ -10,7 +10,7 @@
         <Grid ColumnDefinitions="*,Auto">
             <StackPanel Grid.Column="0" Spacing="2">
                 <TextBlock Classes="titulo-pagina" Text="Utilizadores" />
-                <TextBlock Classes="subtitulo" Text="Gerente/Atendente, cada venda fica associada a quem a fez" />
+                <TextBlock Classes="subtitulo" Text="Gerente, Atendente — cada venda fica associada a quem a fez" />
             </StackPanel>
             <Button Grid.Column="1" Content="+ Novo Utilizador" Classes="primario" Command="{Binding AbrirFormularioCommand}" />
         </Grid>

@@ -1,0 +1,128 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vmm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:caixa="using:KiVenda.Application.Caixa"
+             x:Class="KiVenda.Desktop.Views.Modulos.CaixaView"
+             x:DataType="vmm:CaixaViewModel">
+
+    <StackPanel Spacing="20">
+
+        <TextBlock Classes="titulo-pagina" Text="Caixa" />
+
+        <TextBlock Classes="erro" Text="{Binding MensagemErro}" IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+        <!-- Caixa fechado -->
+        <StackPanel IsVisible="{Binding !CaixaAberto}" Spacing="16">
+            <Border Classes="cartao">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Nenhuma sessão de caixa aberta." FontWeight="Medium" />
+                    <Button Content="Abrir Caixa" Classes="primario" Command="{Binding AbrirFormularioAbrirCommand}" HorizontalAlignment="Left" />
+                </StackPanel>
+            </Border>
+
+            <Border Classes="cartao" IsVisible="{Binding FormularioAbrirAberto}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Abrir Caixa" FontWeight="Bold" FontSize="16" />
+                    <StackPanel Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Saldo inicial (Kz)" />
+                        <TextBox Text="{Binding SaldoInicialInput}" Watermark="ex.: 20000" />
+                    </StackPanel>
+                    <Button Content="Confirmar" Classes="primario" Command="{Binding ConfirmarAbrirCaixaCommand}" IsEnabled="{Binding !AProcessar}" HorizontalAlignment="Left" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- Caixa aberto -->
+        <StackPanel IsVisible="{Binding CaixaAberto}" Spacing="20">
+
+            <Grid ColumnDefinitions="2*,1*">
+                <Border Grid.Column="0" Classes="cartao-verde" Margin="0,0,20,0">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="STATUS DO SISTEMA" Foreground="White" Opacity="0.8" FontSize="12" FontWeight="Bold" />
+                        <TextBlock Text="CAIXA ABERTO" Foreground="White" FontSize="26" FontWeight="Bold" />
+                        <TextBlock Text="{Binding SaldoAtualTexto}" Foreground="White" FontSize="22" FontWeight="SemiBold" Margin="0,10,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Classes="cartao">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Resumo Rápido" FontWeight="Bold" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" Text="Entradas" Classes="subtitulo" />
+                            <TextBlock Grid.Column="1" Text="{Binding TotalEntradasTexto}" Foreground="{StaticResource SucessoBrush}" FontWeight="Medium" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" Text="Saídas" Classes="subtitulo" />
+                            <TextBlock Grid.Column="1" Text="{Binding TotalSaidasTexto}" Foreground="{StaticResource PerigoBrush}" FontWeight="Medium" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*,*">
+                <Button Grid.Column="0" Content="+ Suprimento" Classes="secundario" Command="{Binding AbrirFormularioSuprimentoCommand}"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,0,8,0" />
+                <Button Grid.Column="1" Content="− Sangria" Classes="secundario" Command="{Binding AbrirFormularioSangriaCommand}"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="8,0" />
+                <Button Grid.Column="2" Content="Fechar Caixa" Classes="escuro" Command="{Binding AbrirFormularioFecharCommand}"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="8,0,0,0" />
+            </Grid>
+
+            <Border Classes="cartao" IsVisible="{Binding FormularioSuprimentoAberto}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Suprimento (entrada manual)" FontWeight="Bold" FontSize="16" />
+                    <TextBox Text="{Binding ValorSuprimentoInput}" Watermark="Valor (Kz)" MaxWidth="240" HorizontalAlignment="Left" />
+                    <Button Content="Confirmar" Classes="primario" Command="{Binding ConfirmarSuprimentoCommand}" IsEnabled="{Binding !AProcessar}" HorizontalAlignment="Left" />
+                </StackPanel>
+            </Border>
+
+            <Border Classes="cartao" IsVisible="{Binding FormularioSangriaAberto}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Sangria (saída manual)" FontWeight="Bold" FontSize="16" />
+                    <TextBox Text="{Binding ValorSangriaInput}" Watermark="Valor (Kz)" MaxWidth="240" HorizontalAlignment="Left" />
+                    <Button Content="Confirmar" Classes="primario" Command="{Binding ConfirmarSangriaCommand}" IsEnabled="{Binding !AProcessar}" HorizontalAlignment="Left" />
+                </StackPanel>
+            </Border>
+
+            <Border Classes="cartao" IsVisible="{Binding FormularioFecharAberto}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Fechar Caixa" FontWeight="Bold" FontSize="16" />
+                    <TextBlock Classes="subtitulo" Text="Informe a contagem física do dinheiro em caixa." />
+                    <TextBox Text="{Binding SaldoInformadoInput}" Watermark="Saldo informado (Kz)" MaxWidth="240" HorizontalAlignment="Left" />
+                    <Button Content="Confirmar Fecho" Classes="perigo" Command="{Binding ConfirmarFecharCaixaCommand}" IsEnabled="{Binding !AProcessar}" HorizontalAlignment="Left" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="{Binding ResultadoFecho}" FontWeight="Medium" TextWrapping="Wrap"
+                       IsVisible="{Binding ResultadoFecho, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+            <Border Classes="cartao" Padding="0">
+                <StackPanel>
+                    <TextBlock Text="Últimas Movimentações" FontWeight="Bold" FontSize="16" Margin="20,16,20,4" />
+                    <Grid ColumnDefinitions="1*,2*,1*" Margin="20,8,20,12">
+                        <TextBlock Grid.Column="0" Text="TIPO" Classes="subtitulo" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="1" Text="DESCRIÇÃO" Classes="subtitulo" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="2" Text="VALOR" Classes="subtitulo" FontWeight="SemiBold" />
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding Movimentos}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="caixa:MovimentoCaixaDto">
+                                <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,14">
+                                    <Grid ColumnDefinitions="1*,2*,1*">
+                                        <TextBlock Grid.Column="0" Text="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaTextoConverter}}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Descricao}" Foreground="{StaticResource TextoSecundarioBrush}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Valor, Converter={StaticResource ValorKzConverter}}"
+                                                   Foreground="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaCorConverter}}" FontWeight="Medium" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+
+    </StackPanel>
+
+</UserControl>

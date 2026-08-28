@@ -1,0 +1,122 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vmm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:produtos="using:KiVenda.Application.Produtos"
+             xmlns:vendas="using:KiVenda.Application.Vendas"
+             xmlns:enums="using:KiVenda.Core.Enums"
+             x:Class="KiVenda.Desktop.Views.Modulos.VendasView"
+             x:DataType="vmm:VendasViewModel">
+
+    <Grid>
+
+        <!-- Sem caixa aberto -->
+        <StackPanel IsVisible="{Binding SemCaixaAberto}" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" MaxWidth="420">
+            <TextBlock Classes="titulo-pagina" Text="Caixa Fechado" HorizontalAlignment="Center" />
+            <TextBlock Classes="subtitulo" Text="Abra o caixa no módulo Caixa antes de iniciar uma venda." TextWrapping="Wrap" TextAlignment="Center" />
+        </StackPanel>
+
+        <!-- PDV -->
+        <Grid IsVisible="{Binding !SemCaixaAberto}" ColumnDefinitions="*,340">
+
+            <!-- Catálogo -->
+            <StackPanel Grid.Column="0" Spacing="16" Margin="0,0,20,0">
+                <TextBox Text="{Binding TermoPesquisa}" Watermark="Pesquisar Produto ou Bipar Código" />
+
+                <TextBlock Classes="erro" Text="{Binding MensagemErro}" IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                <TextBlock Text="{Binding MensagemSucesso}" Foreground="{StaticResource SucessoBrush}" FontWeight="Medium"
+                           IsVisible="{Binding MensagemSucesso, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+                <ItemsControl ItemsSource="{Binding ProdutosFiltrados}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel ItemSpacing="14" LineSpacing="14" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="produtos:ProdutoDto">
+                            <Border Classes="cartao" Width="170" Padding="14">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="{Binding Nome}" FontWeight="Medium" TextWrapping="Wrap" />
+                                    <TextBlock Text="{Binding PrecoVendaPorUnidadeBase, Converter={StaticResource ValorKzConverter}, ConverterParameter=2}"
+                                               Foreground="{StaticResource SucessoBrush}" FontWeight="SemiBold" />
+                                    <Button Content="+ Adicionar" Classes="secundario" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                            Tag="{Binding}" Click="BotaoAdicionarProduto_Click" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
+            <!-- Carrinho -->
+            <Border Grid.Column="1" Classes="cartao">
+                <Grid RowDefinitions="Auto,*,Auto">
+
+                    <TextBlock Grid.Row="0" Text="Carrinho" FontWeight="Bold" FontSize="18" Margin="0,0,0,12" />
+
+                    <ScrollViewer Grid.Row="1">
+                        <ItemsControl ItemsSource="{Binding Carrinho}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="vendas:ItemVendaDto">
+                                    <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,8">
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{Binding ProdutoNome}" FontWeight="Medium" TextWrapping="Wrap" />
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <TextBlock Classes="subtitulo" Text="{Binding QuantidadeNaApresentacao}" />
+                                                <TextBlock Classes="subtitulo" Text="x" />
+                                                <TextBlock Classes="subtitulo" Text="{Binding ApresentacaoNome}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="8,0"
+                                                   Text="{Binding ValorTotal, Converter={StaticResource ValorKzConverter}, ConverterParameter=2}" />
+                                        <Button Grid.Column="2" Content="✕" Classes="perigo" Padding="8,4"
+                                                Tag="{Binding}" Click="BotaoRemoverItem_Click" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <StackPanel Grid.Row="2" Spacing="10" Margin="0,12,0,0">
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" Text="Subtotal" Classes="subtitulo" />
+                            <TextBlock Grid.Column="1" Text="{Binding SubtotalTexto}" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" Text="Desconto" Foreground="{StaticResource PerigoBrush}" />
+                            <TextBlock Grid.Column="1" Text="{Binding DescontoTexto}" Foreground="{StaticResource PerigoBrush}" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" Text="TOTAL" FontWeight="Bold" FontSize="16" />
+                            <TextBlock Grid.Column="1" Text="{Binding TotalTexto}" FontWeight="Bold" FontSize="16" Foreground="{StaticResource SucessoBrush}" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox Grid.Column="0" Text="{Binding DescontoInput}" Watermark="Desconto (Kz)" Margin="0,0,8,0" />
+                            <Button Grid.Column="1" Content="Aplicar" Classes="secundario" Command="{Binding AplicarDescontoCommand}" />
+                        </Grid>
+
+                        <ComboBox ItemsSource="{Binding MetodosPagamento}" SelectedItem="{Binding MetodoSelecionado}" HorizontalAlignment="Stretch">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="enums:MetodoPagamento">
+                                    <TextBlock Text="{Binding Converter={StaticResource MetodoPagamentoParaTextoConverter}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <TextBox Text="{Binding ValorPago}" Watermark="Valor pago (vazio = total exato)" />
+
+                        <Button Content="RECEBER (F10)" Classes="primario" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                Command="{Binding FinalizarVendaCommand}" IsEnabled="{Binding !AFinalizar}" />
+                        <Button Content="CANCELAR VENDA" Classes="perigo" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                Command="{Binding CancelarVendaCommand}" />
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Grid>
+
+</UserControl>

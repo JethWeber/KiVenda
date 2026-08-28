@@ -52,9 +52,8 @@ public partial class ShellViewModel : ViewModelBase
     {
         ItensMenu.Add(Item("Dashboard", "🏠", () => new DashboardViewModel(_scopeFactory, _sessao)));
 
-        // Vendas e Caixa: implementação real na Fase 7 — item já visível
-        // (fiel aos mockups), mas com conteúdo placeholder por agora.
-        ItensMenu.Add(Item("Vendas", "🛒", () => new EmBreveViewModel("Vendas", "Fase 7")));
+        // Vendas e Caixa: implementados na Fase 7.
+        ItensMenu.Add(Item("Vendas", "🛒", () => new VendasViewModel(_scopeFactory)));
 
         ItensMenu.Add(Item("Produtos", "📦", () => new ProdutosViewModel(_scopeFactory, _sessao)));
 
@@ -72,7 +71,7 @@ public partial class ShellViewModel : ViewModelBase
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.GerirCaixa))
         {
-            ItensMenu.Add(Item("Caixa", "🏦", () => new EmBreveViewModel("Caixa", "Fase 7")));
+            ItensMenu.Add(Item("Caixa", "🏦", () => new CaixaViewModel(_scopeFactory)));
         }
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.AcederRelatorios))

@@ -21,7 +21,7 @@
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.10" />
     <PackageReference Include="Avalonia.Diagnostics" Version="11.3.10" Condition="'$(Configuration)' == 'Debug'" />
 
-    <!-- LiveCharts2 - compatível com Avalonia 11.3.x -->
+    <!-- LiveCharts2 - compatível com Avalonia 11.3.x (reservado para gráficos futuros, ex.: Fase 9) -->
     <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.5" />
 
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
