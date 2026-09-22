@@ -1,5 +1,6 @@
 using FluentAssertions;
 using KiVenda.Application.Relatorios;
+using KiVenda.Application.Exceptions;
 using KiVenda.Application.Tests.Fakes;
 using KiVenda.Core.Enums;
 using KiVenda.Core.Produtos;
@@ -78,7 +79,7 @@ public class RelatoriosUseCasesTests
 
         var acao = () => useCase.ExecutarAsync();
 
-        await acao.Should().ThrowAsync<KiVenda.Core.Exceptions.DomainException>();
+        await acao.Should().ThrowAsync<PermissaoNegadaException>();
     }
 
     private static InMemoryDatabase CriarBaseComVendaFinalizada(decimal quantidade, decimal preco)
