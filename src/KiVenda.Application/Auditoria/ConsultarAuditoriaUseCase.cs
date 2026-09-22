@@ -3,6 +3,7 @@ using KiVenda.Application.Abstractions.Persistence;
 using KiVenda.Application.Common;
 using KiVenda.Application.Exceptions;
 using KiVenda.Core.Auditoria;
+using KiVenda.Core.Exceptions;
 using KiVenda.Core.Utilizadores;
 
 namespace KiVenda.Application.Auditoria;
