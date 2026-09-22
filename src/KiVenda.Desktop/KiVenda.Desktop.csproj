@@ -31,7 +31,7 @@
     <ProjectReference Include="..\KiVenda.Infrastructure\KiVenda.Infrastructure.csproj" />
     <ProjectReference Include="..\KiVenda.Persistence\KiVenda.Persistence.csproj" />
     <!-- Integração local do SDK WeberTech Licensing (MVP). -->
-    <ProjectReference Include="..\..\WeberTech.Licensing\WeberTech.Licensing\WeberTech.Licensing.csproj" />
+    <ProjectReference Include="..\..\..\WeberTech.Licensing\WeberTech.Licensing\WeberTech.Licensing.csproj" />
   </ItemGroup>
 
 </Project>
