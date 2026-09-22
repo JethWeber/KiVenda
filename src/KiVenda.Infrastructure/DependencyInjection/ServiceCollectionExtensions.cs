@@ -6,6 +6,7 @@ using KiVenda.Infrastructure.Caminhos;
 using KiVenda.Infrastructure.Configuracao;
 using KiVenda.Infrastructure.Impressao;
 using KiVenda.Infrastructure.Licenciamento;
+using KiVenda.Infrastructure.Scanner;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace KiVenda.Infrastructure.DependencyInjection;
@@ -42,6 +43,16 @@ public static class ServiceCollectionExtensions
         var chavePublica = chavePublicaLicenciamento ?? FerramentasLicencaDeTeste.CriarParDeChaves();
         services.AddSingleton<IServicoLicenciamento>(
             _ => new ServicoLicenciamentoRsa(CaminhosAplicacao.CaminhoLicenca, chavePublica));
+
+        // Fase 8, Parte 1: singleton (não scoped) porque o buffer de
+        // timing entre teclas tem de sobreviver entre chamadas
+        // sucessivas de ProcessarCaracter/ProcessarEnter ao longo de
+        // toda a sessão do PDV — um scope por operação, como os casos
+        // de uso da Application, destruiria o estado a meio de uma
+        // leitura. Depende de IArmazenamentoConfiguracaoLocal, já
+        // registado acima como singleton.
+        services.AddSingleton<IServicoScanner>(
+            provider => new ServicoScannerTeclado(provider.GetRequiredService<IArmazenamentoConfiguracaoLocal>()));
 
         return services;
     }
