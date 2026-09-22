@@ -9,6 +9,7 @@ public interface ILogAuditoriaRepository
     Task<IReadOnlyList<LogAuditoria>> ListarAsync(
         Guid? utilizadorId = null,
         string? entidadeAfetada = null,
+        string? acao = null,
         DateTime? de = null,
         DateTime? ate = null,
         int pagina = 1,
