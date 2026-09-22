@@ -7,15 +7,17 @@
     <StackPanel Spacing="18" MaxWidth="980">
         <StackPanel Spacing="4">
             <TextBlock Classes="titulo-pagina" Text="Configurações" />
-            <TextBlock Classes="subtitulo" Text="Preferências do sistema, scanner e assinatura do KiVenda." />
+            <TextBlock Classes="subtitulo" Text="Preferências do sistema, scanner, assinatura e proteção dos dados." />
         </StackPanel>
-
         <TabControl>
             <TabItem Header="Scanner">
                 <views:ConfiguracaoScannerView DataContext="{Binding Scanner}" />
             </TabItem>
             <TabItem Header="Licença">
                 <views:ConfiguracaoLicencaView DataContext="{Binding Licenca}" />
+            </TabItem>
+            <TabItem Header="Backup">
+                <views:ConfiguracaoBackupView DataContext="{Binding Backup}" />
             </TabItem>
         </TabControl>
     </StackPanel>
