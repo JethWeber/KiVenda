@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
+             x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoScannerView"
+             x:DataType="vm:ConfiguracaoScannerViewModel">
+    <StackPanel Spacing="18" MaxWidth="760">
+        <StackPanel Spacing="4">
+            <TextBlock Classes="titulo-pagina" Text="Configurações" />
+            <TextBlock Classes="subtitulo" Text="Scanner de código de barras — leitor USB tipo teclado" />
+        </StackPanel>
+        <Border Classes="cartao" Padding="18">
+            <StackPanel Spacing="16">
+                <TextBlock Text="Scanner de código de barras" FontSize="18" FontWeight="Bold" />
+                <TextBlock Classes="subtitulo"
+                           Text="As alterações são guardadas localmente e aplicadas ao PDV sem reiniciar o KiVenda."
+                           TextWrapping="Wrap" />
+                <CheckBox Content="Ativado" IsChecked="{Binding Ativo}" IsEnabled="{Binding !ACarregar}" />
+                <CheckBox Content="Emitir som ao ler" IsChecked="{Binding EmitirSomAoLer}" IsEnabled="{Binding !ACarregar}" />
+                <CheckBox Content="Adicionar automaticamente" IsChecked="{Binding AdicionarAutomaticamente}" IsEnabled="{Binding !ACarregar}" />
+                <CheckBox Content="Abrir quantidade após leitura" IsChecked="{Binding AbrirQuantidadeAposLeitura}" IsEnabled="{Binding !ACarregar}" />
+                <Border Background="{StaticResource NeutroSuaveBrush}" CornerRadius="8" Padding="12">
+                    <TextBlock TextWrapping="Wrap"
+                               Text="Adicionar automaticamente: cada bip entra no carrinho com quantidade 1. Desativado: a leitura fica pendente para informar a quantidade." />
+                </Border>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Content="Guardar configuração" Classes="primario"
+                            Command="{Binding GuardarCommand}" IsEnabled="{Binding !AGuardar}" />
+                    <Button Content="Restaurar padrão" Classes="secundario"
+                            Command="{Binding RestaurarPadraoCommand}" IsEnabled="{Binding !AGuardar}" />
+                </StackPanel>
+                <TextBlock Text="{Binding Mensagem}" TextWrapping="Wrap"
+                           Foreground="{StaticResource TextoSecundarioBrush}" />
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>
