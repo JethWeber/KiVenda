@@ -120,7 +120,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-                </ItemsControl>
             </StackPanel>
         </Border>
     </StackPanel>
