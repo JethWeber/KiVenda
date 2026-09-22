@@ -6,7 +6,7 @@ using KiVenda.Core.Utilizadores;
 
 namespace KiVenda.Application.Relatorios;
 
-public sealed record ProdutoStockDto(Guid ProdutoId, string ProdutoNome, decimal EstoqueAtual, decimal StockMinimo);
+public sealed record ProdutoStockDto(Guid ProdutoId, string ProdutoNome, decimal EstoqueAtual, decimal StockMinimo, string UnidadeStock, decimal QuantidadeApresentacao, decimal StockMinimoApresentacao);
 
 public sealed record RelatorioStockDto(
     IReadOnlyList<ProdutoStockDto> ProdutosEmFalta,
@@ -29,7 +29,15 @@ public sealed class GerarRelatorioStockUseCase(IUnitOfWork uow, IContextoAutenti
 
         foreach (var produto in produtos)
         {
-            var dto = new ProdutoStockDto(produto.Id, produto.Nome, produto.EstoqueAtual, produto.StockMinimo);
+            var apresentacao = produto.Apresentacoes.FirstOrDefault(a => a.Ativo) ?? produto.Apresentacoes.First();
+            var dto = new ProdutoStockDto(
+                produto.Id,
+                produto.Nome,
+                produto.EstoqueAtual,
+                produto.StockMinimo,
+                apresentacao.Nome,
+                apresentacao.ConverterDeUnidadeBase(produto.EstoqueAtual),
+                apresentacao.ConverterDeUnidadeBase(produto.StockMinimo));
 
             switch (produto.ObterEstadoStock())
             {
