@@ -45,7 +45,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="cartao" IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsDiarioConverter}}">
+        <Border Classes="cartao" IsVisible="{Binding MostrarDiario}">
             <StackPanel Spacing="14" IsVisible="{Binding Diario, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <TextBlock Text="Relatório Diário" FontWeight="Bold" FontSize="18" />
                 <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
@@ -98,7 +98,15 @@
                 <TextBlock Text="Relatório de Stock" FontWeight="Bold" FontSize="18" />
                 <TextBlock Text="Em falta" FontWeight="Bold" />
                 <ItemsControl ItemsSource="{Binding Stock.ProdutosEmFalta}">
-                    <ItemsControl.ItemTemplate><DataTemplate DataType="rel:ProdutoStockDto"><Grid ColumnDefinitions="*,150,150" Margin="0,5"><TextBlock Text="{Binding ProdutoNome}" /><TextBlock Grid.Column="1" Text="{Binding QuantidadeApresentacao, StringFormat={}{0:N2}}" /><TextBlock Grid.Column="2" Text="{Binding StockMinimoApresentacao, StringFormat={}{0:N2}}" /></Grid></DataTemplate></ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="rel:ProdutoStockDto">
+                            <Grid ColumnDefinitions="*,150,150" Margin="0,5">
+                                <TextBlock Text="{Binding ProdutoNome}" />
+                                <TextBlock Grid.Column="1" Text="{Binding QuantidadeApresentacao, StringFormat={}{0:N2}}" />
+                                <TextBlock Grid.Column="2" Text="{Binding StockMinimoApresentacao, StringFormat={}{0:N2}}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <TextBlock Text="Stock baixo" FontWeight="Bold" Margin="0,10,0,0" />
                 <ItemsControl ItemsSource="{Binding Stock.ProdutosComStockBaixo}">
