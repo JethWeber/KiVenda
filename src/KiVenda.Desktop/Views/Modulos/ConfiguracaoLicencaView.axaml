@@ -1,0 +1,92 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
+             x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoLicencaView"
+             x:DataType="vm:ConfiguracaoLicencaViewModel">
+    <ScrollViewer>
+        <StackPanel Spacing="18" MaxWidth="920">
+            <StackPanel Spacing="4">
+                <TextBlock Classes="titulo-pagina" Text="Licença" />
+                <TextBlock Classes="subtitulo"
+                           Text="Assinatura do KiVenda — uma ativação por máquina, com acesso completo ao MVP." />
+            </StackPanel>
+
+            <Border Classes="cartao" Padding="20">
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+                    <StackPanel Grid.Column="0" Spacing="8">
+                        <TextBlock Text="Estado da licença" FontSize="17" FontWeight="Bold" />
+                        <TextBlock Text="{Binding Estado}" FontSize="22" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding Mensagem}" TextWrapping="Wrap"
+                                   Foreground="{StaticResource TextoSecundarioBrush}" />
+                    </StackPanel>
+
+                    <Border Grid.Column="1" Padding="12,8" CornerRadius="16"
+                            Background="{StaticResource VerdeSuaveBrush}"
+                            IsVisible="{Binding LicencaValida}">
+                        <TextBlock Text="ATIVA" Foreground="{StaticResource VerdePrimarioBrush}" FontWeight="Bold" />
+                    </Border>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,18,0,0"
+                               Text="Cliente" Foreground="{StaticResource TextoSecundarioBrush}" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="16,18,0,0"
+                               Text="{Binding Cliente}" FontWeight="SemiBold" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,10,0,0"
+                               Text="Plano" Foreground="{StaticResource TextoSecundarioBrush}" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Margin="16,10,0,0"
+                               Text="{Binding Plano}" FontWeight="SemiBold" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,10,0,0"
+                               Text="Validade" Foreground="{StaticResource TextoSecundarioBrush}" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Margin="16,10,0,0"
+                               Text="{Binding Validade}" FontWeight="SemiBold" />
+                </Grid>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="18" IsVisible="{Binding PrecisaAtivacao}">
+                <Border Grid.Column="0" Classes="cartao" Padding="20">
+                    <StackPanel Spacing="14">
+                        <TextBlock Text="Ativar o KiVenda" FontSize="18" FontWeight="Bold" />
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="Mostre este QR Code à Weber Tech para emitir a licença desta máquina. Depois importe o ficheiro .wta recebido." />
+                        <Border Width="280" Height="280"
+                                HorizontalAlignment="Center"
+                                Background="White"
+                                Padding="12"
+                                IsVisible="{Binding MostrarQr}">
+                            <Image Source="{Binding QrCode}" Stretch="Uniform" />
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Classes="cartao" Padding="20">
+                    <StackPanel Spacing="14">
+                        <TextBlock Text="Já tenho uma licença" FontSize="18" FontWeight="Bold" />
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="Importe o ficheiro .wta recebido da Weber Tech. A licença é validada localmente e fica associada a esta máquina." />
+                        <Button Content="Importar licença .wta"
+                                Classes="primario"
+                                HorizontalAlignment="Left"
+                                IsEnabled="{Binding PodeImportar}" />
+                        <TextBlock Text="Ativação única: depois da primeira ativação, use o ficheiro de renovação quando a assinatura expirar."
+                                   TextWrapping="Wrap"
+                                   Foreground="{StaticResource TextoSecundarioBrush}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Classes="cartao" Padding="20" IsVisible="{Binding MostrarDetalhes}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Assinatura" FontSize="18" FontWeight="Bold" />
+                        <TextBlock Text="Este MVP possui um único pacote. Uma licença válida desbloqueia todos os módulos." TextWrapping="Wrap" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4" HorizontalAlignment="Right">
+                        <TextBlock Text="Dias restantes" Foreground="{StaticResource TextoSecundarioBrush}" />
+                        <TextBlock Text="{Binding DiasRestantes}" FontSize="24" FontWeight="Bold" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
