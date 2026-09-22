@@ -53,6 +53,8 @@ public partial class ShellViewModel : ViewModelBase
 
     private void ConstruirMenu()
     {
+        ItensMenu.Clear();
+
         if (Licensing.CurrentStatus != LicenseStatus.Valid)
         {
             if (Permissoes.Permite(_sessao.Perfil, Acao.ConfigurarSistema))
