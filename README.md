@@ -120,7 +120,7 @@ Legenda: ✅ Concluída · 🔄 Em curso · ⬜ Pendente
 | 7 | [Vendas (PDV) e Caixa](#fase-7--módulo-de-vendas-e-fluxo-de-caixa-✅) | ✅ | Fluxo de venda completo (recibo incluído) e fluxo de caixa completo |
 | 8 | [Scanner de Código de Barras](#fase-8--scanner-de-código-de-barras-✅) | ✅ | Scanner USB tipo teclado integrado no PDV, configuração persistente e testes automatizados implementados |
 | 9 | [Relatórios](#fase-9--relatórios-🔄) | 🔄 | Relatórios diário, mensal e de stock implementados na Application e UI; exportação por impressão; falta validação final local |
-| 10 | Auditoria | ⬜ | Log de operações sensíveis |
+| 10 | [Auditoria](#fase-10--auditoria-log-de-operações-🔄) | 🔄 | Log de operações sensíveis + consulta protegida |
 | 11 | Configurações, Licenciamento e Backup | ⬜ | Onboarding < 5 minutos |
 | 12 | Testes | ⬜ | Suite completa + aceitação com cliente piloto |
 | 13 | Empacotamento e Lançamento | ⬜ | Instalador pronto para distribuição |
@@ -834,6 +834,42 @@ A implementação da Fase 8 está **concluída**: o scanner USB foi validado fis
 ➡️ **Fase 10 — Auditoria (Log de Operações).**
 
 ---
+
+## Fase 10 — Auditoria (Log de Operações) 🔄
+
+**Objetivo:** criar uma trilha persistente das operações sensíveis, permitindo ao Gerente saber **quem fez o quê, em que entidade e quando**, incluindo valores relevantes antes/depois quando aplicável.
+
+### O que foi implementado
+
+**Application / Persistence**
+- [x] `ConsultarAuditoriaUseCase` com proteção pelo perfil Gerente (`Acao.ConfigurarSistema`).
+- [x] Filtros por utilizador, entidade, ação e período.
+- [x] Paginação limitada a 200 registos por consulta.
+- [x] Repositório de auditoria atualizado para filtrar também por ação.
+- [x] Validação de período e tamanho de página.
+- [x] Auditoria ampliada para criação/inativação de produtos, alteração de preço, criação/gestão de utilizadores, alteração de password, venda, ajuste de stock, abertura/fecho de caixa, suprimento e sangria.
+
+**Interface Desktop**
+- [x] Novo `AuditoriaViewModel`.
+- [x] Novo `AuditoriaView` com filtros e listagem dos eventos.
+- [x] Auditoria disponibilizada na navegação apenas para o Gerente.
+- [x] Exibição de data/hora, ação, entidade, ID afetado e dados antes/depois.
+
+**Testes**
+- [x] Consulta de auditoria com filtros.
+- [x] Bloqueio de consulta pelo Atendente.
+- [x] Validação de período invertido.
+
+### Validação pendente
+- [ ] `dotnet build`
+- [ ] `dotnet test`
+- [ ] Abrir Auditoria e confirmar eventos reais após venda, ajuste, caixa e gestão de utilizadores.
+- [ ] Confirmar que o Atendente não vê nem consegue consultar Auditoria.
+- [ ] Validar o histórico numa base SQLite real.
+- [ ] Auditoria de restauração de backup será ligada ao fluxo administrativo de backup da Fase 11.
+
+### Próximo passo
+➡️ **Fase 11 — Configurações, Licenciamento e Backup.**
 
 ## Convenções do projeto
 
