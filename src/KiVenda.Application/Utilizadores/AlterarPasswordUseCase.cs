@@ -2,6 +2,7 @@ using KiVenda.Application.Abstractions.Auth;
 using KiVenda.Application.Abstractions.Persistence;
 using KiVenda.Application.Common;
 using KiVenda.Application.Exceptions;
+using KiVenda.Core.Auditoria;
 using KiVenda.Core.Exceptions;
 using KiVenda.Core.Utilizadores;
 
@@ -32,6 +33,14 @@ public sealed class AlterarPasswordUseCase(IUnitOfWork uow, IContextoAutenticaca
 
         var novoHash = senhaHasher.GerarHash(comando.NovaSenha);
         utilizador.AlterarPasswordHash(novoHash);
+
+        await uow.LogsAuditoria.AdicionarAsync(
+            new LogAuditoria(
+                contexto.UtilizadorId,
+                alterandoAPropria ? "Alterou a própria password" : "Alterou password de utilizador",
+                "Utilizador",
+                utilizador.Id),
+            cancellationToken);
 
         await uow.SaveChangesAsync(cancellationToken);
     }
