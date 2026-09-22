@@ -38,8 +38,8 @@
         <DataTemplate DataType="vmm:AuditoriaViewModel">
             <views:AuditoriaView />
         </DataTemplate>
-        <DataTemplate DataType="vmm:ConfiguracaoScannerViewModel">
-            <views:ConfiguracaoScannerView />
+        <DataTemplate DataType="vmm:ConfiguracoesViewModel">
+            <views:ConfiguracoesView />
         </DataTemplate>
         <DataTemplate DataType="vmm:EmBreveViewModel">
             <views:EmBreveView />
