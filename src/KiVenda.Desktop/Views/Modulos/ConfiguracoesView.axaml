@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:views="using:KiVenda.Desktop.Views.Modulos"
+             x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracoesView"
+             x:DataType="vm:ConfiguracoesViewModel">
+    <StackPanel Spacing="18" MaxWidth="980">
+        <StackPanel Spacing="4">
+            <TextBlock Classes="titulo-pagina" Text="Configurações" />
+            <TextBlock Classes="subtitulo" Text="Preferências do sistema, scanner e assinatura do KiVenda." />
+        </StackPanel>
+
+        <TabControl>
+            <TabItem Header="Scanner">
+                <views:ConfiguracaoScannerView DataContext="{Binding Scanner}" />
+            </TabItem>
+            <TabItem Header="Licença">
+                <views:ConfiguracaoLicencaView DataContext="{Binding Licenca}" />
+            </TabItem>
+        </TabControl>
+    </StackPanel>
+</UserControl>
