@@ -21,6 +21,7 @@ internal sealed class LogAuditoriaRepository : ILogAuditoriaRepository
     public async Task<IReadOnlyList<LogAuditoria>> ListarAsync(
         Guid? utilizadorId = null,
         string? entidadeAfetada = null,
+        string? acao = null,
         DateTime? de = null,
         DateTime? ate = null,
         int pagina = 1,
@@ -37,6 +38,11 @@ internal sealed class LogAuditoriaRepository : ILogAuditoriaRepository
         if (!string.IsNullOrWhiteSpace(entidadeAfetada))
         {
             query = query.Where(l => l.EntidadeAfetada == entidadeAfetada);
+        }
+
+        if (!string.IsNullOrWhiteSpace(acao))
+        {
+            query = query.Where(l => l.Acao == acao);
         }
 
         if (de.HasValue)
