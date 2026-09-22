@@ -48,7 +48,11 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
                 return;
             }
 
-            Licensing.Initialize(ProductType.KiVenda, ProductId);
+            if (Licensing.GetLicensePath() is null)
+            {
+                Licensing.Initialize(ProductType.KiVenda, ProductId);
+            }
+
             Estado = Licensing.CurrentStatus;
             AplicarInfo();
             GerarQrSeNecessario();
