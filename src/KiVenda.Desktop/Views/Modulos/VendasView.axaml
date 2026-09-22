@@ -5,7 +5,9 @@
              xmlns:vendas="using:KiVenda.Application.Vendas"
              xmlns:enums="using:KiVenda.Core.Enums"
              x:Class="KiVenda.Desktop.Views.Modulos.VendasView"
-             x:DataType="vmm:VendasViewModel">
+             x:DataType="vmm:VendasViewModel"
+             AttachedToVisualTree="VendasView_AttachedToVisualTree"
+             DetachedFromVisualTree="VendasView_DetachedFromVisualTree">
 
     <Grid>
 
@@ -20,11 +22,33 @@
 
             <!-- Catálogo -->
             <StackPanel Grid.Column="0" Spacing="16" Margin="0,0,20,0">
-                <TextBox Text="{Binding TermoPesquisa}" Watermark="Pesquisar Produto ou Bipar Código" />
+                <TextBox x:Name="PesquisaCodigoTextBox"
+                         Text="{Binding TermoPesquisa}"
+                         Watermark="Pesquisar Produto ou Bipar Código"
+                         TextInput="PesquisaCodigoTextBox_TextInput"
+                         KeyDown="PesquisaCodigoTextBox_KeyDown" />
 
                 <TextBlock Classes="erro" Text="{Binding MensagemErro}" IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
                 <TextBlock Text="{Binding MensagemSucesso}" Foreground="{StaticResource SucessoBrush}" FontWeight="Medium"
                            IsVisible="{Binding MensagemSucesso, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+                <!-- Leitura reconhecida sem adição automática -->
+                <Border Classes="cartao" Padding="12" IsVisible="{Binding MostrarQuantidadeScanner}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Leitura do scanner" FontWeight="Bold" />
+                        <TextBlock Text="{Binding LeituraScannerPendenteTexto}" TextWrapping="Wrap" />
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <TextBox x:Name="QuantidadeScannerTextBox"
+                                     Grid.Column="0"
+                                     Text="{Binding QuantidadeScannerInput}"
+                                     Watermark="Quantidade" />
+                            <Button Grid.Column="1"
+                                    Content="Adicionar leitura"
+                                    Classes="primario"
+                                    Command="{Binding ConfirmarQuantidadeScannerCommand}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
 
                 <ItemsControl ItemsSource="{Binding ProdutosFiltrados}">
                     <ItemsControl.ItemsPanel>
