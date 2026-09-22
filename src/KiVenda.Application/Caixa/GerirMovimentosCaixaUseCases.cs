@@ -22,6 +22,15 @@ public sealed class RegistarSuprimentoUseCase(IUnitOfWork uow, IContextoAutentic
 
         var movimento = sessao.RegistarSuprimento(comando.Valor, contexto.UtilizadorId, comando.Descricao);
 
+        await uow.LogsAuditoria.AdicionarAsync(
+            new LogAuditoria(
+                contexto.UtilizadorId,
+                "Suprimento de caixa",
+                "SessaoCaixa",
+                sessao.Id,
+                dadosDepois: $"Valor: {comando.Valor:0.00}; Descrição: {comando.Descricao ?? "-"}"),
+            cancellationToken);
+
         await uow.SaveChangesAsync(cancellationToken);
 
         return movimento.Id;
