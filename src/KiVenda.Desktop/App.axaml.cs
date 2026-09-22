@@ -16,6 +16,8 @@ using KiVenda.Persistence.Seed;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using WeberTech.Licensing.Enums;
+using WeberTech.Licensing.Services;
 
 namespace KiVenda.Desktop;
 
@@ -47,6 +49,7 @@ public partial class App : Avalonia.Application
         // StartWithClassicDesktopLifetime terminar), por isso não há
         // risco de deadlock por sincronizar sobre código assíncrono aqui.
         InicializarBaseDeDadosAsync().GetAwaiter().GetResult();
+        InicializarLicenciamento();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -57,6 +60,25 @@ public partial class App : Avalonia.Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private static void InicializarLicenciamento()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            Log.Information("Licenciamento Weber Tech: inicialização real adiada porque o ambiente não é Windows.");
+            return;
+        }
+
+        try
+        {
+            Licensing.Initialize(ProductType.KiVenda, "kivenda.desktop_v03");
+            Log.Information("Licenciamento Weber Tech inicializado. Estado: {Estado}", Licensing.CurrentStatus);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Falha ao inicializar o licenciamento Weber Tech.");
+        }
     }
 
     private static IServiceProvider ConfigureServices()
