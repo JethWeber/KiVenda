@@ -1,0 +1,110 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vmm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:rel="using:KiVenda.Application.Relatorios"
+             xmlns:util="using:KiVenda.Application.Utilizadores"
+             x:Class="KiVenda.Desktop.Views.Modulos.RelatoriosView"
+             x:DataType="vmm:RelatoriosViewModel">
+
+    <StackPanel Spacing="20">
+        <Grid ColumnDefinitions="*,Auto">
+            <StackPanel>
+                <TextBlock Classes="titulo-pagina" Text="Relatórios" />
+                <TextBlock Classes="subtitulo" Text="Visão de gestão das vendas e do stock." />
+            </StackPanel>
+            <Button Grid.Column="1" Content="Imprimir relatório" Classes="primario"
+                    Command="{Binding ImprimirCommand}" IsEnabled="{Binding !ACarregar}" />
+        </Grid>
+
+        <TextBlock Classes="erro" Text="{Binding Mensagem}"
+                   IsVisible="{Binding Mensagem, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+        <Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="10">
+            <Button Grid.Column="0" Content="Diário" Classes="secundario"
+                    Command="{Binding SelecionarDiarioCommand}" />
+            <Button Grid.Column="1" Content="Mensal" Classes="secundario"
+                    Command="{Binding SelecionarMensalCommand}" />
+            <Button Grid.Column="2" Content="Stock" Classes="secundario"
+                    Command="{Binding SelecionarStockCommand}" />
+        </Grid>
+
+        <Border Classes="cartao" IsVisible="{Binding !RelatorioSelecionado, Converter={x:Static StringConverters.IsNullOrEmpty}}">
+            <StackPanel Spacing="12">
+                <Grid ColumnDefinitions="Auto,220,Auto,220" ColumnSpacing="10"
+                      IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsNotStockConverter}}">
+                    <TextBlock Grid.Column="0" Classes="rotulo-campo" Text="Data" VerticalAlignment="Center" />
+                    <DatePicker Grid.Column="1" SelectedDate="{Binding DataSelecionada}" />
+                    <TextBlock Grid.Column="2" Classes="rotulo-campo" Text="Utilizador" VerticalAlignment="Center"
+                               IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsDiarioConverter}}" />
+                    <ComboBox Grid.Column="3" ItemsSource="{Binding Utilizadores}" SelectedItem="{Binding UtilizadorSelecionado}"
+                              IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsDiarioConverter}}"
+                              PlaceholderText="Todos" />
+                </Grid>
+
+                <TextBlock Text="A carregar..." IsVisible="{Binding ACarregar}" />
+            </StackPanel>
+        </Border>
+
+        <Border Classes="cartao" IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsDiarioConverter}}">
+            <StackPanel Spacing="14" IsVisible="{Binding Diario, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <TextBlock Text="Relatório Diário" FontWeight="Bold" FontSize="18" />
+                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
+                    <Border Grid.Column="0" Classes="cartao-estatistica"><StackPanel><TextBlock Text="Total vendido" Classes="subtitulo" /><TextBlock Text="{Binding Diario.TotalVendido, Converter={StaticResource ValorKzConverter}}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+                    <Border Grid.Column="1" Classes="cartao-estatistica"><StackPanel><TextBlock Text="Lucro estimado" Classes="subtitulo" /><TextBlock Text="{Binding Diario.LucroEstimado, Converter={StaticResource ValorKzConverter}}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+                    <Border Grid.Column="2" Classes="cartao-estatistica"><StackPanel><TextBlock Text="Vendas" Classes="subtitulo" /><TextBlock Text="{Binding Diario.NumeroDeVendas}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+                    <Border Grid.Column="3" Classes="cartao-estatistica"><StackPanel><TextBlock Text="Produtos" Classes="subtitulo" /><TextBlock Text="{Binding Diario.ProdutosVendidos.Count}" FontSize="18" FontWeight="Bold" /></StackPanel></Border>
+                </Grid>
+                <ItemsControl ItemsSource="{Binding Diario.ProdutosVendidos}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="rel:ProdutoVendidoDto">
+                            <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="10">
+                                <Grid ColumnDefinitions="*,150,150">
+                                    <TextBlock Text="{Binding ProdutoNome}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding QuantidadeUnidadeBase, StringFormat={}{0:N2}}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding ValorTotalVendido, Converter={StaticResource ValorKzConverter}}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+        <Border Classes="cartao" IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsMensalConverter}}">
+            <StackPanel Spacing="14" IsVisible="{Binding Mensal, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <TextBlock Text="Relatório Mensal" FontWeight="Bold" FontSize="18" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Border Classes="cartao-estatistica"><StackPanel><TextBlock Text="Receita" Classes="subtitulo" /><TextBlock Text="{Binding Mensal.Receita, Converter={StaticResource ValorKzConverter}}" FontSize="20" FontWeight="Bold" /></StackPanel></Border>
+                    <Border Classes="cartao-estatistica"><StackPanel><TextBlock Text="Lucro estimado" Classes="subtitulo" /><TextBlock Text="{Binding Mensal.LucroEstimado, Converter={StaticResource ValorKzConverter}}" FontSize="20" FontWeight="Bold" /></StackPanel></Border>
+                </Grid>
+                <ItemsControl ItemsSource="{Binding Mensal.ProdutosMaisVendidos}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="rel:ProdutoVendidoDto">
+                            <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="10">
+                                <Grid ColumnDefinitions="*,150,150">
+                                    <TextBlock Text="{Binding ProdutoNome}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding QuantidadeUnidadeBase, StringFormat={}{0:N2}}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding ValorTotalVendido, Converter={StaticResource ValorKzConverter}}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+        <Border Classes="cartao" IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsStockConverter}}">
+            <StackPanel Spacing="14" IsVisible="{Binding Stock, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <TextBlock Text="Relatório de Stock" FontWeight="Bold" FontSize="18" />
+                <TextBlock Text="Em falta" FontWeight="Bold" />
+                <ItemsControl ItemsSource="{Binding Stock.ProdutosEmFalta}">
+                    <ItemsControl.ItemTemplate><DataTemplate DataType="rel:ProdutoStockDto"><Grid ColumnDefinitions="*,150,150" Margin="0,5"><TextBlock Text="{Binding ProdutoNome}" /><TextBlock Grid.Column="1" Text="{Binding EstoqueAtual, StringFormat={}{0:N2}}" /><TextBlock Grid.Column="2" Text="{Binding StockMinimo, StringFormat={}{0:N2}}" /></Grid></DataTemplate></ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Text="Stock baixo" FontWeight="Bold" Margin="0,10,0,0" />
+                <ItemsControl ItemsSource="{Binding Stock.ProdutosComStockBaixo}">
+                    <ItemsControl.ItemTemplate><DataTemplate DataType="rel:ProdutoStockDto"><Grid ColumnDefinitions="*,150,150" Margin="0,5"><TextBlock Text="{Binding ProdutoNome}" /><TextBlock Grid.Column="1" Text="{Binding EstoqueAtual, StringFormat={}{0:N2}}" /><TextBlock Grid.Column="2" Text="{Binding StockMinimo, StringFormat={}{0:N2}}" /></Grid></DataTemplate.ItemTemplate></ItemsControl>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>
