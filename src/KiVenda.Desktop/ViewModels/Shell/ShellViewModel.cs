@@ -76,7 +76,7 @@ public partial class ShellViewModel : ViewModelBase
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.AcederRelatorios))
         {
-            ItensMenu.Add(Item("Relatórios", "📊", () => new EmBreveViewModel("Relatórios", "Fase 9")));
+            ItensMenu.Add(Item("Relatórios", "📊", () => new RelatoriosViewModel(_scopeFactory)));
         }
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.CriarUtilizadores))
