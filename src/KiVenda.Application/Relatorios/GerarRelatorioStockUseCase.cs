@@ -29,7 +29,7 @@ public sealed class GerarRelatorioStockUseCase(IUnitOfWork uow, IContextoAutenti
 
         foreach (var produto in produtos)
         {
-            var apresentacao = produto.Apresentacoes.FirstOrDefault(a => a.Ativo) ?? produto.Apresentacoes.First();
+            var apresentacao = produto.Apresentacoes.FirstOrDefault(a => a.Ativa) ?? produto.Apresentacoes.First();
             var dto = new ProdutoStockDto(
                 produto.Id,
                 produto.Nome,
