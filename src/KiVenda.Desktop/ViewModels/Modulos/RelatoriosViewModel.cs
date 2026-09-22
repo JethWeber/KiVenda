@@ -17,6 +17,12 @@ public partial class RelatoriosViewModel : ViewModelBase
 
     [ObservableProperty] private DateTimeOffset? _dataSelecionada = DateTimeOffset.Now;
     [ObservableProperty] private string _relatorioSelecionado = "Diario";
+
+    public bool MostrarDiario => RelatorioSelecionado == "Diario";
+    public bool MostrarMensal => RelatorioSelecionado == "Mensal";
+    public bool MostrarStock => RelatorioSelecionado == "Stock";
+    public bool MostrarFiltrosData => !MostrarStock;
+    public bool MostrarFiltroUtilizador => MostrarDiario;
     [ObservableProperty] private bool _aCarregar;
     [ObservableProperty] private string? _mensagem;
     [ObservableProperty] private RelatorioDiarioDto? _diario;
@@ -115,12 +121,29 @@ public partial class RelatoriosViewModel : ViewModelBase
         }
     }
 
-    partial void OnRelatorioSelecionadoChanged(string value) => _ = CarregarRelatorioAsync();
+    partial void OnRelatorioSelecionadoChanged(string value)
+    {
+        OnPropertyChanged(nameof(MostrarDiario));
+        OnPropertyChanged(nameof(MostrarMensal));
+        OnPropertyChanged(nameof(MostrarStock));
+        OnPropertyChanged(nameof(MostrarFiltrosData));
+        OnPropertyChanged(nameof(MostrarFiltroUtilizador));
+        _ = CarregarRelatorioAsync();
+    }
     partial void OnDataSelecionadaChanged(DateTimeOffset? value)
     {
         if (RelatorioSelecionado is "Diario" or "Mensal")
             _ = CarregarRelatorioAsync();
     }
+    [RelayCommand]
+    private void SelecionarDiario() => RelatorioSelecionado = "Diario";
+
+    [RelayCommand]
+    private void SelecionarMensal() => RelatorioSelecionado = "Mensal";
+
+    [RelayCommand]
+    private void SelecionarStock() => RelatorioSelecionado = "Stock";
+
     partial void OnUtilizadorSelecionadoChanged(UtilizadorDto? value)
     {
         if (RelatorioSelecionado == "Diario")
