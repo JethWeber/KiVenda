@@ -81,7 +81,8 @@ public sealed class LocalizarProdutoPorCodigoUseCase(IUnitOfWork uow, IContextoA
 
     private static ProdutoLocalizadoDto ResolverPorCodigoBarras(Produto produto, string codigo)
     {
-        // Preferência: apresentação com o código de barras exacto bipado.
+        // Preferência: apresentação com o código de barras exacto bipado
+        // (ex.: EAN do saco de 1 kg ≠ EAN do saco de 25 kg).
         var apresentacaoPorCodigo = produto.Apresentacoes
             .FirstOrDefault(a => a.Ativa
                 && a.CodigoBarras is not null
@@ -89,14 +90,24 @@ public sealed class LocalizarProdutoPorCodigoUseCase(IUnitOfWork uow, IContextoA
 
         if (apresentacaoPorCodigo is not null)
         {
+            // O construtor de Produto copia o código de barras do produto
+            // para a apresentação "Unidade base" (fator 1). Nesse caso
+            // reportamos Origem = CodigoBarrasProduto, não Apresentacao,
+            // para o PDV distinguir "bip do produto" de "bip de embalagem".
+            var origem = apresentacaoPorCodigo.FatorConversaoParaUnidadeBase == 1m
+                && string.Equals(produto.CodigoBarras, codigo, StringComparison.Ordinal)
+                    ? OrigemCodigoResolvido.CodigoBarrasProduto
+                    : OrigemCodigoResolvido.CodigoBarrasApresentacao;
+
             return new ProdutoLocalizadoDto(
                 Mapear(produto),
                 apresentacaoPorCodigo.Id,
                 apresentacaoPorCodigo.Nome,
-                OrigemCodigoResolvido.CodigoBarrasApresentacao);
+                origem);
         }
 
-        // Código de barras do próprio produto → apresentação padrão (unidade base).
+        // Código de barras só no produto (sem match em apresentações activas)
+        // → apresentação padrão (unidade base).
         var apresentacaoPadrao = ResolverApresentacaoPadrao(produto);
         return new ProdutoLocalizadoDto(
             Mapear(produto),
