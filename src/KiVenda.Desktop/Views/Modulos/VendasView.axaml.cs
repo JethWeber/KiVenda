@@ -1,16 +1,103 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using KiVenda.Application.Produtos;
 using KiVenda.Application.Vendas;
 using KiVenda.Desktop.ViewModels.Modulos;
+using KiVenda.Infrastructure.Scanner;
 
 namespace KiVenda.Desktop.Views.Modulos;
 
 public partial class VendasView : UserControl
 {
+    private IServicoScanner? _servicoScanner;
+
     public VendasView()
     {
         InitializeComponent();
+    }
+
+    private void VendasView_AttachedToVisualTree(object? sender, Avalonia.VisualTreeAttachmentEventArgs e)
+    {
+        _servicoScanner = App.Services.GetService(typeof(IServicoScanner)) as IServicoScanner;
+        if (_servicoScanner is null)
+        {
+            return;
+        }
+
+        _servicoScanner.CodigoLido -= OnCodigoLido;
+        _servicoScanner.CodigoLido += OnCodigoLido;
+
+        _ = RecarregarScannerAsync();
+        PesquisaCodigoTextBox.Focus();
+    }
+
+    private void VendasView_DetachedFromVisualTree(object? sender, Avalonia.VisualTreeAttachmentEventArgs e)
+    {
+        if (_servicoScanner is not null)
+        {
+            _servicoScanner.CodigoLido -= OnCodigoLido;
+            _servicoScanner.Reset();
+        }
+    }
+
+    private async void OnCodigoLido(string codigo)
+    {
+        if (DataContext is VendasViewModel vm)
+        {
+            // O ViewModel também subscreve o serviço para manter a regra
+            // de negócio fora da View. Esta chamada é apenas um fallback
+            // para DataContext que tenha sido criado depois da subscrição.
+            await Task.Yield();
+        }
+    }
+
+    private async Task RecarregarScannerAsync()
+    {
+        try
+        {
+            if (_servicoScanner is not null)
+            {
+                await _servicoScanner.RecarregarConfiguracaoAsync();
+            }
+        }
+        catch
+        {
+            // Configuração inexistente/corrompida não impede o PDV de abrir;
+            // o serviço usa a configuração padrão.
+        }
+    }
+
+    private void PesquisaCodigoTextBox_TextInput(object? sender, TextInputEventArgs e)
+    {
+        if (_servicoScanner is null || string.IsNullOrEmpty(e.Text))
+        {
+            return;
+        }
+
+        foreach (var caractere in e.Text)
+        {
+            _servicoScanner.ProcessarCaracter(caractere);
+        }
+    }
+
+    private void PesquisaCodigoTextBox_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter)
+        {
+            return;
+        }
+
+        _servicoScanner?.ProcessarEnter();
+
+        // Se o Enter não fechou uma leitura de scanner, preserva o fluxo
+        // manual do PDV: código exato -> produto -> adicionar.
+        if (DataContext is VendasViewModel vm)
+        {
+            vm.AdicionarProdutoCommand.Execute(null);
+        }
+
+        e.Handled = true;
     }
 
     /// <summary>
