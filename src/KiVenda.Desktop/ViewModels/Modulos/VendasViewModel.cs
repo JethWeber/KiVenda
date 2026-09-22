@@ -56,6 +56,9 @@ public partial class VendasViewModel : ViewModelBase
     private bool _mostrarQuantidadeScanner;
 
     [ObservableProperty]
+    private bool _processandoLeituraScanner;
+
+    [ObservableProperty]
     private string _leituraScannerPendenteTexto = string.Empty;
 
     public ObservableCollection<ProdutoDto> ProdutosFiltrados { get; } = new();
@@ -96,6 +99,8 @@ public partial class VendasViewModel : ViewModelBase
 
     private async void OnCodigoLido(string codigo)
     {
+        ProcessandoLeituraScanner = true;
+
         try
         {
             await ProcessarLeituraScannerAsync(codigo);
@@ -104,6 +109,24 @@ public partial class VendasViewModel : ViewModelBase
         {
             MensagemErro = $"Não foi possível processar a leitura: {ex.Message}";
         }
+        finally
+        {
+            ProcessandoLeituraScanner = false;
+        }
+    }
+
+    public async Task TratarEnterPesquisaAsync()
+    {
+        // Dá oportunidade ao evento CodigoLido de marcar a leitura como
+        // scanner antes de decidirmos se este Enter é uma pesquisa manual.
+        await Task.Yield();
+
+        if (ProcessandoLeituraScanner)
+        {
+            return;
+        }
+
+        await AdicionarProdutoAsync(null);
     }
 
     private async Task ProcessarLeituraScannerAsync(string codigo, CancellationToken cancellationToken = default)
