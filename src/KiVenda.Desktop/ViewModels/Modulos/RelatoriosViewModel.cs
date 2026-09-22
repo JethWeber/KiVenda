@@ -186,7 +186,7 @@ public partial class RelatoriosViewModel : ViewModelBase
                 sb.AppendLine();
                 sb.AppendLine("PRODUTOS EM FALTA");
                 foreach (var item in Stock.ProdutosEmFalta)
-                    sb.AppendLine($"{item.ProdutoNome} | atual {item.EstoqueAtual:N2} | mínimo {item.StockMinimo:N2}");
+                    sb.AppendLine($"{item.ProdutoNome} | {item.QuantidadeApresentacao:N2} {item.UnidadeStock} | mínimo {item.StockMinimoApresentacao:N2}");
                 sb.AppendLine();
                 sb.AppendLine("PRODUTOS COM STOCK BAIXO");
                 foreach (var item in Stock.ProdutosComStockBaixo)
