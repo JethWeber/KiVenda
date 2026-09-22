@@ -35,6 +35,9 @@
         <DataTemplate DataType="vmm:RelatoriosViewModel">
             <views:RelatoriosView />
         </DataTemplate>
+        <DataTemplate DataType="vmm:AuditoriaViewModel">
+            <views:AuditoriaView />
+        </DataTemplate>
         <DataTemplate DataType="vmm:ConfiguracaoScannerViewModel">
             <views:ConfiguracaoScannerView />
         </DataTemplate>
