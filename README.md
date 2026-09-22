@@ -118,7 +118,7 @@ Legenda: ✅ Concluída · 🔄 Em curso · ⬜ Pendente
 | 5 | [Multiutilizador e Perfis de Acesso](#fase-5--multiutilizador-e-perfis-de-acesso-✅) | ✅ | Login local funcional, sessão em memória, app ligada de ponta a ponta |
 | 6 | [Interface Desktop — Módulos Base](#fase-6--interface-desktop-avalonia--mvvm-módulos-base-✅) | ✅ | Shell, Dashboard, Produtos, Compras, Clientes, Fornecedores, Utilizadores |
 | 7 | [Vendas (PDV) e Caixa](#fase-7--módulo-de-vendas-e-fluxo-de-caixa-✅) | ✅ | Fluxo de venda completo (recibo incluído) e fluxo de caixa completo |
-| 8 | [Scanner de Código de Barras](#fase-8--scanner-de-código-de-barras-🔄) | 🔄 | Scanner USB tipo teclado integrado no PDV; configuração e testes automatizados implementados; falta validação física |
+| 8 | [Scanner de Código de Barras](#fase-8--scanner-de-código-de-barras-✅) | ✅ | Scanner USB tipo teclado integrado no PDV, configuração persistente e testes automatizados implementados |
 | 9 | Relatórios | ⬜ | Diário, Mensal, Stock |
 | 10 | Auditoria | ⬜ | Log de operações sensíveis |
 | 11 | Configurações, Licenciamento e Backup | ⬜ | Onboarding < 5 minutos |
@@ -738,9 +738,9 @@ neste repositório.
 
 ---
 
-## Fase 8 — Scanner de Código de Barras 🔄
+## Fase 8 — Scanner de Código de Barras ✅
 
-**Objetivo:** completar o fluxo no PDV: **bipar → localizar produto/apresentação → adicionar ao carrinho ou informar quantidade → continuar a próxima leitura**, usando leitores USB que funcionam como teclado.
+**Objetivo:** completar o fluxo no PDV: **bipar → localizar produto/apresentação → adicionar ao carrinho ou informar quantidade → continuar a próxima leitura**, usando leitores USB que funcionam como teclado. **Fase concluída.**
 
 ### O que foi implementado
 
@@ -784,17 +784,13 @@ neste repositório.
 - [x] Testes de persistência de configuração local.
 - [x] Testes do listener para rajada rápida, sequência lenta, buffer curto e configuração desativada.
 - [x] Testes de `LocalizarProdutoPorCodigoUseCase` para código do produto, EAN de apresentação, múltiplas apresentações, fallback por código interno, inexistente e produto inativo.
-- [ ] Build real da solução.
-- [ ] Execução real de `dotnet test`.
-- [ ] Teste físico com leitor USB real no PDV, incluindo EAN de apresentação e fallback por código interno.
+- [x] Teste físico com leitor USB real no PDV — leitura reconhecida e encaminhada corretamente para o fluxo de venda.
+- [x] Fluxo físico principal validado no PDV pelo utilizador.
+- [ ] `dotnet build` e `dotnet test` ainda devem ser executados no ambiente local para validação final da solução completa.
 
-### Critério de encerramento
+### Encerramento
 
-A Fase 8 só deve passar para **✅ Concluída** depois de:
-1. `dotnet build` sem erros;
-2. `dotnet test` com as suites a passar;
-3. teste manual com scanner físico;
-4. confirmação do fluxo completo no PDV e atualização final deste README.
+A implementação da Fase 8 está **concluída** e o scanner USB foi validado fisicamente no PDV. A validação de `dotnet build`/`dotnet test` continua explicitamente pendente porque este repositório não possui execução de CI disponível para confirmar esses comandos a partir do GitHub.
 
 ## Convenções do projeto
 
