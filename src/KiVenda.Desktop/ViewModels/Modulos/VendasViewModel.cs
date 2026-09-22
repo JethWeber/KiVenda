@@ -93,21 +93,67 @@ public partial class VendasViewModel : ViewModelBase
     {
         _scopeFactory = scopeFactory;
         _servicoScanner = App.Services.GetRequiredService<IServicoScanner>();
-        _servicoScanner.CodigoLido += OnCodigoLido;
         _ = InicializarAsync();
     }
 
-    private async void OnCodigoLido(string codigo)
+    public async Task ProcessarLeituraScannerAsync(string codigo, CancellationToken cancellationToken = default)
     {
         ProcessandoLeituraScanner = true;
 
         try
         {
-            await ProcessarLeituraScannerAsync(codigo);
+            if (string.IsNullOrWhiteSpace(codigo) || _vendaId is null || SemCaixaAberto)
+            {
+                return;
+            }
+
+            MensagemErro = null;
+            MensagemSucesso = string.Empty;
+
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var useCase = scope.ServiceProvider.GetRequiredService<LocalizarProdutoPorCodigoUseCase>();
+            var localizado = await useCase.ExecutarAsync(
+                new LocalizarProdutoPorCodigoQuery(codigo),
+                cancellationToken);
+
+            if (localizado is null)
+            {
+                TermoPesquisa = string.Empty;
+                MensagemErro = $"Código \"{codigo}\" não encontrado.";
+                return;
+            }
+
+            TermoPesquisa = string.Empty;
+
+            var configuracao = _servicoScanner.ConfiguracaoAtual;
+
+            if (configuracao.EmitirSomAoLer)
+            {
+                Console.Write('\a');
+            }
+
+            if (configuracao.AdicionarAutomaticamente)
+            {
+                await AdicionarLocalizadoAsync(localizado, 1m, cancellationToken);
+                MensagemSucesso = $"✓ {localizado.Produto.Nome} — {localizado.NomeApresentacao} adicionado.";
+                return;
+            }
+
+            _leituraScannerPendente = localizado;
+            QuantidadeScannerInput = "1";
+            LeituraScannerPendenteTexto =
+                $"{localizado.Produto.Nome} — {localizado.NomeApresentacao}";
+
+            MostrarQuantidadeScanner = true;
+
+            if (!configuracao.AbrirQuantidadeAposLeitura)
+            {
+                MensagemSucesso = $"✓ {localizado.Produto.Nome} — leitura reconhecida. Defina a quantidade.";
+            }
         }
-        catch (Exception ex)
+        catch (DomainException ex)
         {
-            MensagemErro = $"Não foi possível processar a leitura: {ex.Message}";
+            MensagemErro = ex.Message;
         }
         finally
         {
