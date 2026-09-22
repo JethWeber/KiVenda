@@ -36,6 +36,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ListarProdutosUseCase>();
         services.AddScoped<ListarCategoriasUseCase>();
         services.AddScoped<ListarUnidadesMedidaUseCase>();
+        services.AddScoped<LocalizarProdutoPorCodigoUseCase>();
 
         // Stock
         services.AddScoped<RegistarEntradaStockUseCase>();
