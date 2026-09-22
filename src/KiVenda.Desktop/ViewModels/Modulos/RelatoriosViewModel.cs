@@ -58,7 +58,7 @@ public partial class RelatoriosViewModel : ViewModelBase
             switch (RelatorioSelecionado)
             {
                 case "Diario":
-                    var data = (DataSelecionada ?? DateTimeOffset.Now).Date;
+                    var data = DateOnly.FromDateTime((DataSelecionada ?? DateTimeOffset.Now).Date);
                     var diarioUseCase = scope.ServiceProvider.GetRequiredService<GerarRelatorioDiarioUseCase>();
                     Diario = await diarioUseCase.ExecutarAsync(
                         new GerarRelatorioDiarioQuery(data, UtilizadorSelecionado?.Id));
