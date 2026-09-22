@@ -7,6 +7,8 @@ using KiVenda.Desktop.Autenticacao;
 using KiVenda.Desktop.ViewModels.Common;
 using KiVenda.Desktop.ViewModels.Modulos;
 using Microsoft.Extensions.DependencyInjection;
+using WeberTech.Licensing.Enums;
+using WeberTech.Licensing.Services;
 
 namespace KiVenda.Desktop.ViewModels.Shell;
 
@@ -50,6 +52,16 @@ public partial class ShellViewModel : ViewModelBase
 
     private void ConstruirMenu()
     {
+        if (Licensing.CurrentStatus != LicenseStatus.Valid)
+        {
+            if (Permissoes.Permite(_sessao.Perfil, Acao.ConfigurarSistema))
+            {
+                ItensMenu.Add(Item("Configurações", "⚙️", () => new ConfiguracoesViewModel()));
+            }
+
+            return;
+        }
+
         ItensMenu.Add(Item("Dashboard", "🏠", () => new DashboardViewModel(_scopeFactory, _sessao)));
 
         // Vendas e Caixa: implementados na Fase 7.
@@ -87,7 +99,7 @@ public partial class ShellViewModel : ViewModelBase
         if (Permissoes.Permite(_sessao.Perfil, Acao.ConfigurarSistema))
         {
             ItensMenu.Add(Item("Auditoria", "🛡️", () => new AuditoriaViewModel(_scopeFactory)));
-            ItensMenu.Add(Item("Configurações", "⚙️", () => new ConfiguracaoScannerViewModel()));
+            ItensMenu.Add(Item("Configurações", "⚙️", () => new ConfiguracoesViewModel()));
         }
     }
 
