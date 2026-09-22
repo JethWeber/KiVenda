@@ -28,16 +28,16 @@
                     Command="{Binding SelecionarStockCommand}" />
         </Grid>
 
-        <Border Classes="cartao" IsVisible="{Binding !RelatorioSelecionado, Converter={x:Static StringConverters.IsNullOrEmpty}}">
+        <Border Classes="cartao">
             <StackPanel Spacing="12">
                 <Grid ColumnDefinitions="Auto,220,Auto,220" ColumnSpacing="10"
-                      IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsNotStockConverter}}">
+                      IsVisible="{Binding MostrarFiltrosData}">
                     <TextBlock Grid.Column="0" Classes="rotulo-campo" Text="Data" VerticalAlignment="Center" />
                     <DatePicker Grid.Column="1" SelectedDate="{Binding DataSelecionada}" />
                     <TextBlock Grid.Column="2" Classes="rotulo-campo" Text="Utilizador" VerticalAlignment="Center"
-                               IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsDiarioConverter}}" />
+                               IsVisible="{Binding MostrarFiltroUtilizador}" />
                     <ComboBox Grid.Column="3" ItemsSource="{Binding Utilizadores}" SelectedItem="{Binding UtilizadorSelecionado}"
-                              IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsDiarioConverter}}"
+                              IsVisible="{Binding MostrarDiario}"
                               PlaceholderText="Todos" />
                 </Grid>
 
@@ -70,7 +70,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="cartao" IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsMensalConverter}}">
+        <Border Classes="cartao" IsVisible="{Binding MostrarMensal}">
             <StackPanel Spacing="14" IsVisible="{Binding Mensal, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <TextBlock Text="Relatório Mensal" FontWeight="Bold" FontSize="18" />
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
@@ -93,7 +93,7 @@
             </StackPanel>
         </Border>
 
-        <Border Classes="cartao" IsVisible="{Binding RelatorioSelecionado, Converter={StaticResource IsStockConverter}}">
+        <Border Classes="cartao" IsVisible="{Binding MostrarStock}">
             <StackPanel Spacing="14" IsVisible="{Binding Stock, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <TextBlock Text="Relatório de Stock" FontWeight="Bold" FontSize="18" />
                 <TextBlock Text="Em falta" FontWeight="Bold" />
