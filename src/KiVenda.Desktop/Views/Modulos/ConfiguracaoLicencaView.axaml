@@ -67,7 +67,7 @@
                         <Button Content="Importar licença .wta"
                                 Classes="primario"
                                 HorizontalAlignment="Left"
-                                IsEnabled="{Binding PodeImportar}" />
+                                IsEnabled="{Binding PodeImportar}" Click="ImportarLicenca_Click" />
                         <TextBlock Text="Ativação única: depois da primeira ativação, use o ficheiro de renovação quando a assinatura expirar."
                                    TextWrapping="Wrap"
                                    Foreground="{StaticResource TextoSecundarioBrush}" />
