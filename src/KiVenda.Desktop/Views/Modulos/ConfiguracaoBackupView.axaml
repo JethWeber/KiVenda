@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
+             x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoBackupView"
+             x:DataType="vm:ConfiguracaoBackupViewModel">
+    <ScrollViewer>
+        <StackPanel Spacing="18" MaxWidth="980" Margin="0,8,0,24">
+            <StackPanel Spacing="4">
+                <TextBlock Classes="titulo-pagina" Text="Backup" />
+                <TextBlock Classes="subtitulo" Text="Proteja os dados do KiVenda com cópias locais da base de dados." />
+            </StackPanel>
+            <Border Classes="cartao" Padding="20">
+                <StackPanel Spacing="12">
+                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="Criar backup" />
+                    <TextBlock Text="Cria uma cópia consistente da base de dados SQLite. Escolha a pasta onde o ficheiro será guardado." TextWrapping="Wrap" />
+                    <Button Content="Criar backup" HorizontalAlignment="Left" Classes="primario" IsEnabled="{Binding PodeExecutar}" Click="CriarBackup_Click" />
+                </StackPanel>
+            </Border>
+            <Border Classes="cartao" Padding="20">
+                <StackPanel Spacing="12">
+                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="Restaurar backup" />
+                    <TextBlock Text="Selecione um backup válido para substituir a base de dados atual. Reinicie o KiVenda depois da restauração." TextWrapping="Wrap" />
+                    <Button Content="Selecionar backup e restaurar" HorizontalAlignment="Left" Classes="secundario" IsEnabled="{Binding PodeExecutar}" Click="RestaurarBackup_Click" />
+                </StackPanel>
+            </Border>
+            <Border Classes="cartao" Padding="20">
+                <StackPanel Spacing="8">
+                    <TextBlock FontWeight="SemiBold" Text="Estado" />
+                    <TextBlock Text="{Binding Mensagem}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+            <Border Classes="cartao" Padding="20">
+                <StackPanel Spacing="8">
+                    <TextBlock FontWeight="SemiBold" Text="Último backup" />
+                    <TextBlock Text="{Binding UltimoBackup}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+            <TextBlock Text="Mantenha os backups em outro disco ou dispositivo. Um backup guardado apenas no mesmo computador não protege contra falha do armazenamento." TextWrapping="Wrap" Opacity="0.75" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
