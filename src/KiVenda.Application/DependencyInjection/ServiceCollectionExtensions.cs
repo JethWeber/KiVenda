@@ -1,3 +1,4 @@
+using KiVenda.Application.Auditoria;
 using KiVenda.Application.Caixa;
 using KiVenda.Application.Clientes;
 using KiVenda.Application.Compras;
@@ -27,6 +28,9 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplicationUseCases(this IServiceCollection services)
     {
+        // Auditoria
+        services.AddScoped<ConsultarAuditoriaUseCase>();
+
         // Produtos
         services.AddScoped<CriarProdutoUseCase>();
         services.AddScoped<EditarProdutoUseCase>();
