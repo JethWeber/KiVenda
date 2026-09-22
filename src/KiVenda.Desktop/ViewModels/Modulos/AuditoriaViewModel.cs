@@ -86,7 +86,7 @@ public partial class AuditoriaViewModel : ViewModelBase
         {
             await using var scope = _scopeFactory.CreateAsyncScope();
             var useCase = scope.ServiceProvider.GetRequiredService<ListarUtilizadoresUseCase>();
-            var utilizadores = await useCase.ExecutarAsync(new ListarUtilizadoresQuery());
+            var utilizadores = await useCase.ExecutarAsync(new ListarUtilizadoresQuery(ApenasAtivos: false));
 
             Utilizadores.Clear();
             foreach (var utilizador in utilizadores)
