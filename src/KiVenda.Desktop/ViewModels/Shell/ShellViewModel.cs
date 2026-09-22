@@ -12,32 +12,18 @@ using WeberTech.Licensing.Services;
 
 namespace KiVenda.Desktop.ViewModels.Shell;
 
-/// <summary>
-/// Anfitrião da aplicação depois do login: sidebar com os 10 módulos
-/// (Secção 8 da documentação funcional) + área de conteúdo que troca
-/// consoante o item selecionado. Cada item só aparece se o perfil da
-/// sessão atual tiver a permissão correspondente — a mesma matriz
-/// (<see cref="Permissoes"/>) usada pelos casos de uso, nunca duplicada
-/// aqui.
-/// </summary>
 public partial class ShellViewModel : ViewModelBase
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly SessaoUtilizadorAtual _sessao;
 
     public string NomeUtilizador => _sessao.Nome;
-
     public string InicialNome => string.IsNullOrEmpty(_sessao.Nome) ? "?" : _sessao.Nome[..1].ToUpperInvariant();
-
     public string PerfilTexto => _sessao.Perfil == PerfilUtilizador.Gerente ? "Gerente" : "Atendente";
-
     public ObservableCollection<ItemMenuLateral> ItensMenu { get; } = new();
 
-    [ObservableProperty]
-    private ItemMenuLateral? _itemSelecionado;
-
-    [ObservableProperty]
-    private ViewModelBase? _conteudoAtual;
+    [ObservableProperty] private ItemMenuLateral? _itemSelecionado;
+    [ObservableProperty] private ViewModelBase? _conteudoAtual;
 
     public event EventHandler? SessaoTerminada;
 
@@ -45,7 +31,6 @@ public partial class ShellViewModel : ViewModelBase
     {
         _scopeFactory = scopeFactory;
         _sessao = sessao;
-
         Licensing.StatusChanged += OnLicensingStatusChanged;
         ConstruirMenu();
         ItemSelecionado = ItensMenu.FirstOrDefault();
@@ -58,53 +43,40 @@ public partial class ShellViewModel : ViewModelBase
         if (OperatingSystem.IsWindows() && Licensing.CurrentStatus != LicenseStatus.Valid)
         {
             if (Permissoes.Permite(_sessao.Perfil, Acao.ConfigurarSistema))
-            {
-                ItensMenu.Add(Item("Configurações", "⚙️", () => new ConfiguracoesViewModel()));
-            }
-
+                ItensMenu.Add(Item("Configurações", "⚙️", CriarConfiguracoes));
             return;
         }
 
         ItensMenu.Add(Item("Dashboard", "🏠", () => new DashboardViewModel(_scopeFactory, _sessao)));
-
-        // Vendas e Caixa: implementados na Fase 7.
         ItensMenu.Add(Item("Vendas", "🛒", () => new VendasViewModel(_scopeFactory)));
-
         ItensMenu.Add(Item("Produtos", "📦", () => new ProdutosViewModel(_scopeFactory, _sessao)));
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.RegistarCompras))
-        {
             ItensMenu.Add(Item("Compras", "🧾", () => new ComprasViewModel(_scopeFactory)));
-        }
 
         ItensMenu.Add(Item("Clientes", "👥", () => new ClientesViewModel(_scopeFactory)));
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.RegistarCompras))
-        {
             ItensMenu.Add(Item("Fornecedores", "🚚", () => new FornecedoresViewModel(_scopeFactory)));
-        }
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.GerirCaixa))
-        {
             ItensMenu.Add(Item("Caixa", "🏦", () => new CaixaViewModel(_scopeFactory)));
-        }
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.AcederRelatorios))
-        {
             ItensMenu.Add(Item("Relatórios", "📊", () => new RelatoriosViewModel(_scopeFactory)));
-        }
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.CriarUtilizadores))
-        {
             ItensMenu.Add(Item("Utilizadores", "👤", () => new UtilizadoresViewModel(_scopeFactory)));
-        }
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.ConfigurarSistema))
         {
             ItensMenu.Add(Item("Auditoria", "🛡️", () => new AuditoriaViewModel(_scopeFactory)));
-            ItensMenu.Add(Item("Configurações", "⚙️", () => new ConfiguracoesViewModel()));
+            ItensMenu.Add(Item("Configurações", "⚙️", CriarConfiguracoes));
         }
     }
+
+    private static ConfiguracoesViewModel CriarConfiguracoes() =>
+        App.Services.GetRequiredService<ConfiguracoesViewModel>();
 
     private void OnLicensingStatusChanged(object? sender, EventArgs e)
     {
@@ -118,9 +90,7 @@ public partial class ShellViewModel : ViewModelBase
     partial void OnItemSelecionadoChanged(ItemMenuLateral? value)
     {
         if (value is not null)
-        {
             ConteudoAtual = value.FabricaConteudo();
-        }
     }
 
     [RelayCommand]
