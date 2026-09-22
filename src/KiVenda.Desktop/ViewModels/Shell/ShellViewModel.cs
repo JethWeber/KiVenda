@@ -55,7 +55,7 @@ public partial class ShellViewModel : ViewModelBase
     {
         ItensMenu.Clear();
 
-        if (Licensing.CurrentStatus != LicenseStatus.Valid)
+        if (OperatingSystem.IsWindows() && Licensing.CurrentStatus != LicenseStatus.Valid)
         {
             if (Permissoes.Permite(_sessao.Perfil, Acao.ConfigurarSistema))
             {
