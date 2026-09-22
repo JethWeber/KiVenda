@@ -46,6 +46,7 @@ public partial class ShellViewModel : ViewModelBase
         _scopeFactory = scopeFactory;
         _sessao = sessao;
 
+        Licensing.StatusChanged += OnLicensingStatusChanged;
         ConstruirMenu();
         ItemSelecionado = ItensMenu.FirstOrDefault();
     }
@@ -103,6 +104,12 @@ public partial class ShellViewModel : ViewModelBase
         }
     }
 
+    private void OnLicensingStatusChanged(object? sender, EventArgs e)
+    {
+        ConstruirMenu();
+        ItemSelecionado = ItensMenu.FirstOrDefault();
+    }
+
     private static ItemMenuLateral Item(string nome, string icone, Func<ViewModelBase> fabrica) =>
         new() { Nome = nome, Icone = icone, FabricaConteudo = fabrica };
 
@@ -117,6 +124,7 @@ public partial class ShellViewModel : ViewModelBase
     [RelayCommand]
     private void TerminarSessao()
     {
+        Licensing.StatusChanged -= OnLicensingStatusChanged;
         _sessao.TerminarSessao();
         SessaoTerminada?.Invoke(this, EventArgs.Empty);
     }
