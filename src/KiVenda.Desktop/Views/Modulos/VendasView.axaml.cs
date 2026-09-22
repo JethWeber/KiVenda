@@ -25,31 +25,13 @@ public partial class VendasView : UserControl
             return;
         }
 
-        _servicoScanner.CodigoLido -= OnCodigoLido;
-        _servicoScanner.CodigoLido += OnCodigoLido;
-
         _ = RecarregarScannerAsync();
         PesquisaCodigoTextBox.Focus();
     }
 
     private void VendasView_DetachedFromVisualTree(object? sender, Avalonia.VisualTreeAttachmentEventArgs e)
     {
-        if (_servicoScanner is not null)
-        {
-            _servicoScanner.CodigoLido -= OnCodigoLido;
-            _servicoScanner.Reset();
-        }
-    }
-
-    private async void OnCodigoLido(string codigo)
-    {
-        if (DataContext is VendasViewModel vm)
-        {
-            // O ViewModel também subscreve o serviço para manter a regra
-            // de negócio fora da View. Esta chamada é apenas um fallback
-            // para DataContext que tenha sido criado depois da subscrição.
-            await Task.Yield();
-        }
+        _servicoScanner?.Reset();
     }
 
     private async Task RecarregarScannerAsync()
@@ -90,11 +72,11 @@ public partial class VendasView : UserControl
 
         _servicoScanner?.ProcessarEnter();
 
-        // Se o Enter não fechou uma leitura de scanner, preserva o fluxo
-        // manual do PDV: código exato -> produto -> adicionar.
+        // Se o Enter não fechou uma leitura de scanner, o ViewModel
+        // preserva o fluxo manual: código exato -> produto -> adicionar.
         if (DataContext is VendasViewModel vm)
         {
-            vm.AdicionarProdutoCommand.Execute(null);
+            _ = vm.TratarEnterPesquisaAsync();
         }
 
         e.Handled = true;
