@@ -1,6 +1,4 @@
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using KiVenda.Infrastructure.Backup;
 
 namespace KiVenda.Desktop.ViewModels.Modulos;
@@ -10,23 +8,15 @@ public partial class ConfiguracaoBackupViewModel : ViewModelBase
     private readonly IServicoBackup _servicoBackup;
 
     [ObservableProperty] private bool _aCarregar;
-    [ObservableProperty] private string _mensagem = string.Empty;
+    [ObservableProperty] private string _mensagem = "Pronto para criar ou restaurar um backup.";
     [ObservableProperty] private string _ultimoBackup = "Nenhum backup criado nesta sessão.";
-    [ObservableProperty] private string _caminhoRestauracao = string.Empty;
 
     public bool PodeExecutar => !ACarregar;
 
-    public ConfiguracaoBackupViewModel(IServicoBackup servicoBackup)
-    {
-        _servicoBackup = servicoBackup;
-    }
+    public ConfiguracaoBackupViewModel(IServicoBackup servicoBackup) => _servicoBackup = servicoBackup;
 
-    [RelayCommand]
-    private async Task CriarBackupAsync(string? pastaDestino)
+    public async Task CriarBackupAsync(string pastaDestino)
     {
-        if (string.IsNullOrWhiteSpace(pastaDestino))
-            return;
-
         await ExecutarAsync(async () =>
         {
             var resultado = await _servicoBackup.CriarBackupAsync(pastaDestino);
@@ -35,12 +25,8 @@ public partial class ConfiguracaoBackupViewModel : ViewModelBase
         });
     }
 
-    [RelayCommand]
-    private async Task RestaurarBackupAsync(string? caminho)
+    public async Task RestaurarBackupAsync(string caminho)
     {
-        if (string.IsNullOrWhiteSpace(caminho))
-            return;
-
         await ExecutarAsync(async () =>
         {
             if (!await _servicoBackup.ValidarFicheiroBackupAsync(caminho))
@@ -57,17 +43,9 @@ public partial class ConfiguracaoBackupViewModel : ViewModelBase
     private async Task ExecutarAsync(Func<Task> acao)
     {
         ACarregar = true;
-        Mensagem = string.Empty;
         OnPropertyChanged(nameof(PodeExecutar));
-
-        try
-        {
-            await acao();
-        }
-        catch (Exception ex)
-        {
-            Mensagem = $"Operação de backup falhou: {ex.Message}";
-        }
+        try { await acao(); }
+        catch (Exception ex) { Mensagem = $"Operação de backup falhou: {ex.Message}"; }
         finally
         {
             ACarregar = false;
