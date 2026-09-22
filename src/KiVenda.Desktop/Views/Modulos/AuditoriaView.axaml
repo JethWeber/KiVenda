@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:aud="using:KiVenda.Core.Auditoria"
+             x:Class="KiVenda.Desktop.Views.Modulos.AuditoriaView"
+             x:DataType="vm:AuditoriaViewModel">
+    <StackPanel Spacing="18">
+        <StackPanel Spacing="4">
+            <TextBlock Classes="titulo-pagina" Text="Auditoria" />
+            <TextBlock Classes="subtitulo"
+                       Text="Histórico das operações sensíveis realizadas no KiVenda." />
+        </StackPanel>
+
+        <Border Classes="cartao">
+            <StackPanel Spacing="12">
+                <Grid ColumnDefinitions="Auto,180,Auto,180" ColumnSpacing="10" RowDefinitions="Auto,Auto">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Classes="rotulo-campo" Text="De" VerticalAlignment="Center" />
+                    <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding DataDe}" />
+                    <TextBlock Grid.Row="0" Grid.Column="2" Classes="rotulo-campo" Text="Até" VerticalAlignment="Center" />
+                    <DatePicker Grid.Row="0" Grid.Column="3" SelectedDate="{Binding DataAte}" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Classes="rotulo-campo" Text="Utilizador" VerticalAlignment="Center" />
+                    <ComboBox Grid.Row="1" Grid.Column="1"
+                              ItemsSource="{Binding Utilizadores}"
+                              SelectedItem="{Binding UtilizadorSelecionado}"
+                              PlaceholderText="Todos" />
+                    <TextBlock Grid.Row="1" Grid.Column="2" Classes="rotulo-campo" Text="Entidade" VerticalAlignment="Center" />
+                    <ComboBox Grid.Row="1" Grid.Column="3"
+                              ItemsSource="{Binding Entidades}"
+                              SelectedItem="{Binding EntidadeSelecionada}" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                    <TextBox Grid.Column="0"
+                             Watermark="Filtrar por ação (ex.: Alterou preço)"
+                             Text="{Binding Acao}" />
+                    <Button Grid.Column="1" Content="Filtrar" Classes="primario"
+                            Command="{Binding CarregarCommand}"
+                            IsEnabled="{Binding !ACarregar}" />
+                    <Button Grid.Column="2" Content="Limpar" Classes="secundario"
+                            Command="{Binding LimparFiltrosCommand}"
+                            IsEnabled="{Binding !ACarregar}" />
+                </Grid>
+
+                <TextBlock Text="A carregar..." IsVisible="{Binding ACarregar}" />
+                <TextBlock Text="{Binding Mensagem}"
+                           Foreground="{StaticResource TextoSecundarioBrush}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+
+        <Border Classes="cartao">
+            <StackPanel Spacing="0">
+                <Grid ColumnDefinitions="170,180,120,*" Margin="10,0,10,8">
+                    <TextBlock Grid.Column="0" Text="Data/Hora" FontWeight="Bold" />
+                    <TextBlock Grid.Column="1" Text="Ação" FontWeight="Bold" />
+                    <TextBlock Grid.Column="2" Text="Entidade" FontWeight="Bold" />
+                    <TextBlock Grid.Column="3" Text="Detalhes" FontWeight="Bold" />
+                </Grid>
+
+                <ItemsControl ItemsSource="{Binding Registos}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="aud:LogAuditoria">
+                            <Border BorderBrush="{StaticResource BordaBrush}"
+                                    BorderThickness="0,1,0,0"
+                                    Padding="10">
+                                <Grid ColumnDefinitions="170,180,120,*">
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding DataHora, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Acao}" TextWrapping="Wrap" />
+                                    <TextBlock Grid.Column="2" Text="{Binding EntidadeAfetada}" />
+                                    <StackPanel Grid.Column="3" Spacing="2">
+                                        <TextBlock Text="{Binding EntidadeId, StringFormat=ID: {0}}" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding DadosAntes, StringFormat=Antes: {0}}" TextWrapping="Wrap"
+                                                   IsVisible="{Binding DadosAntes, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                        <TextBlock Text="{Binding DadosDepois, StringFormat=Depois: {0}}" TextWrapping="Wrap"
+                                                   IsVisible="{Binding DadosDepois, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>
