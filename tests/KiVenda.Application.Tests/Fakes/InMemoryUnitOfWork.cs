@@ -283,6 +283,6 @@ file sealed class FakeLogAuditoriaRepository(InMemoryDatabase db) : ILogAuditori
         return Task.CompletedTask;
     }
 
-    public Task<IReadOnlyList<LogAuditoria>> ListarAsync(Guid? utilizadorId = null, string? entidadeAfetada = null, DateTime? de = null, DateTime? ate = null, int pagina = 1, int tamanhoPagina = 50, CancellationToken ct = default) =>
+    public Task<IReadOnlyList<LogAuditoria>> ListarAsync(Guid? utilizadorId = null, string? entidadeAfetada = null, string? acao = null, DateTime? de = null, DateTime? ate = null, int pagina = 1, int tamanhoPagina = 50, CancellationToken ct = default) =>
         Task.FromResult<IReadOnlyList<LogAuditoria>>(db.LogsAuditoria.ToList());
 }
