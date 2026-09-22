@@ -150,11 +150,16 @@ public partial class VendasViewModel : ViewModelBase
         LeituraScannerPendenteTexto =
             $"{localizado.Produto.Nome} — {localizado.NomeApresentacao}";
 
-        MostrarQuantidadeScanner = configuracao.AbrirQuantidadeAposLeitura;
+        // Sem adição automática, a leitura fica pendente e o painel de
+        // quantidade fica disponível. A opção AbrirQuantidadeAposLeitura
+        // será usada pela View para dar foco à quantidade na próxima
+        // interação; o estado funcional continua acessível mesmo quando
+        // a opção estiver desligada.
+        MostrarQuantidadeScanner = true;
 
-        if (!MostrarQuantidadeScanner)
+        if (!configuracao.AbrirQuantidadeAposLeitura)
         {
-            MensagemSucesso = $"✓ {localizado.Produto.Nome} — leitura reconhecida.";
+            MensagemSucesso = $"✓ {localizado.Produto.Nome} — leitura reconhecida. Defina a quantidade.";
         }
     }
 
