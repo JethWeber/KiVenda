@@ -175,63 +175,6 @@ public partial class VendasViewModel : ViewModelBase
         await AdicionarProdutoAsync(null);
     }
 
-    private async Task ProcessarLeituraScannerAsync(string codigo, CancellationToken cancellationToken = default)
-    {
-        if (string.IsNullOrWhiteSpace(codigo) || _vendaId is null || SemCaixaAberto)
-        {
-            return;
-        }
-
-        MensagemErro = null;
-        MensagemSucesso = string.Empty;
-
-        await using var scope = _scopeFactory.CreateAsyncScope();
-        var useCase = scope.ServiceProvider.GetRequiredService<LocalizarProdutoPorCodigoUseCase>();
-        var localizado = await useCase.ExecutarAsync(
-            new LocalizarProdutoPorCodigoQuery(codigo),
-            cancellationToken);
-
-        if (localizado is null)
-        {
-            TermoPesquisa = string.Empty;
-            MensagemErro = $"Código \"{codigo}\" não encontrado.";
-            return;
-        }
-
-        TermoPesquisa = string.Empty;
-
-        var configuracao = _servicoScanner.ConfiguracaoAtual;
-
-        if (configuracao.EmitirSomAoLer)
-        {
-            Console.Write('\a');
-        }
-
-        if (configuracao.AdicionarAutomaticamente)
-        {
-            await AdicionarLocalizadoAsync(localizado, 1m, cancellationToken);
-            MensagemSucesso = $"✓ {localizado.Produto.Nome} — {localizado.NomeApresentacao} adicionado.";
-            return;
-        }
-
-        _leituraScannerPendente = localizado;
-        QuantidadeScannerInput = "1";
-        LeituraScannerPendenteTexto =
-            $"{localizado.Produto.Nome} — {localizado.NomeApresentacao}";
-
-        // Sem adição automática, a leitura fica pendente e o painel de
-        // quantidade fica disponível. A opção AbrirQuantidadeAposLeitura
-        // será usada pela View para dar foco à quantidade na próxima
-        // interação; o estado funcional continua acessível mesmo quando
-        // a opção estiver desligada.
-        MostrarQuantidadeScanner = true;
-
-        if (!configuracao.AbrirQuantidadeAposLeitura)
-        {
-            MensagemSucesso = $"✓ {localizado.Produto.Nome} — leitura reconhecida. Defina a quantidade.";
-        }
-    }
-
     [RelayCommand]
     private async Task ConfirmarQuantidadeScannerAsync()
     {
