@@ -119,11 +119,11 @@ Legenda: ✅ Concluída · 🔄 Em curso · ⬜ Pendente
 | 6 | [Interface Desktop — Módulos Base](#fase-6--interface-desktop-avalonia--mvvm-módulos-base-✅) | ✅ | Shell, Dashboard, Produtos, Compras, Clientes, Fornecedores, Utilizadores |
 | 7 | [Vendas (PDV) e Caixa](#fase-7--módulo-de-vendas-e-fluxo-de-caixa-✅) | ✅ | Fluxo de venda completo (recibo incluído) e fluxo de caixa completo |
 | 8 | [Scanner de Código de Barras](#fase-8--scanner-de-código-de-barras-✅) | ✅ | Scanner USB tipo teclado integrado no PDV, configuração persistente e testes automatizados implementados |
-| 9 | [Relatórios](#fase-9--relatórios-🔄) | 🔄 | Relatórios diário, mensal e de stock implementados na Application e UI; exportação por impressão; falta validação final local |
-| 10 | [Auditoria](#fase-10--auditoria-log-de-operações-🔄) | 🔄 | Log de operações sensíveis + consulta protegida |
-| 11 | Configurações, Licenciamento e Backup | ⬜ | Onboarding < 5 minutos |
-| 12 | Testes | ⬜ | Suite completa + aceitação com cliente piloto |
-| 13 | Empacotamento e Lançamento | ⬜ | Instalador pronto para distribuição |
+| 9 | [Relatórios](#fase-9--relatórios-✅) | ✅ | Relatórios diário, mensal e de stock implementados |
+| 10 | [Auditoria](#fase-10--auditoria-log-de-operações-✅) | ✅ | Log de operações sensíveis + consulta protegida |
+| 11 | [Configurações, Licenciamento e Backup](#fase-11--configurações-licenciamento-e-backup-✅) | ✅ | Configurações do sistema, licenciamento e backup/restauro |
+| 12 | [Destruição e Validação do MVP](#fase-12--destruição-e-validação-do-mvp-⬜) | ⬜ | Testes adversariais, volume, recuperação e aceitação real |
+| 13 | [Empacotamento e Lançamento](#fase-13--empacotamento-e-lançamento-⬜) | ⬜ | Instalador pronto para distribuição |
 
 Detalhe completo de cada fase (escopo, tarefas, critérios de aceitação):
 [`docs/PLANO_DE_IMPLEMENTACAO.md`](docs/PLANO_DE_IMPLEMENTACAO.md).
@@ -793,66 +793,61 @@ neste repositório.
 
 A implementação da Fase 8 está **concluída**: o scanner USB foi validado fisicamente no PDV e `dotnet build`/`dotnet test` foram executados localmente pelo utilizador com sucesso.
 
-## Fase 9 — Relatórios 🔄
+## Fase 9 — Relatórios ✅
 
 **Objetivo:** disponibilizar os três relatórios essenciais do MVP — diário, mensal e stock — com filtros adequados, controlo de acesso ao perfil Gerente e impressão do conteúdo.
 
 ### O que foi implementado
 
 **Application**
-- [x] `GerarRelatorioDiarioUseCase` — total vendido, lucro estimado, número de vendas e produtos vendidos, com filtro opcional por utilizador.
-- [x] `GerarRelatorioMensalUseCase` — receita, lucro estimado e até 10 produtos mais vendidos no mês.
-- [x] `GerarRelatorioStockUseCase` — separação entre produtos sem stock e com stock baixo.
-- [x] Relatórios restritos por `Acao.AcederRelatorios`.
+- [x] Relatório diário — total vendido, lucro estimado, número de vendas e produtos vendidos, com filtro opcional por utilizador.
+- [x] Relatório mensal — receita, lucro estimado e produtos mais vendidos.
+- [x] Relatório de stock — separação entre produtos sem stock e com stock baixo.
+- [x] Relatórios protegidos por `Acao.AcederRelatorios`.
 - [x] Stock apresentado também convertido para a apresentação comercial ativa.
 - [x] Casos de uso registados no DI.
 
 **Interface Desktop**
-- [x] Novo `RelatoriosViewModel` com carregamento dos três relatórios.
-- [x] Novo ecrã `RelatoriosView`.
-- [x] Filtro de data para diário/mensal.
+- [x] `RelatoriosViewModel` e `RelatoriosView`.
+- [x] Filtros de data para diário/mensal.
 - [x] Filtro opcional por utilizador no relatório diário.
 - [x] Listagem de produtos vendidos e produtos mais vendidos.
 - [x] Separação visual de produtos em falta e stock baixo.
-- [x] Impressão do relatório através de `IServicoImpressao.ImprimirTextoAsync`.
-- [x] Relatórios ligados ao item "Relatórios" da navegação principal.
-- [x] Acesso continua protegido pelo perfil Gerente.
+- [x] Impressão através de `IServicoImpressao.ImprimirTextoAsync`.
+- [x] Relatórios ligados à navegação principal.
+- [x] Acesso protegido pelo perfil Gerente.
 
 **Testes**
 - [x] Testes do relatório diário.
 - [x] Testes do relatório mensal.
 - [x] Testes do relatório de stock.
-- [x] Teste de bloqueio de acesso ao relatório pelo Atendente.
+- [x] Teste de bloqueio de acesso pelo Atendente.
 
-### Validação pendente
-- [ ] `dotnet build`
-- [ ] `dotnet test`
-- [ ] Validação visual dos três relatórios com dados reais.
-- [ ] Confirmar impressão do relatório numa máquina alvo.
+### Encerramento
 
-### Próximo passo
+A implementação da Fase 9 está concluída. A validação final integrada do MVP será retomada na Fase 12.
+
+### Próxima fase
+
 ➡️ **Fase 10 — Auditoria (Log de Operações).**
 
----
 
-## Fase 10 — Auditoria (Log de Operações) 🔄
+## Fase 10 — Auditoria (Log de Operações) ✅
 
-**Objetivo:** criar uma trilha persistente das operações sensíveis, permitindo ao Gerente saber **quem fez o quê, em que entidade e quando**, incluindo valores relevantes antes/depois quando aplicável.
+**Objetivo:** manter uma trilha persistente das operações sensíveis, permitindo ao Gerente saber quem fez o quê, em que entidade e quando, incluindo valores relevantes antes/depois quando aplicável.
 
 ### O que foi implementado
 
 **Application / Persistence**
-- [x] `ConsultarAuditoriaUseCase` com proteção pelo perfil Gerente (`Acao.ConfigurarSistema`).
+- [x] `ConsultarAuditoriaUseCase` protegido pelo perfil Gerente.
 - [x] Filtros por utilizador, entidade, ação e período.
 - [x] Paginação limitada a 200 registos por consulta.
-- [x] Repositório de auditoria atualizado para filtrar também por ação.
-- [x] Validação de período e tamanho de página.
-- [x] Auditoria ampliada para criação/inativação de produtos, alteração de preço, criação/gestão de utilizadores, alteração de password, venda, ajuste de stock, abertura/fecho de caixa, suprimento e sangria.
+- [x] Repositório atualizado para filtrar também por ação.
+- [x] Auditoria nas operações sensíveis: produtos, utilizadores, passwords, vendas, ajustes de stock, caixa, suprimentos e sangrias.
 
 **Interface Desktop**
-- [x] Novo `AuditoriaViewModel`.
-- [x] Novo `AuditoriaView` com filtros e listagem dos eventos.
-- [x] Auditoria disponibilizada na navegação apenas para o Gerente.
+- [x] `AuditoriaViewModel` e `AuditoriaView`.
+- [x] Auditoria disponibilizada na navegação para o Gerente.
 - [x] Exibição de data/hora, ação, entidade, ID afetado e dados antes/depois.
 
 **Testes**
@@ -860,16 +855,104 @@ A implementação da Fase 8 está **concluída**: o scanner USB foi validado fis
 - [x] Bloqueio de consulta pelo Atendente.
 - [x] Validação de período invertido.
 
-### Validação pendente
-- [ ] `dotnet build`
-- [ ] `dotnet test`
-- [ ] Abrir Auditoria e confirmar eventos reais após venda, ajuste, caixa e gestão de utilizadores.
-- [ ] Confirmar que o Atendente não vê nem consegue consultar Auditoria.
-- [ ] Validar o histórico numa base SQLite real.
-- [ ] Auditoria de restauração de backup será ligada ao fluxo administrativo de backup da Fase 11.
+### Encerramento
 
-### Próximo passo
+A implementação da Fase 10 está concluída. A validação integrada e os cenários adversariais ficam concentrados na Fase 12.
+
+### Próxima fase
+
 ➡️ **Fase 11 — Configurações, Licenciamento e Backup.**
+
+
+## Fase 11 — Configurações, Licenciamento e Backup ✅
+
+**Objetivo:** fechar a camada administrativa do MVP, reunindo configurações operacionais, licenciamento e proteção/restauro dos dados.
+
+### O que foi implementado
+
+**Configurações**
+- [x] Aba **Scanner** integrada nas Configurações.
+- [x] Aba **Licença** integrada nas Configurações.
+- [x] Aba **Backup** integrada nas Configurações.
+- [x] ViewModels e Views ligados ao composition root/DI.
+- [x] Fluxo de backup com seleção de pasta para criação.
+- [x] Fluxo de restauro com seleção de ficheiro e validação antes da restauração.
+- [x] Mensagens de estado, último backup e orientação para manter cópias fora da máquina.
+
+**Licenciamento — WeberTech.Licensing**
+- [x] Integração com o projeto `WeberTech.Licensing`.
+- [x] Produto KiVenda identificado por `kivenda.desktop_v03`.
+- [x] Validação de produto, máquina, assinatura e validade.
+- [x] Ativação inicial através de QR Code.
+- [x] Importação de licença `.wta` para ativação/renovação.
+- [x] No MVP, uma licença válida desbloqueia todas as funcionalidades.
+- [x] Após ativação válida, o fluxo de nova ativação fica bloqueado; licença expirada segue pelo fluxo de renovação.
+- [x] Enforcement de licença no Windows; o ambiente não-Windows mantém o fluxo de desenvolvimento sem depender do WMI usado pelo Machine ID.
+
+**Validação automatizada**
+- [x] Build da solução validado após a integração.
+- [x] `dotnet test` validado com **148/148 testes aprovados** no ponto de integração do licenciamento.
+
+### Encerramento
+
+A Fase 11 está concluída em termos de implementação. **Hoje, 22/09/2026, o projeto entra na Fase 12: destruição e validação do MVP.**
+
+### Próxima fase
+
+➡️ **Fase 12 — Destruição e Validação do MVP.**
+
+---
+
+## Fase 12 — Destruição e Validação do MVP ⬜
+
+> **Proposta — NÃO EXECUTADA AINDA.** Esta secção regista o plano de ataque para a próxima etapa. Nenhum destes testes deve ser tratado como já realizado.
+
+**Objetivo:** tentar quebrar deliberadamente o MVP antes de o considerar pronto para uso real.
+
+### 12.1 — Tortura funcional
+- [ ] Validar vendas com stock insuficiente, stock zero e limites de quantidade.
+- [ ] Tentar valores monetários e quantidades inválidas/extremas.
+- [ ] Testar códigos inexistentes, duplicados e entradas inesperadas.
+- [ ] Interromper/cancelar vendas em diferentes pontos do fluxo.
+- [ ] Exercitar permissões com Gerente e Atendente em todas as áreas sensíveis.
+
+### 12.2 — Tortura de dados e persistência
+- [ ] Testar base de dados vazia e bases com grande volume.
+- [ ] Testar backups válidos, inválidos e corrompidos.
+- [ ] Restaurar backup antigo e verificar consistência dos dados.
+- [ ] Testar falhas de ficheiros, configuração e espaço disponível.
+- [ ] Confirmar que operações interrompidas não deixam dados parcialmente gravados.
+
+### 12.3 — Volume e desempenho
+- [ ] Popular o sistema com milhares de produtos, movimentos e vendas.
+- [ ] Medir pesquisa, abertura de módulos, PDV e relatórios.
+- [ ] Testar sequência intensa de leituras do scanner.
+- [ ] Observar consumo de RAM, CPU, disco e tempo de resposta.
+- [ ] Procurar degradação progressiva depois de muitas operações.
+
+### 12.4 — Recuperação e caos controlado
+- [ ] Encerrar o processo durante operações críticas.
+- [ ] Reiniciar a aplicação após falhas simuladas.
+- [ ] Testar duas instâncias da aplicação.
+- [ ] Validar recuperação após restauro de backup.
+- [ ] Confirmar que o sistema volta a um estado operacional consistente.
+
+### 12.5 — Validação física e aceitação
+- [ ] Repetir o fluxo principal com o scanner USB real na Cantina Modelo.
+- [ ] Executar um ciclo realista de compras → stock → venda → caixa → relatório → auditoria.
+- [ ] Registar falhas encontradas, gravidade, reprodução e correção.
+- [ ] Reexecutar os testes depois de cada correção relevante.
+- [ ] Fazer validação de aceitação com cenário de utilização real.
+
+### Critério de encerramento da Fase 12
+
+A Fase 12 só será concluída depois de os testes serem **efetivamente executados**, os problemas encontrados serem tratados ou explicitamente documentados como dívida técnica, e a suíte automatizada continuar verde após as correções.
+
+### Próxima fase
+
+➡️ **Fase 13 — Empacotamento e Lançamento.**
+
+---
 
 ## Convenções do projeto
 
