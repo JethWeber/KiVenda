@@ -7,6 +7,7 @@ using KiVenda.Core.Enums;
 using KiVenda.Core.Exceptions;
 using KiVenda.Desktop.ViewModels.Common;
 using KiVenda.Infrastructure.Impressao;
+using KiVenda.Infrastructure.Scanner;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace KiVenda.Desktop.ViewModels.Modulos;
@@ -25,6 +26,9 @@ namespace KiVenda.Desktop.ViewModels.Modulos;
 public partial class VendasViewModel : ViewModelBase
 {
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IServicoScanner _servicoScanner;
+
+    private ProdutoLocalizadoDto? _leituraScannerPendente;
 
     private Guid? _vendaId;
     private decimal _totalAtual;
@@ -44,6 +48,15 @@ public partial class VendasViewModel : ViewModelBase
 
     [ObservableProperty]
     private string _mensagemSucesso = string.Empty;
+
+    [ObservableProperty]
+    private string _quantidadeScannerInput = "1";
+
+    [ObservableProperty]
+    private bool _mostrarQuantidadeScanner;
+
+    [ObservableProperty]
+    private string _leituraScannerPendenteTexto = string.Empty;
 
     public ObservableCollection<ProdutoDto> ProdutosFiltrados { get; } = new();
 
@@ -76,7 +89,132 @@ public partial class VendasViewModel : ViewModelBase
     public VendasViewModel(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
+        _servicoScanner = App.Services.GetRequiredService<IServicoScanner>();
+        _servicoScanner.CodigoLido += OnCodigoLido;
         _ = InicializarAsync();
+    }
+
+    private async void OnCodigoLido(string codigo)
+    {
+        try
+        {
+            await ProcessarLeituraScannerAsync(codigo);
+        }
+        catch (Exception ex)
+        {
+            MensagemErro = $"Não foi possível processar a leitura: {ex.Message}";
+        }
+    }
+
+    private async Task ProcessarLeituraScannerAsync(string codigo, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(codigo) || _vendaId is null || SemCaixaAberto)
+        {
+            return;
+        }
+
+        MensagemErro = null;
+        MensagemSucesso = string.Empty;
+
+        await using var scope = _scopeFactory.CreateAsyncScope();
+        var useCase = scope.ServiceProvider.GetRequiredService<LocalizarProdutoPorCodigoUseCase>();
+        var localizado = await useCase.ExecutarAsync(
+            new LocalizarProdutoPorCodigoQuery(codigo),
+            cancellationToken);
+
+        if (localizado is null)
+        {
+            TermoPesquisa = string.Empty;
+            MensagemErro = $"Código \"{codigo}\" não encontrado.";
+            return;
+        }
+
+        TermoPesquisa = string.Empty;
+
+        var configuracao = _servicoScanner.ConfiguracaoAtual;
+
+        if (configuracao.EmitirSomAoLer)
+        {
+            Console.Write('\a');
+        }
+
+        if (configuracao.AdicionarAutomaticamente)
+        {
+            await AdicionarLocalizadoAsync(localizado, 1m, cancellationToken);
+            MensagemSucesso = $"✓ {localizado.Produto.Nome} — {localizado.NomeApresentacao} adicionado.";
+            return;
+        }
+
+        _leituraScannerPendente = localizado;
+        QuantidadeScannerInput = "1";
+        LeituraScannerPendenteTexto =
+            $"{localizado.Produto.Nome} — {localizado.NomeApresentacao}";
+
+        MostrarQuantidadeScanner = configuracao.AbrirQuantidadeAposLeitura;
+
+        if (!MostrarQuantidadeScanner)
+        {
+            MensagemSucesso = $"✓ {localizado.Produto.Nome} — leitura reconhecida.";
+        }
+    }
+
+    [RelayCommand]
+    private async Task ConfirmarQuantidadeScannerAsync()
+    {
+        if (_leituraScannerPendente is null)
+        {
+            return;
+        }
+
+        if (!decimal.TryParse(QuantidadeScannerInput, out var quantidade) || quantidade <= 0)
+        {
+            MensagemErro = "Quantidade inválida.";
+            return;
+        }
+
+        try
+        {
+            await AdicionarLocalizadoAsync(_leituraScannerPendente, quantidade);
+            MensagemSucesso =
+                $"✓ {_leituraScannerPendente.Produto.Nome} — {quantidade} × {_leituraScannerPendente.NomeApresentacao} adicionado.";
+            LimparLeituraScannerPendente();
+        }
+        catch (DomainException ex)
+        {
+            MensagemErro = ex.Message;
+        }
+    }
+
+    private async Task AdicionarLocalizadoAsync(
+        ProdutoLocalizadoDto localizado,
+        decimal quantidade,
+        CancellationToken cancellationToken = default)
+    {
+        if (_vendaId is null)
+        {
+            return;
+        }
+
+        await using var scope = _scopeFactory.CreateAsyncScope();
+        var useCase = scope.ServiceProvider.GetRequiredService<AdicionarItemVendaUseCase>();
+
+        await useCase.ExecutarAsync(
+            new AdicionarItemVendaCommand(
+                _vendaId.Value,
+                localizado.Produto.Id,
+                localizado.ApresentacaoId,
+                quantidade),
+            cancellationToken);
+
+        await AtualizarCarrinhoAsync(scope.ServiceProvider);
+    }
+
+    private void LimparLeituraScannerPendente()
+    {
+        _leituraScannerPendente = null;
+        QuantidadeScannerInput = "1";
+        LeituraScannerPendenteTexto = string.Empty;
+        MostrarQuantidadeScanner = false;
     }
 
     private async Task InicializarAsync()
