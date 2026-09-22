@@ -86,7 +86,7 @@ public partial class ShellViewModel : ViewModelBase
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.ConfigurarSistema))
         {
-            ItensMenu.Add(Item("Configurações", "⚙️", () => new EmBreveViewModel("Configurações", "Fase 11")));
+            ItensMenu.Add(Item("Configurações", "⚙️", () => new ConfiguracaoScannerViewModel()));
         }
     }
 
