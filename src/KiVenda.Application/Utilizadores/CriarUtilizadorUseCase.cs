@@ -1,6 +1,7 @@
 using KiVenda.Application.Abstractions.Auth;
 using KiVenda.Application.Abstractions.Persistence;
 using KiVenda.Application.Common;
+using KiVenda.Core.Auditoria;
 using KiVenda.Core.Enums;
 using KiVenda.Core.Exceptions;
 using KiVenda.Core.Utilizadores;
@@ -25,6 +26,16 @@ public sealed class CriarUtilizadorUseCase(IUnitOfWork uow, IContextoAutenticaca
         var utilizador = new Utilizador(comando.Nome, comando.NomeUtilizador, hash, comando.Perfil);
 
         await uow.Utilizadores.AdicionarAsync(utilizador, cancellationToken);
+
+        await uow.LogsAuditoria.AdicionarAsync(
+            new LogAuditoria(
+                contexto.UtilizadorId,
+                "Criou utilizador",
+                "Utilizador",
+                utilizador.Id,
+                dadosDepois: $"Nome: {utilizador.Nome}; Login: {utilizador.NomeUtilizador}; Perfil: {utilizador.Perfil}"),
+            cancellationToken);
+
         await uow.SaveChangesAsync(cancellationToken);
 
         return utilizador.Id;
