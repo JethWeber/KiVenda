@@ -32,6 +32,9 @@
         <DataTemplate DataType="vmm:UtilizadoresViewModel">
             <views:UtilizadoresView />
         </DataTemplate>
+        <DataTemplate DataType="vmm:ConfiguracaoScannerViewModel">
+            <views:ConfiguracaoScannerView />
+        </DataTemplate>
         <DataTemplate DataType="vmm:EmBreveViewModel">
             <views:EmBreveView />
         </DataTemplate>
