@@ -25,13 +25,28 @@ public partial class VendasView : UserControl
             return;
         }
 
+        _servicoScanner.CodigoLido -= OnCodigoLido;
+        _servicoScanner.CodigoLido += OnCodigoLido;
+
         _ = RecarregarScannerAsync();
         PesquisaCodigoTextBox.Focus();
     }
 
     private void VendasView_DetachedFromVisualTree(object? sender, Avalonia.VisualTreeAttachmentEventArgs e)
     {
-        _servicoScanner?.Reset();
+        if (_servicoScanner is not null)
+        {
+            _servicoScanner.CodigoLido -= OnCodigoLido;
+            _servicoScanner.Reset();
+        }
+    }
+
+    private void OnCodigoLido(string codigo)
+    {
+        if (DataContext is VendasViewModel vm)
+        {
+            _ = vm.ProcessarLeituraScannerAsync(codigo);
+        }
     }
 
     private async Task RecarregarScannerAsync()
