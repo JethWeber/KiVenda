@@ -86,6 +86,7 @@ public partial class ShellViewModel : ViewModelBase
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.ConfigurarSistema))
         {
+            ItensMenu.Add(Item("Auditoria", "🛡️", () => new AuditoriaViewModel(_scopeFactory)));
             ItensMenu.Add(Item("Configurações", "⚙️", () => new ConfiguracaoScannerViewModel()));
         }
     }
