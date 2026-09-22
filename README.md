@@ -118,7 +118,7 @@ Legenda: ✅ Concluída · 🔄 Em curso · ⬜ Pendente
 | 5 | [Multiutilizador e Perfis de Acesso](#fase-5--multiutilizador-e-perfis-de-acesso-✅) | ✅ | Login local funcional, sessão em memória, app ligada de ponta a ponta |
 | 6 | [Interface Desktop — Módulos Base](#fase-6--interface-desktop-avalonia--mvvm-módulos-base-✅) | ✅ | Shell, Dashboard, Produtos, Compras, Clientes, Fornecedores, Utilizadores |
 | 7 | [Vendas (PDV) e Caixa](#fase-7--módulo-de-vendas-e-fluxo-de-caixa-✅) | ✅ | Fluxo de venda completo (recibo incluído) e fluxo de caixa completo |
-| 8 | Scanner de Código de Barras | ⬜ | Leitura via input tipo teclado |
+| 8 | [Scanner de Código de Barras](#fase-8--scanner-de-código-de-barras-🔄) | 🔄 | Scanner USB tipo teclado integrado no PDV; configuração e testes automatizados implementados; falta validação física |
 | 9 | Relatórios | ⬜ | Diário, Mensal, Stock |
 | 10 | Auditoria | ⬜ | Log de operações sensíveis |
 | 11 | Configurações, Licenciamento e Backup | ⬜ | Onboarding < 5 minutos |
@@ -737,6 +737,64 @@ neste repositório.
 (ver detalhe em [`docs/PLANO_DE_IMPLEMENTACAO.md`](docs/PLANO_DE_IMPLEMENTACAO.md#fase-8--scanner-de-código-de-barras))
 
 ---
+
+## Fase 8 — Scanner de Código de Barras 🔄
+
+**Objetivo:** completar o fluxo no PDV: **bipar → localizar produto/apresentação → adicionar ao carrinho ou informar quantidade → continuar a próxima leitura**, usando leitores USB que funcionam como teclado.
+
+### O que foi implementado
+
+**Parte 1 — Listener USB tipo teclado**
+- [x] `IServicoScanner` e `ServicoScannerTeclado`.
+- [x] Buffer de caracteres + `Stopwatch`, com limite de 50 ms entre caracteres e mínimo de 3 caracteres.
+- [x] Enter fecha a leitura e dispara `CodigoLido` quando a sequência é reconhecida.
+- [x] Configuração `Ativo` é respeitada e pode ser recarregada sem reiniciar.
+- [x] Serviço registado como singleton no DI.
+
+**Parte 2 — Resolução do código**
+- [x] `LocalizarProdutoPorCodigoUseCase`.
+- [x] Primeiro procura código de barras do produto/apresentação; depois faz fallback para código interno.
+- [x] Um EAN específico de apresentação resolve a apresentação correspondente, preservando o fator de conversão.
+- [x] Produto inativo ou código inexistente não entra no PDV.
+- [x] Permissão centralizada através de `PermissaoGuard`.
+
+**Parte 3 — Integração no PDV**
+- [x] Campo de pesquisa do PDV encaminha caracteres e Enter para o serviço.
+- [x] Leitura reconhecida chega ao `VendasViewModel`.
+- [x] Com adição automática, cada bip adiciona quantidade 1 e uma segunda leitura do mesmo produto reutiliza a lógica do carrinho.
+- [x] Com adição automática desligada, a leitura fica pendente e permite informar quantidade.
+- [x] Opção de abrir quantidade após leitura dá foco ao campo de quantidade.
+- [x] Som configurável.
+- [x] Código não encontrado gera mensagem amigável.
+- [x] Pesquisa manual por código + Enter continua separada do fluxo reconhecido como scanner.
+- [x] Subscrição do evento fica na View e é removida no detach, evitando subscriptions acumuladas quando o módulo é reaberto.
+
+**Parte 4 — Configuração**
+- [x] Tela de Configurações com quatro opções:
+  - Ativado
+  - Emitir som ao ler
+  - Adicionar automaticamente
+  - Abrir quantidade após leitura
+- [x] Persistência em JSON local através de `IArmazenamentoConfiguracaoLocal`.
+- [x] Configuração é recarregada ao abrir a tela e ao entrar no PDV.
+- [x] Alterações são aplicadas ao serviço imediatamente, sem reiniciar a aplicação.
+- [x] O item Configurações continua protegido pela permissão `Acao.ConfigurarSistema`, disponível ao perfil Gerente.
+
+**Parte 5 — Testes**
+- [x] Testes de persistência de configuração local.
+- [x] Testes do listener para rajada rápida, sequência lenta, buffer curto e configuração desativada.
+- [x] Testes de `LocalizarProdutoPorCodigoUseCase` para código do produto, EAN de apresentação, múltiplas apresentações, fallback por código interno, inexistente e produto inativo.
+- [ ] Build real da solução.
+- [ ] Execução real de `dotnet test`.
+- [ ] Teste físico com leitor USB real no PDV, incluindo EAN de apresentação e fallback por código interno.
+
+### Critério de encerramento
+
+A Fase 8 só deve passar para **✅ Concluída** depois de:
+1. `dotnet build` sem erros;
+2. `dotnet test` com as suites a passar;
+3. teste manual com scanner físico;
+4. confirmação do fluxo completo no PDV e atualização final deste README.
 
 ## Convenções do projeto
 
