@@ -1,6 +1,7 @@
 using KiVenda.Application.Abstractions.Auth;
 using KiVenda.Application.Abstractions.Persistence;
 using KiVenda.Application.Common;
+using KiVenda.Core.Auditoria;
 using KiVenda.Core.Exceptions;
 using KiVenda.Core.Produtos;
 using KiVenda.Core.Utilizadores;
@@ -46,6 +47,11 @@ public sealed class CriarProdutoUseCase(IUnitOfWork uow, IContextoAutenticacao c
             comando.FotoUrl);
 
         await uow.Produtos.AdicionarAsync(produto, cancellationToken);
+
+        await uow.LogsAuditoria.AdicionarAsync(
+            new LogAuditoria(contexto.UtilizadorId, "Criou Produto", "Produto", produto.Id, dadosDepois: $"Código: {produto.CodigoInterno}; Nome: {produto.Nome}"),
+            cancellationToken);
+
         await uow.SaveChangesAsync(cancellationToken);
 
         return produto.Id;
