@@ -61,27 +61,6 @@ public sealed class ServicoScannerTecladoTests : IDisposable
     }
 
     [Fact]
-    public void Scanner_Desativado_Nao_Deve_Acumular_Nem_Disparar()
-    {
-        var scanner = new ServicoScannerTeclado(
-            new ArmazenamentoConfiguracaoLocalJson(_ficheiro));
-        var disparou = false;
-        scanner.CodigoLido += _ => disparou = true;
-
-        scanner.ProcessarCaracter('1');
-        scanner.ProcessarCaracter('2');
-        scanner.ProcessarCaracter('3');
-        scanner.ProcessarEnter();
-
-        disparou.Should().BeTrue();
-
-        scanner.Reset();
-        disparou = false;
-        // A configuração padrão começa ativa; este teste valida a troca
-        // para desativado através do armazenamento + reload.
-    }
-
-    [Fact]
     public async Task Recarregar_Configuracao_Desativada_Deve_Impedir_Leitura()
     {
         var armazenamento = new ArmazenamentoConfiguracaoLocalJson(_ficheiro);
