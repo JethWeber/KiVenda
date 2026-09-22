@@ -1,6 +1,7 @@
 using KiVenda.Application.Abstractions.Auth;
 using KiVenda.Application.Abstractions.Persistence;
 using KiVenda.Application.Common;
+using KiVenda.Core.Auditoria;
 using KiVenda.Core.Caixa;
 using KiVenda.Core.Exceptions;
 using KiVenda.Core.Utilizadores;
@@ -29,6 +30,16 @@ public sealed class AbrirCaixaUseCase(IUnitOfWork uow, IContextoAutenticacao con
         var sessao = new SessaoCaixa(contexto.UtilizadorId, comando.SaldoInicial);
 
         await uow.SessoesCaixa.AdicionarAsync(sessao, cancellationToken);
+
+        await uow.LogsAuditoria.AdicionarAsync(
+            new LogAuditoria(
+                contexto.UtilizadorId,
+                "Abriu caixa",
+                "SessaoCaixa",
+                sessao.Id,
+                dadosDepois: $"Saldo inicial: {comando.SaldoInicial:0.00}"),
+            cancellationToken);
+
         await uow.SaveChangesAsync(cancellationToken);
 
         return sessao.Id;
