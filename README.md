@@ -119,7 +119,7 @@ Legenda: ✅ Concluída · 🔄 Em curso · ⬜ Pendente
 | 6 | [Interface Desktop — Módulos Base](#fase-6--interface-desktop-avalonia--mvvm-módulos-base-✅) | ✅ | Shell, Dashboard, Produtos, Compras, Clientes, Fornecedores, Utilizadores |
 | 7 | [Vendas (PDV) e Caixa](#fase-7--módulo-de-vendas-e-fluxo-de-caixa-✅) | ✅ | Fluxo de venda completo (recibo incluído) e fluxo de caixa completo |
 | 8 | [Scanner de Código de Barras](#fase-8--scanner-de-código-de-barras-✅) | ✅ | Scanner USB tipo teclado integrado no PDV, configuração persistente e testes automatizados implementados |
-| 9 | Relatórios | ⬜ | Diário, Mensal, Stock |
+| 9 | [Relatórios](#fase-9--relatórios-🔄) | 🔄 | Relatórios diário, mensal e de stock implementados na Application e UI; exportação por impressão; falta validação final local |
 | 10 | Auditoria | ⬜ | Log de operações sensíveis |
 | 11 | Configurações, Licenciamento e Backup | ⬜ | Onboarding < 5 minutos |
 | 12 | Testes | ⬜ | Suite completa + aceitação com cliente piloto |
@@ -786,11 +786,54 @@ neste repositório.
 - [x] Testes de `LocalizarProdutoPorCodigoUseCase` para código do produto, EAN de apresentação, múltiplas apresentações, fallback por código interno, inexistente e produto inativo.
 - [x] Teste físico com leitor USB real no PDV — leitura reconhecida e encaminhada corretamente para o fluxo de venda.
 - [x] Fluxo físico principal validado no PDV pelo utilizador.
-- [ ] `dotnet build` e `dotnet test` ainda devem ser executados no ambiente local para validação final da solução completa.
+- [x] `dotnet build` executado pelo utilizador — passou sem erros.
+- [x] `dotnet test` executado pelo utilizador — passou sem falhas.
 
 ### Encerramento
 
-A implementação da Fase 8 está **concluída** e o scanner USB foi validado fisicamente no PDV. A validação de `dotnet build`/`dotnet test` continua explicitamente pendente porque este repositório não possui execução de CI disponível para confirmar esses comandos a partir do GitHub.
+A implementação da Fase 8 está **concluída**: o scanner USB foi validado fisicamente no PDV e `dotnet build`/`dotnet test` foram executados localmente pelo utilizador com sucesso.
+
+## Fase 9 — Relatórios 🔄
+
+**Objetivo:** disponibilizar os três relatórios essenciais do MVP — diário, mensal e stock — com filtros adequados, controlo de acesso ao perfil Gerente e impressão do conteúdo.
+
+### O que foi implementado
+
+**Application**
+- [x] `GerarRelatorioDiarioUseCase` — total vendido, lucro estimado, número de vendas e produtos vendidos, com filtro opcional por utilizador.
+- [x] `GerarRelatorioMensalUseCase` — receita, lucro estimado e até 10 produtos mais vendidos no mês.
+- [x] `GerarRelatorioStockUseCase` — separação entre produtos sem stock e com stock baixo.
+- [x] Relatórios restritos por `Acao.AcederRelatorios`.
+- [x] Stock apresentado também convertido para a apresentação comercial ativa.
+- [x] Casos de uso registados no DI.
+
+**Interface Desktop**
+- [x] Novo `RelatoriosViewModel` com carregamento dos três relatórios.
+- [x] Novo ecrã `RelatoriosView`.
+- [x] Filtro de data para diário/mensal.
+- [x] Filtro opcional por utilizador no relatório diário.
+- [x] Listagem de produtos vendidos e produtos mais vendidos.
+- [x] Separação visual de produtos em falta e stock baixo.
+- [x] Impressão do relatório através de `IServicoImpressao.ImprimirTextoAsync`.
+- [x] Relatórios ligados ao item "Relatórios" da navegação principal.
+- [x] Acesso continua protegido pelo perfil Gerente.
+
+**Testes**
+- [x] Testes do relatório diário.
+- [x] Testes do relatório mensal.
+- [x] Testes do relatório de stock.
+- [x] Teste de bloqueio de acesso ao relatório pelo Atendente.
+
+### Validação pendente
+- [ ] `dotnet build`
+- [ ] `dotnet test`
+- [ ] Validação visual dos três relatórios com dados reais.
+- [ ] Confirmar impressão do relatório numa máquina alvo.
+
+### Próximo passo
+➡️ **Fase 10 — Auditoria (Log de Operações).**
+
+---
 
 ## Convenções do projeto
 
