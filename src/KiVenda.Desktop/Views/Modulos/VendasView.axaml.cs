@@ -41,11 +41,20 @@ public partial class VendasView : UserControl
         }
     }
 
-    private void OnCodigoLido(string codigo)
+    private async void OnCodigoLido(string codigo)
     {
-        if (DataContext is VendasViewModel vm)
+        if (DataContext is not VendasViewModel vm)
         {
-            _ = vm.ProcessarLeituraScannerAsync(codigo);
+            return;
+        }
+
+        await vm.ProcessarLeituraScannerAsync(codigo);
+
+        if (_servicoScanner?.ConfiguracaoAtual.AbrirQuantidadeAposLeitura == true &&
+            QuantidadeScannerTextBox.IsVisible)
+        {
+            QuantidadeScannerTextBox.Focus();
+            QuantidadeScannerTextBox.SelectAll();
         }
     }
 
