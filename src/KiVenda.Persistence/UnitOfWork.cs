@@ -55,8 +55,19 @@ public sealed class UnitOfWork : IUnitOfWork
 
     public ILogAuditoriaRepository LogsAuditoria => _logsAuditoria ??= new LogAuditoriaRepository(_context);
 
-    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        _context.SaveChangesAsync(cancellationToken);
+    // public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
+    //     _context.SaveChangesAsync(cancellationToken);
+
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        foreach (var entry in _context.ChangeTracker.Entries())
+        {
+            Console.WriteLine(
+                $"[EF DEBUG] {entry.Entity.GetType().Name} -> {entry.State}");
+        }
+
+        return _context.SaveChangesAsync(cancellationToken);
+    }
 
     public ValueTask DisposeAsync() => _context.DisposeAsync();
 }

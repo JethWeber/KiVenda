@@ -1,6 +1,7 @@
 using KiVenda.Application.Abstractions.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace KiVenda.Persistence.DependencyInjection;
 
@@ -24,8 +25,11 @@ public static class ServiceCollectionExtensions
     /// </param>
     public static IServiceCollection AddPersistence(this IServiceCollection services, string caminhoBaseDeDados)
     {
-        services.AddDbContext<KiVendaDbContext>(options =>
-            options.UseSqlite($"Data Source={caminhoBaseDeDados}"));
+        services.AddDbContext<KiVendaDbContext>(options => options
+            .UseSqlite($"Data Source={caminhoBaseDeDados}")
+            .EnableDetailedErrors()
+            .EnableSensitiveDataLogging()
+            .LogTo(Console.WriteLine, LogLevel.Information));
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
