@@ -54,6 +54,22 @@ public sealed class KiVendaDbContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(KiVendaDbContext).Assembly);
 
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            var primaryKey = entityType.FindPrimaryKey();
+
+            if (primaryKey is null)
+                continue;
+
+            foreach (var property in primaryKey.Properties)
+            {
+                if (property.ClrType == typeof(Guid))
+                {
+                    property.ValueGenerated = Microsoft.EntityFrameworkCore.Metadata.ValueGenerated.Never;
+                }
+            }
+        }
+
         base.OnModelCreating(modelBuilder);
     }
 }
