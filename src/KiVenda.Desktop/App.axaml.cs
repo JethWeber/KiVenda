@@ -88,7 +88,7 @@ public partial class App : Avalonia.Application
         Log.Information("A preparar a base de dados local...");
         await using var scope = Services.CreateAsyncScope();
         var contexto = scope.ServiceProvider.GetRequiredService<KiVendaDbContext>();
-        await contexto.Database.EnsureCreatedAsync();
+        await contexto.Database.MigrateAsync();
         var senhaHasher = scope.ServiceProvider.GetRequiredService<ISenhaHasher>();
         await KiVendaDbSeeder.SeedAsync(contexto, senhaHasher.GerarHash("admin123"));
         Log.Information("Base de dados pronta.");

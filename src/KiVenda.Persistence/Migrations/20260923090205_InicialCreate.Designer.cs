@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KiVenda.Persistence.Migrations
 {
     [DbContext(typeof(KiVendaDbContext))]
-    [Migration("20260822095147_InicialCreate")]
+    [Migration("20260923090205_InicialCreate")]
     partial class InicialCreate
     {
         /// <inheritdoc />

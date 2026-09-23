@@ -190,6 +190,12 @@
   },
   "active": "f2c2f79f1fbb3813",
   "lastOpenFiles": [
+    "src/KiVenda.Desktop/Views/Modulos/ConfiguracoesView.axaml.cs",
+    "src/KiVenda.Desktop/Views/Modulos/ConfiguracoesView.axaml",
+    "src/KiVenda.Desktop/Views/Modulos/ConfiguracaoLicencaView.axaml.cs",
+    "src/KiVenda.Desktop/Views/Modulos/ConfiguracaoLicencaView.axaml",
+    "src/KiVenda.Desktop/ViewModels/Modulos/ConfiguracoesViewModel.cs",
+    "src/KiVenda.Desktop/ViewModels/Modulos/ConfiguracaoLicencaViewModel.cs",
     "MocUp/stitch_kivenda_desktop_ui_mockup/AllUI/Config.png",
     "MocUp/stitch_kivenda_desktop_ui_mockup/AllUI/Captura de ecrã de 2026-09-22 20-40-14.png",
     "src/KiVenda.Desktop/Views/Modulos/AuditoriaView.axaml.cs",
@@ -197,11 +203,6 @@
     "tests/KiVenda.Application.Tests/Auditoria",
     "src/KiVenda.Desktop/Views/Modulos/AuditoriaView.axaml",
     "src/KiVenda.Desktop/ViewModels/Modulos/AuditoriaViewModel.cs",
-    "src/KiVenda.Application/Auditoria/ConsultarAuditoriaUseCase.cs",
-    "src/KiVenda.Application/Auditoria",
-    "tests/KiVenda.Application.Tests/Relatorios/RelatoriosUseCasesTests.cs",
-    "tests/KiVenda.Application.Tests/Relatorios",
-    "src/KiVenda.Desktop/Views/Modulos/RelatoriosView.axaml.cs",
     "README.md"
   ]
 }

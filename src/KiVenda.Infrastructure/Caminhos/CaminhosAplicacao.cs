@@ -10,26 +10,32 @@ namespace KiVenda.Infrastructure.Caminhos;
 /// </summary>
 public static class CaminhosAplicacao
 {
-    private const string NomePasta = "KiVenda";
+    private const string NomePasta = "KiVendaDesktop";
 
     /// <summary>
     /// Pasta raiz de dados da aplicação:
-    ///   Windows → %APPDATA%\KiVenda
-    ///   Linux   → ~/.local/share/KiVenda (via XDG_DATA_HOME quando definido)
-    ///   macOS   → ~/Library/Application Support/KiVenda
+    ///   Windows → %LOCALAPPDATA%\KiVendaDesktop
+    ///   Linux   → ~/.local/share/KiVendaDesktop
+    ///   macOS   → ~/Library/Application Support/KiVendaDesktop
     /// </summary>
     public static string PastaDados
     {
         get
         {
-            var pastaBase = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);
+            var pastaBase = Environment.GetFolderPath(
+                Environment.SpecialFolder.LocalApplicationData,
+                Environment.SpecialFolderOption.Create);
+
             var caminho = Path.Combine(pastaBase, NomePasta);
+
             Directory.CreateDirectory(caminho);
+
             return caminho;
         }
     }
 
-    public static string CaminhoBaseDeDados => Path.Combine(PastaDados, "kivenda.db");
+    public static string CaminhoBaseDeDados =>
+        Path.Combine(PastaDados, "kivenda.db");
 
     public static string PastaBackups
     {
@@ -61,7 +67,9 @@ public static class CaminhosAplicacao
         }
     }
 
-    public static string CaminhoConfiguracaoLocal => Path.Combine(PastaDados, "configuracao.json");
+    public static string CaminhoConfiguracaoLocal =>
+        Path.Combine(PastaDados, "configuracao.json");
 
-    public static string CaminhoLicenca => Path.Combine(PastaDados, "licenca.wta");
+    public static string CaminhoLicenca =>
+        Path.Combine(PastaDados, "licenca.wta");
 }
