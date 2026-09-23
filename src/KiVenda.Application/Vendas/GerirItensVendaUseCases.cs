@@ -3,9 +3,6 @@ using KiVenda.Application.Abstractions.Persistence;
 using KiVenda.Application.Common;
 using KiVenda.Core.Exceptions;
 using KiVenda.Core.Utilizadores;
-using KiVenda.Core.Vendas;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace KiVenda.Application.Vendas;
 
@@ -28,31 +25,6 @@ public sealed class AdicionarItemVendaUseCase(IUnitOfWork uow, IContextoAutentic
             ?? throw new DomainException("Produto não encontrado.");
 
         var item = venda.AdicionarItem(produto, comando.ApresentacaoId, comando.QuantidadeNaApresentacao);
-
-        // Diagnóstico temporário: confirmar como o EF está classificando
-        // o ItemVenda recém-adicionado ao agregado.
-        var context = uow.GetType()
-            .GetField("_context", BindingFlags.NonPublic | BindingFlags.Instance)?
-            .GetValue(uow) as DbContext;
-
-        if (context is not null)
-        {
-            var entityType = context.Model.FindEntityType(typeof(ItemVenda));
-            var key = entityType?.FindPrimaryKey();
-
-            Console.WriteLine("===== ITEM VENDA DEBUG =====");
-            Console.WriteLine($"Id: {item.Id}");
-            Console.WriteLine($"Guid.Empty: {item.Id == Guid.Empty}");
-            Console.WriteLine($"ValueGenerated: {key?.Properties.Single().ValueGenerated}");
-
-            foreach (var entry in context.ChangeTracker.Entries<ItemVenda>())
-            {
-                Console.WriteLine(
-                    $"TRACKER -> State={entry.State}, Id={entry.Entity.Id}");
-            }
-
-            Console.WriteLine("============================");
-        }
 
         await uow.SaveChangesAsync(cancellationToken);
 
