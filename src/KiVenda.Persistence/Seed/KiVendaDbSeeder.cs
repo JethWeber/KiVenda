@@ -52,10 +52,34 @@ public static class KiVendaDbSeeder
     private static async Task SeedCategoriaGeralAsync(KiVendaDbContext context, CancellationToken cancellationToken)
     {
         var existe = await context.Categorias.AnyAsync(c => c.Nome == "Geral", cancellationToken);
+        var alimento = await context.Categorias.AnyAsync(c => c.Nome == "Alimento", cancellationToken);
+        var bebida = await context.Categorias.AnyAsync(c => c.Nome == "Bebida", cancellationToken);
+        var higiene = await context.Categorias.AnyAsync(c => c.Nome == "Higiene", cancellationToken);
+        var medicamento = await context.Categorias.AnyAsync(c => c.Nome == "Medicamento", cancellationToken);
 
         if (!existe)
         {
             await context.Categorias.AddAsync(new Categoria("Geral"), cancellationToken);
+        }
+
+        if (!alimento)
+        {
+            await context.Categorias.AddAsync(new Categoria("Alimento"), cancellationToken);
+        }
+
+        if (!bebida)
+        {
+            await context.Categorias.AddAsync(new Categoria("Bebida"), cancellationToken);
+        }
+
+        if (!higiene)
+        {
+            await context.Categorias.AddAsync(new Categoria("Higiene"), cancellationToken);
+        }
+
+        if (!medicamento)
+        {
+            await context.Categorias.AddAsync(new Categoria("Medicamento"), cancellationToken);
         }
     }
 
