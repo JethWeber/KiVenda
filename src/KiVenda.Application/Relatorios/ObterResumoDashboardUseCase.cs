@@ -6,21 +6,27 @@ using KiVenda.Core.Utilizadores;
 
 namespace KiVenda.Application.Relatorios;
 
+public sealed record AlertaDashboardDto(
+    Guid Id,
+    string Tipo,
+    string Titulo,
+    string Mensagem);
+
 public sealed record ResumoDashboardDto(
     decimal VendasDeHoje,
     decimal? CaixaAtual,
     decimal LucroEstimadoHoje,
     int ProdutosStockBaixoOuSemStock,
-    int VendasRealizadasHoje);
+    int VendasRealizadasHoje,
+    IReadOnlyList<AlertaDashboardDto> Alertas);
 
 /// <summary>
 /// Resumo do Dashboard (Secção 4.1: "responder de forma imediata à
 /// pergunta mais comum do comerciante — Quanto vendi hoje?"). Ao
 /// contrário de <see cref="GerarRelatorioDiarioUseCase"/> (módulo
 /// Relatórios, restrito ao Gerente), este resumo usa apenas a
-/// permissão-base (<see cref="Acao.ConsultarProdutosStockClientes"/>,
-/// disponível a ambos os perfis) — é um resumo operacional do dia a
-/// dia, não um relatório de gestão.
+/// permissão-base (<see cref="Acao.ConsultarProdutosStockClientes"/>),
+/// disponível a ambos os perfis.
 /// </summary>
 public sealed class ObterResumoDashboardUseCase(IUnitOfWork uow, IContextoAutenticacao contexto)
 {
@@ -31,20 +37,43 @@ public sealed class ObterResumoDashboardUseCase(IUnitOfWork uow, IContextoAutent
         var inicioDoDia = DateTime.UtcNow.Date;
         var fimDoDia = inicioDoDia.AddDays(1).AddTicks(-1);
 
-        var vendasHoje = (await uow.Vendas.ListarAsync(de: inicioDoDia, ate: fimDoDia, cancellationToken: cancellationToken))
+        var vendasHoje = (await uow.Vendas.ListarAsync(
+                de: inicioDoDia,
+                ate: fimDoDia,
+                cancellationToken: cancellationToken))
             .Where(v => v.Estado == EstadoVenda.Finalizada)
             .ToList();
 
         var sessaoAberta = await uow.SessoesCaixa.ObterAbertaAsync(cancellationToken);
 
-        var produtos = await uow.Produtos.ListarAsync(apenasAtivos: true, cancellationToken: cancellationToken);
-        var produtosComAlerta = produtos.Count(p => p.ObterEstadoStock() is EstadoStock.StockBaixo or EstadoStock.SemStock);
+        var produtos = await uow.Produtos.ListarAsync(
+            apenasAtivos: true,
+            cancellationToken: cancellationToken);
+
+        var produtosComAlerta = produtos
+            .Where(p => p.ObterEstadoStock() is EstadoStock.StockBaixo or EstadoStock.SemStock)
+            .ToList();
+
+        var notificacoes = await uow.Notificacoes.ListarPorUtilizadorAsync(
+            contexto.UtilizadorId,
+            cancellationToken: cancellationToken);
+
+        var alertas = notificacoes
+            .Where(n => !n.Lida)
+            .OrderByDescending(n => n.DataCriacao)
+            .Select(n => new AlertaDashboardDto(
+                n.Id,
+                n.Tipo,
+                n.Titulo,
+                n.Mensagem))
+            .ToList();
 
         return new ResumoDashboardDto(
             VendasDeHoje: vendasHoje.Sum(v => v.Total),
             CaixaAtual: sessaoAberta?.SaldoCalculado,
             LucroEstimadoHoje: vendasHoje.Sum(v => v.LucroEstimado),
-            ProdutosStockBaixoOuSemStock: produtosComAlerta,
-            VendasRealizadasHoje: vendasHoje.Count);
+            ProdutosStockBaixoOuSemStock: produtosComAlerta.Count,
+            VendasRealizadasHoje: vendasHoje.Count,
+            Alertas: alertas);
     }
 }
