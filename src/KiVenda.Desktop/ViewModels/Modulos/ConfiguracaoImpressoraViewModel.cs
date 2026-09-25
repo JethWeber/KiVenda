@@ -126,7 +126,7 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
             return;
         }
 
-        var dispositivo = DispositivoSelecionado?.Id ?? Dispositivo.Trim();
+        var dispositivo = Dispositivo.Trim();
 
         if (string.IsNullOrWhiteSpace(dispositivo))
         {
@@ -164,7 +164,7 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
 
         try
         {
-            var dispositivo = DispositivoSelecionado?.Id ?? Dispositivo.Trim();
+            var dispositivo = Dispositivo.Trim();
 
             var configuracao = new ConfiguracaoImpressoraTermica(
                 dispositivo,
@@ -206,6 +206,15 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
         if (value is not null)
         {
             Dispositivo = value.Id;
+        }
+    }
+
+    partial void OnDispositivoChanged(string value)
+    {
+        if (DispositivoSelecionado is not null &&
+            !string.Equals(DispositivoSelecionado.Id, value, StringComparison.OrdinalIgnoreCase))
+        {
+            DispositivoSelecionado = null;
         }
     }
 
