@@ -44,7 +44,7 @@
                     <TextBlock FontWeight="SemiBold" Text="Estado" />
                     <TextBlock Text="{Binding Mensagem}" TextWrapping="Wrap" />
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Button Content="Guardar empresa" Classes="primario" Command="{Binding GuardarCommand}" IsEnabled="{Binding !ACarregar}" />
+                        <Button Content="Guardar empresa" Classes="primario" Command="{Binding GuardarCommand}" IsEnabled="{Binding PodeExecutar}" />
                         <Button Content="Remover cadastro" Classes="secundario" Command="{Binding RemoverCommand}" IsEnabled="{Binding TemEmpresa}" />
                     </StackPanel>
                 </StackPanel>
