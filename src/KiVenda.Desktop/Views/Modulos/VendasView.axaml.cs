@@ -44,21 +44,6 @@ public partial class VendasView : UserControl
         PesquisaCodigoTextBox.Focus();
     }
 
-    private void VendasView_AttachedToVisualTree(object? sender, Avalonia.VisualTreeAttachmentEventArgs e)
-    {
-        _servicoScanner = App.Services.GetService(typeof(IServicoScanner)) as IServicoScanner;
-        if (_servicoScanner is null)
-        {
-            return;
-        }
-
-        _servicoScanner.CodigoLido -= OnCodigoLido;
-        _servicoScanner.CodigoLido += OnCodigoLido;
-
-        _ = RecarregarScannerAsync();
-        PesquisaCodigoTextBox.Focus();
-    }
-
     private void VendasView_DetachedFromVisualTree(object? sender, Avalonia.VisualTreeAttachmentEventArgs e)
     {
         if (DataContext is VendasViewModel vm)
