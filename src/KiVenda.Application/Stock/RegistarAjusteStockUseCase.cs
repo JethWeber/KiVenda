@@ -3,6 +3,7 @@ using KiVenda.Application.Abstractions.Persistence;
 using KiVenda.Application.Common;
 using KiVenda.Core.Auditoria;
 using KiVenda.Core.Exceptions;
+using KiVenda.Core.Notificacoes;
 using KiVenda.Core.Utilizadores;
 
 namespace KiVenda.Application.Stock;
@@ -28,6 +29,19 @@ public sealed class RegistarAjusteStockUseCase(IUnitOfWork uow, IContextoAutenti
         var movimento = produto.RegistarAjusteStock(comando.DeltaUnidadeBase, comando.Motivo, contexto.UtilizadorId);
 
         await uow.MovimentosStock.AdicionarAsync(movimento, cancellationToken);
+
+        if (estoqueAntes > produto.StockMinimo && produto.EstoqueAtual <= produto.StockMinimo)
+        {
+            await uow.Notificacoes.AdicionarAsync(
+                new Notificacao(
+                    contexto.UtilizadorId,
+                    "STOCK_BAIXO",
+                    produto.EstoqueAtual <= 0 ? "Produto sem stock" : "Stock baixo",
+                    produto.EstoqueAtual <= 0
+                        ? $"O produto {produto.Nome} ficou sem stock."
+                        : $"O stock de {produto.Nome} ficou baixo: {produto.EstoqueAtual:0.####} unidade(s)."),
+                cancellationToken);
+        }
 
         await uow.LogsAuditoria.AdicionarAsync(
             new LogAuditoria(
