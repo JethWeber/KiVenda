@@ -5,6 +5,7 @@ using KiVenda.Core.Compras;
 using KiVenda.Core.Fornecedores;
 using KiVenda.Core.Empresas;
 using KiVenda.Core.Produtos;
+using KiVenda.Core.Notificacoes;
 using KiVenda.Core.Utilizadores;
 using KiVenda.Core.Vendas;
 using SessaoCaixaEntity = KiVenda.Core.Caixa.SessaoCaixa;
@@ -32,6 +33,7 @@ public sealed class InMemoryUnitOfWork : IUnitOfWork
     public ISessaoCaixaRepository SessoesCaixa => new FakeSessaoCaixaRepository(_db);
     public IUtilizadorRepository Utilizadores => new FakeUtilizadorRepository(_db);
     public ILogAuditoriaRepository LogsAuditoria => new FakeLogAuditoriaRepository(_db);
+    public INotificacaoRepository Notificacoes => new FakeNotificacaoRepository(_db);
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => Task.FromResult(0);
     public ValueTask DisposeAsync() => ValueTask.CompletedTask;
@@ -146,6 +148,28 @@ file sealed class FakeUtilizadorRepository(InMemoryDatabase db) : IUtilizadorRep
     public Task<Utilizador?> ObterPorNomeUtilizadorAsync(string nomeUtilizador, CancellationToken ct = default) => Task.FromResult(db.Utilizadores.FirstOrDefault(u => u.NomeUtilizador == nomeUtilizador));
     public Task<IReadOnlyList<Utilizador>> ListarAsync(bool apenasAtivos = true, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<Utilizador>>(db.Utilizadores.Where(u => !apenasAtivos || u.Ativo).ToList());
     public Task AdicionarAsync(Utilizador utilizador, CancellationToken ct = default) { db.Utilizadores.Add(utilizador); return Task.CompletedTask; }
+}
+
+file sealed class FakeNotificacaoRepository(InMemoryDatabase db) : INotificacaoRepository
+{
+    public Task<IReadOnlyList<Notificacao>> ListarPorUtilizadorAsync(Guid utilizadorId, int limite = 100, CancellationToken ct = default) =>
+        Task.FromResult<IReadOnlyList<Notificacao>>(db.Notificacoes
+            .Where(n => n.UtilizadorId == utilizadorId)
+            .OrderByDescending(n => n.DataCriacao)
+            .Take(Math.Clamp(limite, 1, 500))
+            .ToList());
+
+    public Task<Notificacao?> ObterUltimaPorTipoAsync(Guid utilizadorId, string tipo, CancellationToken ct = default) =>
+        Task.FromResult(db.Notificacoes
+            .Where(n => n.UtilizadorId == utilizadorId && n.Tipo == tipo)
+            .OrderByDescending(n => n.DataCriacao)
+            .FirstOrDefault());
+
+    public Task AdicionarAsync(Notificacao notificacao, CancellationToken ct = default)
+    {
+        db.Notificacoes.Add(notificacao);
+        return Task.CompletedTask;
+    }
 }
 
 file sealed class FakeLogAuditoriaRepository(InMemoryDatabase db) : ILogAuditoriaRepository
