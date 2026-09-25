@@ -8,7 +8,7 @@ namespace KiVenda.Infrastructure.Impressao;
 /// A camada de infraestrutura escolhe o detector e transporte adequados ao
 /// sistema operativo; a UI trabalha apenas com identificadores descobertos.
 /// </summary>
-public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao
+public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao, IServicoImpressaoTermica
 {
     private readonly IArmazenamentoConfiguracaoLocal _armazenamento;
     private readonly IDetectorImpressoras _detector;
