@@ -12,13 +12,18 @@ public sealed record AlertaDashboardDto(
     string Titulo,
     string Mensagem);
 
+public sealed record VendaDiaDashboardDto(
+    DateTime Data,
+    decimal Total);
+
 public sealed record ResumoDashboardDto(
     decimal VendasDeHoje,
     decimal? CaixaAtual,
     decimal LucroEstimadoHoje,
     int ProdutosStockBaixoOuSemStock,
     int VendasRealizadasHoje,
-    IReadOnlyList<AlertaDashboardDto> Alertas);
+    IReadOnlyList<AlertaDashboardDto> Alertas,
+    IReadOnlyList<VendaDiaDashboardDto> VendasPorDia);
 
 /// <summary>
 /// Resumo do Dashboard (Secção 4.1: "responder de forma imediata à
@@ -37,11 +42,35 @@ public sealed class ObterResumoDashboardUseCase(IUnitOfWork uow, IContextoAutent
         var inicioDoDia = DateTime.UtcNow.Date;
         var fimDoDia = inicioDoDia.AddDays(1).AddTicks(-1);
 
-        var vendasHoje = (await uow.Vendas.ListarAsync(
-                de: inicioDoDia,
-                ate: fimDoDia,
+        var inicioHistoricoLocal = DateTime.Now.Date.AddDays(-29);
+        var fimHistoricoLocal = DateTime.Now.Date.AddDays(1);
+
+        var inicioHistoricoUtc = inicioHistoricoLocal.ToUniversalTime();
+        var fimHistoricoUtc = fimHistoricoLocal.ToUniversalTime();
+
+        var vendasHistorico = (await uow.Vendas.ListarAsync(
+                de: inicioHistoricoUtc,
+                ate: fimHistoricoUtc.AddTicks(-1),
                 cancellationToken: cancellationToken))
             .Where(v => v.Estado == EstadoVenda.Finalizada)
+            .ToList();
+
+        var vendasHoje = vendasHistorico
+            .Where(v => v.Data.ToLocalTime().Date == DateTime.Now.Date)
+            .ToList();
+
+        var vendasPorData = vendasHistorico
+            .GroupBy(v => v.Data.ToLocalTime().Date)
+            .ToDictionary(g => g.Key, g => g.Sum(v => v.Total));
+
+        var vendasPorDia = Enumerable.Range(0, 30)
+            .Select(offset =>
+            {
+                var data = inicioHistoricoLocal.AddDays(offset);
+                return new VendaDiaDashboardDto(
+                    data,
+                    vendasPorData.GetValueOrDefault(data, 0m));
+            })
             .ToList();
 
         var sessaoAberta = await uow.SessoesCaixa.ObterAbertaAsync(cancellationToken);
@@ -74,6 +103,7 @@ public sealed class ObterResumoDashboardUseCase(IUnitOfWork uow, IContextoAutent
             LucroEstimadoHoje: vendasHoje.Sum(v => v.LucroEstimado),
             ProdutosStockBaixoOuSemStock: produtosComAlerta.Count,
             VendasRealizadasHoje: vendasHoje.Count,
-            Alertas: alertas);
+            Alertas: alertas,
+            VendasPorDia: vendasPorDia);
     }
 }
