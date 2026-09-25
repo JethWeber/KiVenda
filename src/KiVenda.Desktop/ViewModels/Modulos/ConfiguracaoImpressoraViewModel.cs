@@ -74,7 +74,7 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
 
         try
         {
-            var encontrados = await _detector.DetarAsync();
+            var encontrados = await _detector.DetetarAsync();
 
             Dispositivos.Clear();
             foreach (var dispositivo in encontrados)
