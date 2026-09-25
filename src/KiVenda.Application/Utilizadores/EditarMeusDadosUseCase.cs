@@ -15,7 +15,7 @@ public sealed class EditarMeusDadosUseCase(
     public async Task ExecutarAsync(EditarMeusDadosCommand comando, CancellationToken cancellationToken = default)
     {
         if (comando.UtilizadorId != contexto.UtilizadorId)
-            throw new PermissaoNegadaException(KiVenda.Core.Enums.Acao.CriarUtilizadores);
+            throw new DomainException("Só podes alterar os teus próprios dados.");
 
         if (string.IsNullOrWhiteSpace(comando.Nome) || string.IsNullOrWhiteSpace(comando.NomeUtilizador))
             throw new DomainException("Nome e login são obrigatórios.");
@@ -28,14 +28,12 @@ public sealed class EditarMeusDadosUseCase(
             throw new DomainException("Esse login já está em uso.");
 
         utilizador.AlterarDados(comando.Nome, comando.NomeUtilizador);
-
         if (!string.IsNullOrWhiteSpace(comando.NovaSenha))
             utilizador.AlterarPasswordHash(senhaHasher.GerarHash(comando.NovaSenha));
 
         await uow.LogsAuditoria.AdicionarAsync(
             new LogAuditoria(contexto.UtilizadorId, "Alterou os próprios dados", "Utilizador", utilizador.Id),
             cancellationToken);
-
         await uow.SaveChangesAsync(cancellationToken);
     }
 }
