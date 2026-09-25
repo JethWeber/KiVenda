@@ -26,6 +26,7 @@ public partial class ConfiguracaoEmpresaViewModel : ViewModelBase
     [ObservableProperty] private bool _aGuardar;
 
     public bool TemEmpresa => _empresaId.HasValue;
+    public bool PodeExecutar => !ACarregar && !AGuardar;
     public bool TemLogo => Logo is { Length: > 0 };
     public string EstadoLogo => TemLogo ? "Logótipo carregado." : "Sem logótipo.";
 
@@ -63,6 +64,7 @@ public partial class ConfiguracaoEmpresaViewModel : ViewModelBase
             }
 
             OnPropertyChanged(nameof(TemEmpresa));
+            OnPropertyChanged(nameof(PodeExecutar));
             OnPropertyChanged(nameof(TemLogo));
             OnPropertyChanged(nameof(EstadoLogo));
         }
@@ -70,7 +72,7 @@ public partial class ConfiguracaoEmpresaViewModel : ViewModelBase
         {
             Mensagem = $"Não foi possível carregar a empresa: {ex.Message}";
         }
-        finally { ACarregar = false; }
+        finally { ACarregar = false; OnPropertyChanged(nameof(PodeExecutar)); }
     }
 
     [RelayCommand]
@@ -83,6 +85,7 @@ public partial class ConfiguracaoEmpresaViewModel : ViewModelBase
         }
 
         AGuardar = true;
+        OnPropertyChanged(nameof(PodeExecutar));
         try
         {
             await using var scope = App.Services.CreateAsyncScope();
@@ -110,7 +113,7 @@ public partial class ConfiguracaoEmpresaViewModel : ViewModelBase
         {
             Mensagem = $"Erro ao guardar empresa: {ex.Message}";
         }
-        finally { AGuardar = false; }
+        finally { AGuardar = false; OnPropertyChanged(nameof(PodeExecutar)); }
     }
 
     [RelayCommand]
@@ -134,6 +137,12 @@ public partial class ConfiguracaoEmpresaViewModel : ViewModelBase
 
     public void DefinirLogo(byte[] bytes, string mimeType)
     {
+        if (bytes.Length > 2 * 1024 * 1024)
+        {
+            Mensagem = "O logótipo não pode ultrapassar 2 MB.";
+            return;
+        }
+
         Logo = bytes;
         LogoMimeType = mimeType;
         OnPropertyChanged(nameof(TemLogo));
