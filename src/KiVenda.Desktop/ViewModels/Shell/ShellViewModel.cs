@@ -129,11 +129,11 @@ public partial class ShellViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void AbrirNotificacoes()
+    private async Task AbrirNotificacoesAsync()
     {
         NotificacoesAbertas = !NotificacoesAbertas;
         if (NotificacoesAbertas)
-            _servicoNotificacoes.MarcarTodasComoLidas();
+            await _servicoNotificacoes.MarcarTodasComoLidasAsync();
     }
 
     [RelayCommand]
