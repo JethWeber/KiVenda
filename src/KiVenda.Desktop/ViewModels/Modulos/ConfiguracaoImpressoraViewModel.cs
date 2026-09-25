@@ -58,13 +58,13 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
         try
         {
             var configuracao = new ConfiguracaoImpressoraTermica(
-                Ativo,
                 Dispositivo.Trim(),
                 Colunas > 0 ? Colunas : 48,
                 LinhasAlimentacaoFinal >= 0 ? LinhasAlimentacaoFinal : 4,
                 CortarPapel,
                 2,
-                string.IsNullOrWhiteSpace(EncodingNome) ? "cp850" : EncodingNome.Trim());
+                string.IsNullOrWhiteSpace(EncodingNome) ? "cp850" : EncodingNome.Trim(),
+                Ativo);
 
             await _armazenamento.GuardarAsync(
                 ConfiguracaoImpressoraTermica.Chave,
