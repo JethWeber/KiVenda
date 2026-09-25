@@ -7,6 +7,7 @@ public sealed class ConfiguracoesViewModel : ViewModelBase
 {
     public ConfiguracaoEmpresaViewModel Empresa { get; } = new();
     public ConfiguracaoScannerViewModel Scanner { get; } = new();
+    public ConfiguracaoImpressoraViewModel Impressora { get; } = new();
     public ConfiguracaoLicencaViewModel Licenca { get; } = new();
     public ConfiguracaoBackupViewModel Backup { get; }
     public ConfiguracaoTemaViewModel Tema { get; }
