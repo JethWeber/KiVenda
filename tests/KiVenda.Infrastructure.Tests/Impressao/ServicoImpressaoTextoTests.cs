@@ -26,10 +26,10 @@ public class ServicoImpressaoTextoTests : IDisposable
             Data: new DateTime(2026, 8, 22, 14, 30, 0),
             Itens: new[] { new ItemReciboDto("Açúcar", "1 kg", 2m, 3000m) },
             Subtotal: 3000m,
-            Desconto: 0m,
             Total: 3000m,
             LucroEstimado: 1000m,
-            Pagamentos: new[] { new PagamentoCommand(MetodoPagamento.Dinheiro, 3000m) });
+            MetodoPagamento: MetodoPagamento.Dinheiro,
+            OperadorNome: "Maria Silva");
 
         await servico.ImprimirReciboVendaAsync(recibo, dadosLoja);
 
@@ -42,10 +42,13 @@ public class ServicoImpressaoTextoTests : IDisposable
         conteudo.Should().Contain("1 kg");
         conteudo.Should().Contain("3.000,00 Kz");
         conteudo.Should().Contain("Dinheiro");
+        conteudo.Should().NotContain("Desconto");
+        conteudo.Should().NotContain("Valor pago");
+        conteudo.Should().NotContain("Troco");
     }
 
     [Fact]
-    public async Task ImprimirReciboVendaAsync_Com_Desconto_Deve_Mostrar_A_Linha_De_Desconto()
+    public async Task ImprimirReciboVendaAsync_Deve_Respeitar_Total_Sem_Desconto()
     {
         var servico = new ServicoImpressaoTexto(_pastaRecibos);
         var dadosLoja = new DadosLoja("Cantina da Maria");
@@ -55,18 +58,18 @@ public class ServicoImpressaoTextoTests : IDisposable
             DateTime.Now,
             new[] { new ItemReciboDto("Arroz", "5 kg", 1m, 5000m) },
             Subtotal: 5000m,
-            Desconto: 500m,
-            Total: 4500m,
+            Total: 5000m,
             LucroEstimado: 800m,
-            Pagamentos: new[] { new PagamentoCommand(MetodoPagamento.Multicaixa, 4500m) });
+            MetodoPagamento: MetodoPagamento.Multicaixa,
+            OperadorNome: "João Pedro");
 
         await servico.ImprimirReciboVendaAsync(recibo, dadosLoja);
 
         var ficheiro = Directory.GetFiles(_pastaRecibos, "recibo-*.txt").Single();
         var conteudo = await File.ReadAllTextAsync(ficheiro);
 
-        conteudo.Should().Contain("Desconto");
-        conteudo.Should().Contain("4.500,00 Kz"); // total já com desconto aplicado
+        conteudo.Should().Contain("5.000,00 Kz");
+        conteudo.Should().NotContain("Desconto");
     }
 
     [Fact]
