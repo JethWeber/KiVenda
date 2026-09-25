@@ -32,6 +32,11 @@ public partial class ShellViewModel : ViewModelBase
     [ObservableProperty] private ViewModelBase? _conteudoAtual;
     [ObservableProperty] private bool _notificacoesAbertas;
 
+    partial void OnItemSelecionadoChanged(ItemMenuLateral? value)
+    {
+        ConteudoAtual = value?.FabricaConteudo();
+    }
+
     public bool TemNotificacoesNaoLidas => _servicoNotificacoes.NaoLidas > 0;
 
     public event EventHandler? SessaoTerminada;
