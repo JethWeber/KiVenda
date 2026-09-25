@@ -48,7 +48,7 @@ public sealed class ServicoTema
 
     private static void Aplicar(TemaKiVenda tema)
     {
-        if (Application.Current is not { } app)
+        if (global::Avalonia.Application.Current is not { } app)
             return;
 
         app.RequestedThemeVariant = tema switch
