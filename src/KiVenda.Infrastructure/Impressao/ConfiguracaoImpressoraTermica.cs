@@ -4,10 +4,11 @@ namespace KiVenda.Infrastructure.Impressao;
 
 /// <summary>
 /// Configuração local de uma impressora térmica ESC/POS.
-/// É persistida no armazenamento de configurações do KiVenda.
+/// O dispositivo é descoberto automaticamente e persistido como identificador
+/// estável do sistema operativo (caminho no Linux ou nome da impressora no Windows).
 /// </summary>
 public sealed record ConfiguracaoImpressoraTermica(
-    string Dispositivo = "/dev/usb/lp0",
+    string Dispositivo = "",
     int Colunas = 48,
     int LinhasAlimentacaoFinal = 4,
     bool CortarPapel = true,
