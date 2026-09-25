@@ -1,5 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
              xmlns:vmm="using:KiVenda.Desktop.ViewModels.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.DashboardView"
              x:DataType="vmm:DashboardViewModel">
@@ -157,41 +158,29 @@
                         <StackPanel Spacing="3">
                             <TextBlock Text="Tendência de Vendas" FontSize="17" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextoPrimarioBrush}" />
-                            <TextBlock Text="Últimos 7 dias de atividade comercial" FontSize="12"
+                            <TextBlock Text="{Binding GraficoDescricao}" FontSize="12"
                                        Foreground="{DynamicResource TextoSecundarioBrush}" />
                         </StackPanel>
-                        <Border Grid.Column="1" Background="{DynamicResource NeutroSuaveBrush}"
-                                CornerRadius="8" Padding="4">
-                            <StackPanel Orientation="Horizontal">
-                                <Border Background="{DynamicResource SuperficieBrush}" CornerRadius="6" Padding="12,6">
-                                    <TextBlock Text="7 Dias" FontSize="11" FontWeight="Bold"
-                                               Foreground="{DynamicResource TextoPrimarioBrush}" />
-                                </Border>
-                                <TextBlock Text="30 Dias" FontSize="11" FontWeight="Bold"
-                                           Foreground="{DynamicResource TextoSecundarioBrush}" Margin="12,6" />
-                            </StackPanel>
-                        </Border>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                            <Button Content="7 Dias"
+                                    Padding="12,6"
+                                    Classes="secundario"
+                                    Command="{Binding Selecionar7DiasCommand}" />
+                            <Button Content="30 Dias"
+                                    Padding="12,6"
+                                    Classes="secundario"
+                                    Command="{Binding Selecionar30DiasCommand}" />
+                        </StackPanel>
                     </Grid>
 
-                    <Grid Height="250" ColumnDefinitions="*,*,*,*,*,*,*" VerticalAlignment="Bottom">
-                        <Border Grid.Column="0" Height="95" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
-                        <Border Grid.Column="1" Height="145" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
-                        <Border Grid.Column="2" Height="130" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
-                        <Border Grid.Column="3" Height="205" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
-                        <Border Grid.Column="4" Height="225" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0">
-                            <Border BorderBrush="{DynamicResource VerdePrimarioBrush}" BorderThickness="0,2,0,0" />
-                        </Border>
-                        <Border Grid.Column="5" Height="110" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
-                        <Border Grid.Column="6" Height="75" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
-
-                        <TextBlock Grid.Column="0" Text="Seg" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
-                        <TextBlock Grid.Column="1" Text="Ter" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
-                        <TextBlock Grid.Column="2" Text="Qua" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
-                        <TextBlock Grid.Column="3" Text="Qui" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
-                        <TextBlock Grid.Column="4" Text="Sex" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource VerdePrimarioBrush}" />
-                        <TextBlock Grid.Column="5" Text="Sáb" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
-                        <TextBlock Grid.Column="6" Text="Dom" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
-                    </Grid>
+                    <lvc:CartesianChart Height="250"
+                                             Series="{Binding SeriesVendas}"
+                                             XAxes="{Binding EixosXVendas}"
+                                             YAxes="{Binding EixosYVendas}"
+                                             AnimationsSpeed="00:00:00.250"
+                                             LegendPosition="Hidden"
+                                             TooltipPosition="Top"
+                                             Margin="0,4,0,0" />
                 </StackPanel>
             </Border>
 
