@@ -5,7 +5,7 @@
              x:DataType="vm:ConfiguracaoScannerViewModel">
     <StackPanel Spacing="18" MaxWidth="760">
         <StackPanel Spacing="4">
-            <TextBlock Classes="titulo-pagina" Text="Configurações" />
+            <TextBlock Classes="titulo-pagina" Text="Dispositivos" />
             <TextBlock Classes="subtitulo" Text="Scanner de código de barras — leitor USB tipo teclado" />
         </StackPanel>
         <Border Classes="cartao" Padding="18">
