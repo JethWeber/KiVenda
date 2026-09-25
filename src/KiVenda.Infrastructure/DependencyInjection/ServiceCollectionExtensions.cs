@@ -40,8 +40,8 @@ public static class ServiceCollectionExtensions
         }
         else
         {
-            services.AddSingleton<IDetectorImpressoras, DetectorImpressorasLinux>();
-            services.AddSingleton<ITransporteImpressora, TransporteImpressoraLinux>();
+            services.AddSingleton<IDetectorImpressoras, DetectorImpressorasNaoSuportado>();
+            services.AddSingleton<ITransporteImpressora, TransporteImpressoraNaoSuportado>();
         }
 
         services.AddSingleton<IServicoImpressao, ServicoImpressaoEscPosUsb>();
