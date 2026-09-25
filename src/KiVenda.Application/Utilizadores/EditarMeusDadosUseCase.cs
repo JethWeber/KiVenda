@@ -1,6 +1,7 @@
 using KiVenda.Application.Abstractions.Auth;
 using KiVenda.Application.Abstractions.Persistence;
 using KiVenda.Core.Auditoria;
+using KiVenda.Core.Notificacoes;
 using KiVenda.Core.Exceptions;
 
 namespace KiVenda.Application.Utilizadores;
@@ -30,6 +31,14 @@ public sealed class EditarMeusDadosUseCase(
         utilizador.AlterarDados(comando.Nome, comando.NomeUtilizador);
         if (!string.IsNullOrWhiteSpace(comando.NovaSenha))
             utilizador.AlterarPasswordHash(senhaHasher.GerarHash(comando.NovaSenha));
+
+        await uow.Notificacoes.AdicionarAsync(
+            new Notificacao(
+                contexto.UtilizadorId,
+                "UTILIZADOR_EDITADO",
+                "Dados atualizados",
+                "Os teus dados foram atualizados. A sessão será terminada para aplicar as alterações."),
+            cancellationToken);
 
         await uow.LogsAuditoria.AdicionarAsync(
             new LogAuditoria(contexto.UtilizadorId, "Alterou os próprios dados", "Utilizador", utilizador.Id),
