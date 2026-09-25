@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KiVenda.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InicialCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,6 +38,30 @@ namespace KiVenda.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Clientes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Empresa",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    NomeComercial = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    RazaoSocial = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    Nif = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
+                    Telefone = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 150, nullable: true),
+                    Endereco = table.Column<string>(type: "TEXT", maxLength: 250, nullable: true),
+                    Municipio = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Provincia = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Website = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    Logo = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    LogoMimeType = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    CriadoEm = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    AtualizadoEm = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Empresa", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -700,6 +724,9 @@ namespace KiVenda.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Empresa");
+
             migrationBuilder.DropTable(
                 name: "ItensCompra");
 
