@@ -800,6 +800,15 @@ namespace KiVenda.Persistence.Migrations
                     b.ToTable("Vendas", (string)null);
                 });
 
+            modelBuilder.Entity("KiVenda.Core.Notificacoes.Notificacao", b =>
+                {
+                    b.HasOne("KiVenda.Core.Utilizadores.Utilizador", null)
+                        .WithMany()
+                        .HasForeignKey("UtilizadorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("KiVenda.Core.Auditoria.LogAuditoria", b =>
                 {
                     b.HasOne("KiVenda.Core.Utilizadores.Utilizador", null)
