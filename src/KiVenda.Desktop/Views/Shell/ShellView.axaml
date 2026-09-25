@@ -44,7 +44,7 @@
                          Background="Transparent"
                          BorderThickness="0"
                          ItemsSource="{Binding ItensMenu}"
-                         SelectedItem="{Binding ItemSelecionado}">
+                         SelectionChanged="OnMenuSelectionChanged">
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">
                             <Setter Property="Padding" Value="14,11" />
