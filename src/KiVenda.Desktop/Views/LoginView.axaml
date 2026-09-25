@@ -34,7 +34,7 @@
                     <Border Background="{DynamicResource SuperficieBrush}"
                             BorderBrush="{DynamicResource BordaBrush}"
                             BorderThickness="1"
-                            CornerRadius="14"
+                            CornerRadius="14">
 
                         <StackPanel>
                             <StackPanel HorizontalAlignment="Center"
