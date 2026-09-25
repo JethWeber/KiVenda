@@ -4,6 +4,7 @@ using KiVenda.Application.Common;
 using KiVenda.Core.Auditoria;
 using KiVenda.Core.Enums;
 using KiVenda.Core.Exceptions;
+using KiVenda.Core.Notificacoes;
 using KiVenda.Core.Utilizadores;
 
 namespace KiVenda.Application.Vendas;
@@ -66,6 +67,7 @@ public sealed class FinalizarVendaUseCase(IUnitOfWork uow, IContextoAutenticacao
                 ?? throw new DomainException("Produto não encontrado ao dar saída de stock.");
 
             var apresentacao = produto.ObterApresentacao(item.ApresentacaoProdutoId);
+            var estoqueAntes = produto.EstoqueAtual;
 
             var movimento = produto.RegistarSaidaStock(
                 item.QuantidadeUnidadeBase,
@@ -74,6 +76,19 @@ public sealed class FinalizarVendaUseCase(IUnitOfWork uow, IContextoAutenticacao
                 contexto.UtilizadorId);
 
             await uow.MovimentosStock.AdicionarAsync(movimento, cancellationToken);
+
+            if (estoqueAntes > produto.StockMinimo && produto.EstoqueAtual <= produto.StockMinimo)
+            {
+                await uow.Notificacoes.AdicionarAsync(
+                    new Notificacao(
+                        contexto.UtilizadorId,
+                        "STOCK_BAIXO",
+                        produto.EstoqueAtual <= 0 ? "Produto sem stock" : "Stock baixo",
+                        produto.EstoqueAtual <= 0
+                            ? $"O produto {produto.Nome} ficou sem stock."
+                            : $"O stock de {produto.Nome} ficou baixo: {produto.EstoqueAtual:0.####} unidade(s)."),
+                    cancellationToken);
+            }
 
             itensRecibo.Add(new ItemReciboDto(produto.Nome, apresentacao.Nome, item.QuantidadeNaApresentacao, item.ValorTotal));
         }
