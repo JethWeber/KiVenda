@@ -1,0 +1,91 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
+             x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoImpressoraView"
+             x:DataType="vm:ConfiguracaoImpressoraViewModel">
+    <StackPanel Spacing="18" MaxWidth="760">
+        <StackPanel Spacing="4">
+            <TextBlock Classes="titulo-pagina" Text="Impressora térmica" />
+            <TextBlock Classes="subtitulo"
+                       Text="Impressão de recibos ESC/POS por USB. A configuração é guardada localmente em JSON."
+                       TextWrapping="Wrap" />
+        </StackPanel>
+
+        <Border Classes="cartao" Padding="18">
+            <StackPanel Spacing="16">
+                <TextBlock Text="Impressora térmica ESC/POS" FontSize="18" FontWeight="Bold" />
+
+                <CheckBox Content="Ativar impressão térmica"
+                          IsChecked="{Binding Ativo}"
+                          IsEnabled="{Binding !ACarregar}" />
+
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Dispositivo" FontWeight="SemiBold" />
+                    <TextBox Text="{Binding Dispositivo}"
+                             Watermark="/dev/usb/lp0"
+                             IsEnabled="{Binding !ACarregar}" />
+                    <TextBlock Classes="subtitulo"
+                               Text="Linux: pode ser /dev/usb/lp0, /dev/ttyUSB0 ou outro dispositivo exposto pela impressora."
+                               TextWrapping="Wrap" />
+                </StackPanel>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                    <StackPanel Grid.Column="0" Spacing="6">
+                        <TextBlock Text="Colunas" FontWeight="SemiBold" />
+                        <NumericUpDown Value="{Binding Colunas}"
+                                       Minimum="1"
+                                       Maximum="100"
+                                       FormatString="0"
+                                       IsEnabled="{Binding !ACarregar}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Spacing="6">
+                        <TextBlock Text="Linhas no final" FontWeight="SemiBold" />
+                        <NumericUpDown Value="{Binding LinhasAlimentacaoFinal}"
+                                       Minimum="0"
+                                       Maximum="20"
+                                       FormatString="0"
+                                       IsEnabled="{Binding !ACarregar}" />
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Codificação" FontWeight="SemiBold" />
+                    <TextBox Text="{Binding EncodingNome}"
+                             Watermark="cp850"
+                             IsEnabled="{Binding !ACarregar}" />
+                    <TextBlock Classes="subtitulo"
+                               Text="Padrão: cp850. Pode ser alterado quando o modelo da impressora exigir outra codificação."
+                               TextWrapping="Wrap" />
+                </StackPanel>
+
+                <CheckBox Content="Cortar papel automaticamente"
+                          IsChecked="{Binding CortarPapel}"
+                          IsEnabled="{Binding !ACarregar}" />
+
+                <Border Background="{StaticResource NeutroSuaveBrush}" CornerRadius="8" Padding="12">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Estado inicial seguro" FontWeight="Bold" />
+                        <TextBlock Text="A impressora começa desativada. Enquanto estiver desativada, finalizar uma venda não tenta escrever em /dev/usb/lp0."
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Content="Guardar configuração"
+                            Classes="primario"
+                            Command="{Binding GuardarCommand}"
+                            IsEnabled="{Binding !AGuardar}" />
+                    <Button Content="Restaurar padrão"
+                            Classes="secundario"
+                            Command="{Binding RestaurarPadraoCommand}"
+                            IsEnabled="{Binding !AGuardar}" />
+                </StackPanel>
+
+                <TextBlock Text="{Binding Mensagem}"
+                           TextWrapping="Wrap"
+                           Foreground="{StaticResource TextoSecundarioBrush}" />
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>
