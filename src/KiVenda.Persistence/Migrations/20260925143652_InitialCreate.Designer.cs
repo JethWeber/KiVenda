@@ -3,6 +3,7 @@ using System;
 using KiVenda.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,31 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KiVenda.Persistence.Migrations
 {
     [DbContext(typeof(KiVendaDbContext))]
-    [Migration("20260925143000_AdicionarNotificacoes")]
-    partial class AdicionarNotificacoes
+    [Migration("20260925143652_InitialCreate")]
+    partial class InitialCreate
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
-
-            modelBuilder.Entity("KiVenda.Core.Notificacoes.Notificacao", b =>
-                {
-                    b.Property<Guid>("Id").HasColumnType("TEXT");
-                    b.Property<DateTime?>("AtualizadoEm").HasColumnType("TEXT");
-                    b.Property<DateTime>("CriadoEm").HasColumnType("TEXT");
-                    b.Property<DateTime>("DataCriacao").HasColumnType("TEXT");
-                    b.Property<DateTime?>("DataLeitura").HasColumnType("TEXT");
-                    b.Property<bool>("Lida").HasColumnType("INTEGER");
-                    b.Property<string>("Mensagem").IsRequired().HasMaxLength(500).HasColumnType("TEXT");
-                    b.Property<string>("Tipo").IsRequired().HasMaxLength(50).HasColumnType("TEXT");
-                    b.Property<string>("Titulo").IsRequired().HasMaxLength(150).HasColumnType("TEXT");
-                    b.Property<Guid>("UtilizadorId").HasColumnType("TEXT");
-                    b.HasKey("Id");
-                    b.HasIndex("UtilizadorId", "DataCriacao");
-                    b.HasIndex("UtilizadorId", "Lida");
-                    b.ToTable("Notificacoes", (string)null);
-                });
 
             modelBuilder.Entity("KiVenda.Core.Auditoria.LogAuditoria", b =>
                 {
@@ -377,6 +361,53 @@ namespace KiVenda.Persistence.Migrations
                     b.HasIndex("Nome");
 
                     b.ToTable("Fornecedores", (string)null);
+                });
+
+            modelBuilder.Entity("KiVenda.Core.Notificacoes.Notificacao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("AtualizadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DataLeitura")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Lida")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Mensagem")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UtilizadorId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UtilizadorId", "DataCriacao");
+
+                    b.HasIndex("UtilizadorId", "Lida");
+
+                    b.ToTable("Notificacoes", (string)null);
                 });
 
             modelBuilder.Entity("KiVenda.Core.Produtos.ApresentacaoProduto", b =>
@@ -801,15 +832,6 @@ namespace KiVenda.Persistence.Migrations
                     b.ToTable("Vendas", (string)null);
                 });
 
-            modelBuilder.Entity("KiVenda.Core.Notificacoes.Notificacao", b =>
-                {
-                    b.HasOne("KiVenda.Core.Utilizadores.Utilizador", null)
-                        .WithMany()
-                        .HasForeignKey("UtilizadorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("KiVenda.Core.Auditoria.LogAuditoria", b =>
                 {
                     b.HasOne("KiVenda.Core.Utilizadores.Utilizador", null)
@@ -885,6 +907,15 @@ namespace KiVenda.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("ProdutoId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("KiVenda.Core.Notificacoes.Notificacao", b =>
+                {
+                    b.HasOne("KiVenda.Core.Utilizadores.Utilizador", null)
+                        .WithMany()
+                        .HasForeignKey("UtilizadorId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
