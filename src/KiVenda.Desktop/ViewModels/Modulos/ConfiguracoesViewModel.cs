@@ -1,3 +1,4 @@
+using KiVenda.Desktop.Tema;
 using KiVenda.Infrastructure.Backup;
 
 namespace KiVenda.Desktop.ViewModels.Modulos;
@@ -8,9 +9,11 @@ public sealed class ConfiguracoesViewModel : ViewModelBase
     public ConfiguracaoScannerViewModel Scanner { get; } = new();
     public ConfiguracaoLicencaViewModel Licenca { get; } = new();
     public ConfiguracaoBackupViewModel Backup { get; }
+    public ConfiguracaoTemaViewModel Tema { get; }
 
-    public ConfiguracoesViewModel(IServicoBackup servicoBackup)
+    public ConfiguracoesViewModel(IServicoBackup servicoBackup, ServicoTema servicoTema)
     {
         Backup = new ConfiguracaoBackupViewModel(servicoBackup);
+        Tema = new ConfiguracaoTemaViewModel(servicoTema);
     }
 }
