@@ -35,7 +35,6 @@
                             BorderBrush="{DynamicResource BordaBrush}"
                             BorderThickness="1"
                             CornerRadius="14"
-                            Clip="True">
 
                         <StackPanel>
                             <StackPanel HorizontalAlignment="Center"
