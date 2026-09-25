@@ -16,6 +16,4 @@ public interface IServicoImpressao
     Task ImprimirTextoAsync(string titulo, string conteudo, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<string>> ListarImpressorasDisponiveisAsync(CancellationToken cancellationToken = default);
-
-    Task TestarImpressoraAsync(string dispositivo, CancellationToken cancellationToken = default);
 }
