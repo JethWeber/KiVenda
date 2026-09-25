@@ -76,6 +76,7 @@ public partial class App : Avalonia.Application
         services.AddInfrastructure();
         services.AddSingleton<IServicoBackup>(_ => new ServicoBackupSqlite(CaminhosAplicacao.CaminhoBaseDeDados));
         services.AddSingleton<ServicoTema>();
+        services.AddSingleton<KiVenda.Desktop.Notificacoes.ServicoNotificacoes>();
         services.AddTransient<ConfiguracoesViewModel>();
 
         services.AddSingleton<SessaoUtilizadorAtual>();
