@@ -14,6 +14,7 @@ public sealed class ServicoNotificacoes
     public event EventHandler? Alteradas;
     public int NaoLidas => Notificacoes.Count(x => !x.Lida);
     private CancellationTokenSource? _atualizacaoCts;
+    private readonly HashSet<Guid> _produtosEmStockAlerta = new();
 
     public ServicoNotificacoes(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao)
     {
@@ -33,14 +34,22 @@ public sealed class ServicoNotificacoes
 
         var uow = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
         var produtos = await uow.Produtos.ListarAsync(apenasAtivos: true, cancellationToken: cancellationToken);
-        var ultimaPorTipo = itens.GroupBy(x => x.Tipo).ToDictionary(g => g.Key, g => g.Max(x => x.DataCriacao));
+        var produtosComStockBaixo = produtos
+            .Where(p => p.ObterEstadoStock() is KiVenda.Core.Enums.EstadoStock.StockBaixo or KiVenda.Core.Enums.EstadoStock.SemStock)
+            .ToList();
 
-        foreach (var produto in produtos.Where(p => p.ObterEstadoStock() is KiVenda.Core.Enums.EstadoStock.StockBaixo or KiVenda.Core.Enums.EstadoStock.SemStock))
+        var idsEmAlertaAgora = produtosComStockBaixo.Select(p => p.Id).ToHashSet();
+        _produtosEmStockAlerta.RemoveWhere(id => !idsEmAlertaAgora.Contains(id));
+
+        foreach (var produto in produtosComStockBaixo)
         {
-            var tipo = $"STOCK_BAIXO:{produto.Id:N}";
-            if (ultimaPorTipo.TryGetValue(tipo, out var ultima) && DateTime.UtcNow - ultima < TimeSpan.FromDays(3))
+            // Só gera o alerta na transição normal -> stock baixo.
+            // Se o utilizador eliminar a notificação, ela não volta a aparecer
+            // enquanto o produto continuar no mesmo estado.
+            if (!_produtosEmStockAlerta.Add(produto.Id))
                 continue;
 
+            var tipo = $"STOCK_BAIXO:{produto.Id:N}";
             var titulo = produto.EstoqueAtual <= 0 ? "Produto sem stock" : "Stock baixo";
             var mensagem = produto.EstoqueAtual <= 0
                 ? $"O produto {produto.Nome} ficou sem stock."
@@ -49,10 +58,9 @@ public sealed class ServicoNotificacoes
             var entidade = new KiVenda.Core.Notificacoes.Notificacao(_sessao.UtilizadorId, tipo, titulo, mensagem);
             await uow.Notificacoes.AdicionarAsync(entidade, cancellationToken);
             Notificacoes.Insert(0, Mapear(entidade));
-            ultimaPorTipo[tipo] = entidade.DataCriacao;
         }
 
-        if (produtos.Any(p => p.ObterEstadoStock() is KiVenda.Core.Enums.EstadoStock.StockBaixo or KiVenda.Core.Enums.EstadoStock.SemStock))
+        if (produtosComStockBaixo.Count > 0)
             await uow.SaveChangesAsync(cancellationToken);
         Alteradas?.Invoke(this, EventArgs.Empty);
     }
