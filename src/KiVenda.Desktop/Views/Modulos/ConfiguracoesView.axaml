@@ -22,6 +22,9 @@
             <TabItem Header="Backup">
                 <views:ConfiguracaoBackupView DataContext="{Binding Backup}" />
             </TabItem>
+            <TabItem Header="Ajustes">
+                <views:ConfiguracaoTemaView DataContext="{Binding Tema}" />
+            </TabItem>
         </TabControl>
     </StackPanel>
 </UserControl>
