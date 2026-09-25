@@ -1,33 +1,98 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:impressao="using:KiVenda.Infrastructure.Impressao"
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoImpressoraView"
              x:DataType="vm:ConfiguracaoImpressoraViewModel">
     <StackPanel Spacing="18" MaxWidth="760">
         <StackPanel Spacing="4">
             <TextBlock Classes="titulo-pagina" Text="Impressora térmica" />
             <TextBlock Classes="subtitulo"
-                       Text="Impressão de recibos ESC/POS por USB. A configuração é guardada localmente em JSON."
+                       Text="O KiVenda identifica automaticamente as impressoras disponíveis no sistema operativo. A seleção é guardada localmente em JSON."
                        TextWrapping="Wrap" />
         </StackPanel>
 
         <Border Classes="cartao" Padding="18">
             <StackPanel Spacing="16">
-                <TextBlock Text="Impressora térmica ESC/POS" FontSize="18" FontWeight="Bold" />
+                <TextBlock Text="Impressora ESC/POS" FontSize="18" FontWeight="Bold" />
 
                 <CheckBox Content="Ativar impressão térmica"
                           IsChecked="{Binding Ativo}"
                           IsEnabled="{Binding !ACarregar}" />
 
                 <StackPanel Spacing="6">
-                    <TextBlock Text="Dispositivo" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding Dispositivo}"
-                             Watermark="/dev/usb/lp0"
-                             IsEnabled="{Binding !ACarregar}" />
-                    <TextBlock Classes="subtitulo"
-                               Text="Linux: pode ser /dev/usb/lp0, /dev/ttyUSB0 ou outro dispositivo exposto pela impressora."
+                    <TextBlock Text="Impressora detetada" FontWeight="SemiBold" />
+
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <ComboBox Grid.Column="0"
+                                  ItemsSource="{Binding Dispositivos}"
+                                  SelectedItem="{Binding DispositivoSelecionado, Mode=TwoWay}"
+                                  IsEnabled="{Binding !ACarregar}"
+                                  MaxWidth="600">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="impressao:DispositivoImpressora">
+                                    <StackPanel Spacing="2">
+                                        <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Porta}"
+                                                   Classes="subtitulo"
+                                                   TextWrapping="NoWrap" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <Button Grid.Column="1"
+                                Content="🔄 Procurar"
+                                Command="{Binding ProcurarCommand}"
+                                IsEnabled="{Binding !ADetetar}" />
+                    </Grid>
+
+                    <TextBlock Text="{Binding EstadoDeteccao}"
+                               Classes="subtitulo"
                                TextWrapping="Wrap" />
                 </StackPanel>
+
+                <Border Background="{StaticResource NeutroSuaveBrush}"
+                        CornerRadius="8"
+                        Padding="12">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Configuração automática" FontWeight="Bold" />
+                        <TextBlock Text="Linux usa os dispositivos de impressão/USB detetados pelo sistema. Windows usa as impressoras instaladas e respetivas portas. O KiVenda escolhe o transporte correto sem o utilizador precisar indicar /dev/usb/lp0 ou COM3."
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Content="🖨 Testar impressão"
+                            Classes="secundario"
+                            Command="{Binding TestarCommand}"
+                            IsEnabled="{Binding !ATestar}" />
+                    <Button Content="Guardar configuração"
+                            Classes="primario"
+                            Command="{Binding GuardarCommand}"
+                            IsEnabled="{Binding !AGuardar}" />
+                    <Button Content="Restaurar padrão"
+                            Classes="secundario"
+                            Command="{Binding RestaurarPadraoCommand}"
+                            IsEnabled="{Binding !AGuardar}" />
+                </StackPanel>
+
+                <Expander Header="Configuração avançada"
+                          IsExpanded="False">
+                    <StackPanel Spacing="10" Margin="0,10,0,0">
+                        <TextBlock Classes="subtitulo"
+                                   Text="Use apenas quando a deteção automática não encontrar o dispositivo. O valor é o identificador técnico usado pelo sistema operativo."
+                                   TextWrapping="Wrap" />
+
+                        <TextBox Text="{Binding Dispositivo}"
+                                 Watermark="Identificador do dispositivo"
+                                 IsEnabled="{Binding !ACarregar}" />
+
+                        <TextBlock Text="Linux: /dev/serial/by-id/... ou /dev/usb/lp0. Windows: winspool:Nome da impressora."
+                                   Classes="subtitulo"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </Expander>
 
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
                     <StackPanel Grid.Column="0" Spacing="6">
@@ -62,25 +127,6 @@
                 <CheckBox Content="Cortar papel automaticamente"
                           IsChecked="{Binding CortarPapel}"
                           IsEnabled="{Binding !ACarregar}" />
-
-                <Border Background="{StaticResource NeutroSuaveBrush}" CornerRadius="8" Padding="12">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Estado inicial seguro" FontWeight="Bold" />
-                        <TextBlock Text="A impressora começa desativada. Enquanto estiver desativada, finalizar uma venda não tenta escrever em /dev/usb/lp0."
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-                </Border>
-
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Button Content="Guardar configuração"
-                            Classes="primario"
-                            Command="{Binding GuardarCommand}"
-                            IsEnabled="{Binding !AGuardar}" />
-                    <Button Content="Restaurar padrão"
-                            Classes="secundario"
-                            Command="{Binding RestaurarPadraoCommand}"
-                            IsEnabled="{Binding !AGuardar}" />
-                </StackPanel>
 
                 <TextBlock Text="{Binding Mensagem}"
                            TextWrapping="Wrap"
