@@ -24,17 +24,20 @@ public class CriarProdutoUseCaseTests
     }
 
     [Fact]
-    public async Task Gerente_Deve_Conseguir_Criar_Produto()
+    public async Task Gerente_Deve_Conseguir_Criar_Produto_Com_Codigo_Interno_Automatico()
     {
         var (db, uow, contexto) = CriarAmbiente();
         var useCase = new CriarProdutoUseCase(uow, contexto);
 
         var comando = new CriarProdutoCommand(
-            "Açúcar", "PRD-AC01", db.Categorias[0].Id, db.UnidadesMedida[0].Id, 1.5m, 5000m);
+            "Açúcar", db.Categorias[0].Id, db.UnidadesMedida[0].Id, 1.5m, 5000m);
 
         var produtoId = await useCase.ExecutarAsync(comando);
 
-        db.Produtos.Should().ContainSingle(p => p.Id == produtoId && p.Nome == "Açúcar");
+        db.Produtos.Should().ContainSingle(p =>
+            p.Id == produtoId &&
+            p.Nome == "Açúcar" &&
+            p.CodigoInterno == "PRD-0000");
     }
 
     [Fact]
@@ -43,7 +46,8 @@ public class CriarProdutoUseCaseTests
         var (db, uow, contexto) = CriarAmbiente(PerfilUtilizador.Atendente);
         var useCase = new CriarProdutoUseCase(uow, contexto);
 
-        var comando = new CriarProdutoCommand("Açúcar", "PRD-AC01", db.Categorias[0].Id, db.UnidadesMedida[0].Id, 1.5m, 5000m);
+        var comando = new CriarProdutoCommand(
+            "Açúcar", db.Categorias[0].Id, db.UnidadesMedida[0].Id, 1.5m, 5000m);
 
         var acao = async () => await useCase.ExecutarAsync(comando);
 
@@ -51,16 +55,21 @@ public class CriarProdutoUseCaseTests
     }
 
     [Fact]
-    public async Task Nao_Deve_Permitir_Codigo_Interno_Duplicado()
+    public async Task Deve_Gerar_Codigos_Internos_Sequenciais()
     {
         var (db, uow, contexto) = CriarAmbiente();
         var useCase = new CriarProdutoUseCase(uow, contexto);
-        var comando = new CriarProdutoCommand("Açúcar", "PRD-AC01", db.Categorias[0].Id, db.UnidadesMedida[0].Id, 1.5m, 5000m);
-        await useCase.ExecutarAsync(comando);
 
-        var comandoDuplicado = new CriarProdutoCommand("Açúcar Fino", "PRD-AC01", db.Categorias[0].Id, db.UnidadesMedida[0].Id, 2m, 1000m);
-        var acao = async () => await useCase.ExecutarAsync(comandoDuplicado);
+        var primeiro = new CriarProdutoCommand(
+            "Açúcar", db.Categorias[0].Id, db.UnidadesMedida[0].Id, 1.5m, 5000m);
+        var segundo = new CriarProdutoCommand(
+            "Açúcar Fino", db.Categorias[0].Id, db.UnidadesMedida[0].Id, 2m, 1000m);
 
-        await acao.Should().ThrowAsync<DomainException>();
+        await useCase.ExecutarAsync(primeiro);
+        await useCase.ExecutarAsync(segundo);
+
+        db.Produtos.Should().HaveCount(2);
+        db.Produtos.Select(p => p.CodigoInterno)
+            .Should().BeEquivalentTo(["PRD-0000", "PRD-0001"]);
     }
 }
