@@ -69,6 +69,7 @@ public partial class DashboardViewModel : ViewModelBase
     public ObservableCollection<AlertaDashboard> Alertas { get; } = new();
 
     public bool TemAlertas => Alertas.Count > 0;
+    public bool SemAlertas => Alertas.Count == 0;
 
     public DashboardViewModel(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao)
     {
@@ -165,6 +166,7 @@ public partial class DashboardViewModel : ViewModelBase
         }
 
         Alertas.Remove(alerta);\n        OnPropertyChanged(nameof(TemAlertas));
+            OnPropertyChanged(nameof(SemAlertas));
 
         if (alerta.Id is not Guid notificacaoId)
         {
