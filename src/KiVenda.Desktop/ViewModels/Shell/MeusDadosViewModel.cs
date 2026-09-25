@@ -39,6 +39,9 @@ public partial class MeusDadosViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private void Cancelar() => GuardadoComSucesso?.Invoke(this, EventArgs.Empty);
+
+    [RelayCommand]
     private async Task GuardarAsync()
     {
         try
