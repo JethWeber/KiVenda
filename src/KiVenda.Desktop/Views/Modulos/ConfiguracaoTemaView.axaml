@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
+             x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoTemaView"
+             x:DataType="vm:ConfiguracaoTemaViewModel">
+
+    <ScrollViewer>
+        <StackPanel Spacing="16" MaxWidth="980" Margin="0,8,0,24">
+
+            <StackPanel Spacing="4">
+                <TextBlock Classes="titulo-pagina" Text="Ajustes" />
+                <TextBlock Classes="subtitulo"
+                           Text="Personalize a aparência do KiVenda. A opção Sistema acompanha automaticamente o tema do sistema operativo."
+                           TextWrapping="Wrap" />
+            </StackPanel>
+
+            <Border Classes="cartao">
+                <StackPanel Spacing="14">
+                    <StackPanel Spacing="4">
+                        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Tema da aplicação" />
+                        <TextBlock Classes="subtitulo"
+                                   Text="A alteração é aplicada imediatamente e fica guardada para a próxima sessão."
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <ComboBox ItemsSource="{Binding OpcoesTema}"
+                              SelectedItem="{Binding TemaSelecionado}"
+                              MinWidth="260"
+                              HorizontalAlignment="Left" />
+
+                    <Border Background="{DynamicResource NeutroSuaveBrush}"
+                            CornerRadius="10"
+                            Padding="14">
+                        <StackPanel Spacing="4">
+                            <TextBlock FontWeight="SemiBold" Text="Tema selecionado" />
+                            <TextBlock Text="{Binding TemaAtualDescricao}"
+                                       Foreground="{DynamicResource TextoSecundarioBrush}" />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="• Sistema — segue Light/Dark definido no Fedora, Windows ou macOS.
+• KiVenda Dark — força o tema escuro.
+• KiVenda Light — força o tema claro."
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextoSecundarioBrush}" />
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
