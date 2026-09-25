@@ -2,6 +2,7 @@ using KiVenda.Core.Auditoria;
 using KiVenda.Core.Caixa;
 using KiVenda.Core.Clientes;
 using KiVenda.Core.Compras;
+using KiVenda.Core.Empresas;
 using KiVenda.Core.Fornecedores;
 using KiVenda.Core.Produtos;
 using KiVenda.Core.Utilizadores;
@@ -32,6 +33,7 @@ public sealed class KiVendaDbContext : DbContext
     // Clientes / Fornecedores
     public DbSet<Cliente> Clientes => Set<Cliente>();
     public DbSet<Fornecedor> Fornecedores => Set<Fornecedor>();
+    public DbSet<Empresa> Empresas => Set<Empresa>();
 
     // Compras
     public DbSet<Compra> Compras => Set<Compra>();
