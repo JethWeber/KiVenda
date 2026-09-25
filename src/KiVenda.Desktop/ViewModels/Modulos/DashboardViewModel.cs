@@ -165,7 +165,8 @@ public partial class DashboardViewModel : ViewModelBase
             return;
         }
 
-        Alertas.Remove(alerta);\n        OnPropertyChanged(nameof(TemAlertas));
+        Alertas.Remove(alerta);
+        OnPropertyChanged(nameof(TemAlertas));
             OnPropertyChanged(nameof(SemAlertas));
 
         if (alerta.Id is not Guid notificacaoId)
