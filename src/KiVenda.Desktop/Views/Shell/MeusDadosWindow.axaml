@@ -1,0 +1,36 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:KiVenda.Desktop.ViewModels.Shell"
+        x:Class="KiVenda.Desktop.Views.Shell.MeusDadosWindow"
+        x:DataType="vm:MeusDadosViewModel"
+        Title="Meus Dados"
+        Width="420"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Border Padding="28" Background="{DynamicResource SuperficieBrush}">
+        <StackPanel Spacing="12">
+            <TextBlock Text="Meus Dados" FontSize="22" FontWeight="Bold" />
+            <TextBlock Text="Altere os seus dados. Depois de guardar, terá de iniciar sessão novamente."
+                       TextWrapping="Wrap" FontSize="12"
+                       Foreground="{DynamicResource TextoSecundarioBrush}" />
+
+            <TextBlock Text="Nome completo" Classes="rotulo-campo" />
+            <TextBox Text="{Binding Nome}" />
+
+            <TextBlock Text="Login" Classes="rotulo-campo" />
+            <TextBox Text="{Binding NomeUtilizador}" />
+
+            <TextBlock Text="Nova palavra-passe" Classes="rotulo-campo" />
+            <TextBox Text="{Binding NovaSenha}" PasswordChar="•" Watermark="Deixe vazio para manter" />
+
+            <TextBlock Text="{Binding Mensagem}" Classes="erro" TextWrapping="Wrap" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,8,0,0">
+                <Button Content="Cancelar" Classes="secundario" Command="{Binding CancelarCommand}" />
+                <Button Content="Guardar" Classes="primario" Command="{Binding GuardarCommand}" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>
