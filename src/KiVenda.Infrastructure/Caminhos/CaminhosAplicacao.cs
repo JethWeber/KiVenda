@@ -70,6 +70,9 @@ public static class CaminhosAplicacao
     public static string CaminhoConfiguracaoLocal =>
         Path.Combine(PastaDados, "configuracao.json");
 
+    public static string CaminhoTema =>
+        Path.Combine(PastaDados, "tema.json");
+
     public static string CaminhoLicenca =>
         Path.Combine(PastaDados, "licenca.wta");
 }
