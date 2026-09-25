@@ -10,6 +10,9 @@
             <TextBlock Classes="subtitulo" Text="Preferências do sistema, scanner, assinatura e proteção dos dados." />
         </StackPanel>
         <TabControl>
+            <TabItem Header="Empresa">
+                <views:ConfiguracaoEmpresaView DataContext="{Binding Empresa}" />
+            </TabItem>
             <TabItem Header="Scanner">
                 <views:ConfiguracaoScannerView DataContext="{Binding Scanner}" />
             </TabItem>

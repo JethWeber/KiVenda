@@ -3,6 +3,7 @@ using KiVenda.Application.Caixa;
 using KiVenda.Application.Clientes;
 using KiVenda.Application.Compras;
 using KiVenda.Application.Fornecedores;
+using KiVenda.Application.Empresas;
 using KiVenda.Application.Produtos;
 using KiVenda.Application.Relatorios;
 using KiVenda.Application.Stock;
@@ -75,6 +76,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<EditarClienteUseCase>();
         services.AddScoped<ListarClientesUseCase>();
         services.AddScoped<ConsultarHistoricoComprasUseCase>();
+
+        // Empresa
+        services.AddScoped<ObterEmpresaUseCase>();
+        services.AddScoped<CriarEmpresaUseCase>();
+        services.AddScoped<EditarEmpresaUseCase>();
+        services.AddScoped<RemoverEmpresaUseCase>();
 
         // Fornecedores
         services.AddScoped<CriarFornecedorUseCase>();

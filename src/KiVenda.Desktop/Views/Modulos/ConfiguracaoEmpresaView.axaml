@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
+             x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoEmpresaView"
+             x:DataType="vm:ConfiguracaoEmpresaViewModel">
+    <ScrollViewer>
+        <StackPanel Spacing="16" MaxWidth="980" Margin="0,8,0,24">
+            <StackPanel Spacing="4">
+                <TextBlock Classes="titulo-pagina" Text="Empresa" />
+                <TextBlock Classes="subtitulo" Text="Dados que identificarão a empresa no KiVenda e nos futuros recibos." TextWrapping="Wrap" />
+            </StackPanel>
+
+            <Border Classes="cartao" Padding="20">
+                <StackPanel Spacing="12">
+                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="Identificação" />
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="14" RowSpacing="10">
+                        <TextBox Grid.Row="0" Grid.Column="0" Watermark="Nome comercial *" Text="{Binding NomeComercial}" />
+                        <TextBox Grid.Row="0" Grid.Column="1" Watermark="Razão social" Text="{Binding RazaoSocial}" />
+                        <TextBox Grid.Row="1" Grid.Column="0" Watermark="NIF" Text="{Binding Nif}" />
+                        <TextBox Grid.Row="1" Grid.Column="1" Watermark="Telefone" Text="{Binding Telefone}" />
+                        <TextBox Grid.Row="2" Grid.Column="0" Watermark="E-mail" Text="{Binding Email}" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Watermark="Website" Text="{Binding Website}" />
+                        <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Watermark="Endereço" Text="{Binding Endereco}" />
+                        <TextBox Grid.Row="4" Grid.Column="0" Watermark="Município" Text="{Binding Municipio}" />
+                        <TextBox Grid.Row="4" Grid.Column="1" Watermark="Província" Text="{Binding Provincia}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Classes="cartao" Padding="20">
+                <StackPanel Spacing="10">
+                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="Logótipo" />
+                    <TextBlock Text="{Binding EstadoLogo}" />
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Button Content="Escolher imagem" Classes="secundario" Click="EscolherLogo_Click" />
+                        <Button Content="Remover logótipo" Classes="secundario" Click="RemoverLogo_Click" />
+                    </StackPanel>
+                    <TextBlock Text="Formatos aceites: PNG, JPEG e WebP. Tamanho máximo: 2 MB." Opacity="0.7" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Classes="cartao" Padding="20">
+                <StackPanel Spacing="10">
+                    <TextBlock FontWeight="SemiBold" Text="Estado" />
+                    <TextBlock Text="{Binding Mensagem}" TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Button Content="Guardar empresa" Classes="primario" Command="{Binding GuardarCommand}" IsEnabled="{Binding PodeExecutar}" />
+                        <Button Content="Remover cadastro" Classes="secundario" Command="{Binding RemoverCommand}" IsEnabled="{Binding TemEmpresa}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
