@@ -63,7 +63,7 @@ public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao, IServicoImpre
     public async Task<IReadOnlyList<string>> ListarImpressorasDisponiveisAsync(
         CancellationToken cancellationToken = default)
     {
-        var dispositivos = await _detector.DetarAsync(cancellationToken);
+        var dispositivos = await _detector.DetetarAsync(cancellationToken);
 
         return dispositivos
             .Where(d => d.Disponivel)
