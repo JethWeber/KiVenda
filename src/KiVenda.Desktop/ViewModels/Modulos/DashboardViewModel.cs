@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KiVenda.Application.Relatorios;
 using KiVenda.Desktop.Autenticacao;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using KiVenda.Desktop.ViewModels.Common;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -60,6 +62,32 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty]
     private string _vendasRealizadasTexto = "—";
 
+    private IReadOnlyList<VendaDiaDashboardDto> _vendasPorDia = Array.Empty<VendaDiaDashboardDto>();
+
+    [ObservableProperty]
+    private int _periodoGraficoDias = 7;
+
+    public ISeries[] SeriesVendas { get; private set; } = Array.Empty<ISeries>();
+
+    public Axis[] EixosXVendas { get; private set; } = Array.Empty<Axis>();
+
+    public Axis[] EixosYVendas { get; } =
+    [
+        new Axis
+        {
+            Labeler = valor => valor.ToString("N0")
+        }
+    ];
+
+    public bool Grafico7DiasSelecionado => PeriodoGraficoDias == 7;
+
+    public bool Grafico30DiasSelecionado => PeriodoGraficoDias == 30;
+
+    public string GraficoDescricao =>
+        PeriodoGraficoDias == 7
+            ? "Últimos 7 dias de atividade comercial"
+            : "Últimos 30 dias de atividade comercial";
+
     [ObservableProperty]
     private bool _caixaFechado;
 
@@ -96,6 +124,8 @@ public partial class DashboardViewModel : ViewModelBase
             LucroEstimadoTexto = FormatadorKz.Formatar(resumo.LucroEstimadoHoje);
             StockBaixoTexto = resumo.ProdutosStockBaixoOuSemStock.ToString();
             VendasRealizadasTexto = resumo.VendasRealizadasHoje.ToString();
+            _vendasPorDia = resumo.VendasPorDia;
+            AtualizarGraficoVendas();
 
             CaixaFechado = resumo.CaixaAtual is null;
             CaixaAtualTexto = resumo.CaixaAtual is null
@@ -143,6 +173,64 @@ public partial class DashboardViewModel : ViewModelBase
         {
             ACarregar = false;
         }
+    }
+
+    [RelayCommand]
+    private void Selecionar7Dias()
+    {
+        PeriodoGraficoDias = 7;
+        AtualizarGraficoVendas();
+    }
+
+    [RelayCommand]
+    private void Selecionar30Dias()
+    {
+        PeriodoGraficoDias = 30;
+        AtualizarGraficoVendas();
+    }
+
+    partial void OnPeriodoGraficoDiasChanged(int value)
+    {
+        OnPropertyChanged(nameof(Grafico7DiasSelecionado));
+        OnPropertyChanged(nameof(Grafico30DiasSelecionado));
+        OnPropertyChanged(nameof(GraficoDescricao));
+    }
+
+    private void AtualizarGraficoVendas()
+    {
+        var dados = _vendasPorDia
+            .TakeLast(PeriodoGraficoDias)
+            .ToList();
+
+        SeriesVendas =
+        [
+            new ColumnSeries<decimal>
+            {
+                Name = "Vendas",
+                Values = dados.Select(d => d.Total).ToArray(),
+                Padding = 6,
+                MaxBarWidth = 32,
+                Rx = 6,
+                Ry = 6,
+                YToolTipLabelFormatter = point => FormatadorKz.Formatar(point.Model)
+            }
+        ];
+
+        EixosXVendas =
+        [
+            new Axis
+            {
+                Labels = dados
+                    .Select(d => d.Data.ToString(
+                        PeriodoGraficoDias == 7 ? "ddd" : "dd/MM",
+                        new System.Globalization.CultureInfo("pt-AO")))
+                    .ToArray(),
+                LabelsRotation = PeriodoGraficoDias == 30 ? 45 : 0
+            }
+        ];
+
+        OnPropertyChanged(nameof(SeriesVendas));
+        OnPropertyChanged(nameof(EixosXVendas));
     }
 
     [RelayCommand]
