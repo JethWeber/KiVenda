@@ -39,9 +39,6 @@ public sealed class ObterResumoDashboardUseCase(IUnitOfWork uow, IContextoAutent
     {
         PermissaoGuard.Exigir(contexto, Acao.ConsultarProdutosStockClientes);
 
-        var inicioDoDia = DateTime.UtcNow.Date;
-        var fimDoDia = inicioDoDia.AddDays(1).AddTicks(-1);
-
         var inicioHistoricoLocal = DateTime.Now.Date.AddDays(-29);
         var fimHistoricoLocal = DateTime.Now.Date.AddDays(1);
 
