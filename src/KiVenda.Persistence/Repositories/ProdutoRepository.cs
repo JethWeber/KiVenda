@@ -61,7 +61,7 @@ internal sealed class ProdutoRepository : IProdutoRepository
         var maiorNumero = -1;
         foreach (var codigo in codigos)
         {
-            if (codigo.Length == 8 && int.TryParse(codigo.AsSpan(4), out var numero))
+            if (codigo.Length > prefixo.Length && int.TryParse(codigo.AsSpan(prefixo.Length), out var numero))
                 maiorNumero = Math.Max(maiorNumero, numero);
         }
         if (maiorNumero >= 9999)
