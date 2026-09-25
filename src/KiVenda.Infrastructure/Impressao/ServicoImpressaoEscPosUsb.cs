@@ -1,26 +1,25 @@
 using KiVenda.Application.Vendas;
+using KiVenda.Infrastructure.Configuracao;
 
 namespace KiVenda.Infrastructure.Impressao;
 
 /// <summary>
 /// Serviço de impressão térmica baseado em ESC/POS.
-/// A geração dos comandos está separada do transporte USB para permitir
-/// testes sem impressora física e futuras adaptações de transporte.
+/// A configuração é carregada do JSON local para que o utilizador possa
+/// alterar o dispositivo sem reiniciar nem editar variáveis de ambiente.
 /// </summary>
 public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao
 {
-    private readonly ConfiguracaoImpressoraTermica _configuracao;
-    private readonly GeradorEscPos _gerador;
+    private readonly IArmazenamentoConfiguracaoLocal _armazenamento;
     private readonly TransporteImpressoraUsb _transporte;
     private readonly ServicoImpressaoTexto _servicoRelatorios;
 
     public ServicoImpressaoEscPosUsb(
-        ConfiguracaoImpressoraTermica configuracao,
+        IArmazenamentoConfiguracaoLocal armazenamento,
         TransporteImpressoraUsb transporte,
         ServicoImpressaoTexto servicoRelatorios)
     {
-        _configuracao = configuracao;
-        _gerador = new GeradorEscPos(configuracao);
+        _armazenamento = armazenamento;
         _transporte = transporte;
         _servicoRelatorios = servicoRelatorios;
     }
@@ -30,13 +29,27 @@ public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao
         DadosLoja dadosLoja,
         CancellationToken cancellationToken = default)
     {
-        var dados = _gerador.GerarRecibo(recibo, dadosLoja);
-        await _transporte.EnviarAsync(_configuracao.Dispositivo, dados, cancellationToken);
+        var configuracao = await ObterConfiguracaoAsync(cancellationToken);
+
+        if (!configuracao.Ativo)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(configuracao.Dispositivo))
+        {
+            throw new InvalidOperationException(
+                "A impressora térmica está ativada, mas nenhum dispositivo foi configurado.");
+        }
+
+        var gerador = new GeradorEscPos(configuracao);
+        var dados = gerador.GerarRecibo(recibo, dadosLoja);
+
+        await _transporte.EnviarAsync(configuracao.Dispositivo, dados, cancellationToken);
     }
 
     /// <summary>
     /// Relatórios continuam a usar a impressão normal/textual.
-    /// A camada térmica fica exclusivamente responsável por recibos.
     /// </summary>
     public Task ImprimirTextoAsync(
         string titulo,
@@ -44,15 +57,33 @@ public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao
         CancellationToken cancellationToken = default) =>
         _servicoRelatorios.ImprimirTextoAsync(titulo, conteudo, cancellationToken);
 
-    public Task<IReadOnlyList<string>> ListarImpressorasDisponiveisAsync(
+    public async Task<IReadOnlyList<string>> ListarImpressorasDisponiveisAsync(
         CancellationToken cancellationToken = default)
     {
-        if (File.Exists(_configuracao.Dispositivo))
+        var configuracao = await ObterConfiguracaoAsync(cancellationToken);
+
+        if (!configuracao.Ativo || string.IsNullOrWhiteSpace(configuracao.Dispositivo))
         {
-            return Task.FromResult<IReadOnlyList<string>>(
-                [$"Térmica ESC/POS ({_configuracao.Dispositivo})"]);
+            return Array.Empty<string>();
         }
 
-        return Task.FromResult<IReadOnlyList<string>>(Array.Empty<string>());
+        if (File.Exists(configuracao.Dispositivo))
+        {
+            return
+            [
+                $"Térmica ESC/POS ({configuracao.Dispositivo})"
+            ];
+        }
+
+        return Array.Empty<string>();
+    }
+
+    private async Task<ConfiguracaoImpressoraTermica> ObterConfiguracaoAsync(
+        CancellationToken cancellationToken)
+    {
+        return await _armazenamento.ObterAsync<ConfiguracaoImpressoraTermica>(
+            ConfiguracaoImpressoraTermica.Chave,
+            cancellationToken)
+            ?? ConfiguracaoImpressoraTermica.Padrao;
     }
 }
