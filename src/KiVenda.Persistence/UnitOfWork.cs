@@ -22,6 +22,7 @@ public sealed class UnitOfWork : IUnitOfWork
     private IMovimentoStockRepository? _movimentosStock;
     private IClienteRepository? _clientes;
     private IFornecedorRepository? _fornecedores;
+    private IEmpresaRepository? _empresas;
     private ICompraRepository? _compras;
     private IVendaRepository? _vendas;
     private ISessaoCaixaRepository? _sessoesCaixa;
@@ -44,6 +45,8 @@ public sealed class UnitOfWork : IUnitOfWork
     public IClienteRepository Clientes => _clientes ??= new ClienteRepository(_context);
 
     public IFornecedorRepository Fornecedores => _fornecedores ??= new FornecedorRepository(_context);
+
+    public IEmpresaRepository Empresas => _empresas ??= new EmpresaRepository(_context);
 
     public ICompraRepository Compras => _compras ??= new CompraRepository(_context);
 
