@@ -4,41 +4,135 @@
              x:Class="KiVenda.Desktop.Views.LoginView"
              x:DataType="vm:LoginViewModel">
 
-    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Width="340">
-        <StackPanel Spacing="16">
+    <Grid Background="{DynamicResource FundoPaginaBrush}">
+        <Ellipse Width="520"
+                 Height="520"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Top"
+                 Margin="0,-260,-180,0"
+                 Fill="{DynamicResource VerdePrimarioBrush}"
+                 Opacity="0.035" />
+        <Ellipse Width="460"
+                 Height="460"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Bottom"
+                 Margin="-180,0,0,-220"
+                 Fill="{DynamicResource AvisoBrush}"
+                 Opacity="0.025" />
 
-            <StackPanel Spacing="4" HorizontalAlignment="Center">
-                <TextBlock Text="KiVenda" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" />
-                <TextBlock Text="Inicie sessão para continuar" Opacity="0.7" HorizontalAlignment="Center" />
-            </StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <Grid HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Margin="24"
+                  MinHeight="680">
 
-            <StackPanel Spacing="6">
-                <TextBlock Text="Utilizador" />
-                <TextBox Text="{Binding NomeUtilizador}" Watermark="ex.: gerente" />
-            </StackPanel>
+                <StackPanel Width="420"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
 
-            <StackPanel Spacing="6">
-                <TextBlock Text="Password" />
-                <TextBox Text="{Binding Senha}" PasswordChar="•" />
-            </StackPanel>
+                    <Border Background="{DynamicResource SuperficieBrush}"
+                            BorderBrush="{DynamicResource BordaBrush}"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            BoxShadow="0 8 24 0 #0F000000"
+                            Clip="True">
 
-            <!--
-                Sem conversor dedicado: o TextBlock fica sempre presente
-                (texto vazio quando não há erro), para não depender de
-                um StringConverters.IsNotNullOrEmpty mapeado por xmlns
-                nesta fase inicial da UI.
-            -->
-            <TextBlock Text="{Binding MensagemErro}"
-                       Foreground="Red"
-                       TextWrapping="Wrap" />
+                        <StackPanel>
+                            <StackPanel HorizontalAlignment="Center"
+                                        Margin="40,36,40,24"
+                                        Spacing="5">
+                                <TextBlock Text="KiVenda"
+                                           HorizontalAlignment="Center"
+                                           Foreground="{DynamicResource VerdePrimarioBrush}"
+                                           FontSize="32"
+                                           FontWeight="Bold"
+                                           LetterSpacing="0.2" />
 
-            <Button Content="Entrar"
-                    Command="{Binding EntrarCommand}"
-                    IsEnabled="{Binding !AEntrar}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Center" />
+                                <TextBlock Text="Quem vende, controla."
+                                           HorizontalAlignment="Center"
+                                           Foreground="{DynamicResource TextoSecundarioBrush}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           LetterSpacing="0.8" />
+                            </StackPanel>
 
-        </StackPanel>
+                            <StackPanel Margin="40,0,40,36"
+                                        Spacing="20">
+
+                                <StackPanel Spacing="7">
+                                    <TextBlock Text="Utilizador"
+                                               Classes="rotulo-campo"
+                                               FontWeight="SemiBold" />
+
+                                    <TextBox Text="{Binding NomeUtilizador}"
+                                             Watermark="ex.: gerente"
+                                             Height="46"
+                                             FontSize="14" />
+                                </StackPanel>
+
+                                <StackPanel Spacing="7">
+                                    <TextBlock Text="Palavra-passe"
+                                               Classes="rotulo-campo"
+                                               FontWeight="SemiBold" />
+
+                                    <Grid>
+                                        <TextBox Text="{Binding Senha}"
+                                                 PasswordChar="{Binding PasswordChar}"
+                                                 Watermark="••••••••"
+                                                 Height="46"
+                                                 FontSize="14"
+                                                 Padding="12,10,46,10" />
+
+                                        <Button Command="{Binding AlternarVisibilidadeSenhaCommand}"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Width="42"
+                                                Height="42"
+                                                Padding="0"
+                                                Foreground="{DynamicResource TextoSecundarioBrush}"
+                                                ToolTip.Tip="Mostrar/ocultar palavra-passe">
+                                            <TextBlock Text="◉"
+                                                       FontSize="15"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center" />
+                                        </Button>
+                                    </Grid>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding MensagemErro}"
+                                           Classes="erro"
+                                           FontSize="12" />
+
+                                <Button Content="Entrar"
+                                        Command="{Binding EntrarCommand}"
+                                        IsEnabled="{Binding !AEntrar}"
+                                        Classes="primario"
+                                        Height="46"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Center"
+                                        FontSize="14" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Margin="0,22,0,0"
+                                HorizontalAlignment="Center"
+                                Spacing="5">
+                        <TextBlock Text="KiVenda Desktop"
+                                   HorizontalAlignment="Center"
+                                   Foreground="{DynamicResource TextoSuaveCinzaBrush}"
+                                   FontSize="11" />
+                        <TextBlock Text="Sistema local • Funciona offline"
+                                   HorizontalAlignment="Center"
+                                   Foreground="{DynamicResource TextoSuaveCinzaBrush}"
+                                   FontSize="10" />
+                    </StackPanel>
+
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
     </Grid>
-
 </UserControl>
