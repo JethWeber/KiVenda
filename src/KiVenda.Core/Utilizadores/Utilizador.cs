@@ -49,6 +49,16 @@ public sealed class Utilizador : Entity
         Perfil = perfil;
     }
 
+    public void AlterarDados(string nome, string nomeUtilizador)
+    {
+        if (string.IsNullOrWhiteSpace(nome) || string.IsNullOrWhiteSpace(nomeUtilizador))
+            throw new DomainException("Nome e login são obrigatórios.");
+
+        Nome = nome.Trim();
+        NomeUtilizador = nomeUtilizador.Trim();
+        MarcarComoAtualizado();
+    }
+
     public void AlterarPasswordHash(string novoPasswordHash)
     {
         if (string.IsNullOrWhiteSpace(novoPasswordHash))
