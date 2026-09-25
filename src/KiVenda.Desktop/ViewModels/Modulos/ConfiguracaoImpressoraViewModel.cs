@@ -82,10 +82,15 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
                 Dispositivos.Add(dispositivo);
             }
 
-            DispositivoSelecionado =
-                Dispositivos.FirstOrDefault(d =>
-                    string.Equals(d.Id, Dispositivo, StringComparison.OrdinalIgnoreCase))
-                ?? Dispositivos.FirstOrDefault(d => d.Disponivel);
+            var correspondenciaGuardada = Dispositivos.FirstOrDefault(d =>
+                string.Equals(d.Id, Dispositivo, StringComparison.OrdinalIgnoreCase));
+
+            var disponiveisDetetados = Dispositivos
+                .Where(d => d.Disponivel)
+                .ToList();
+
+            DispositivoSelecionado = correspondenciaGuardada
+                ?? (disponiveisDetetados.Count == 1 ? disponiveisDetetados[0] : null);
 
             if (Dispositivos.Count == 0)
             {
