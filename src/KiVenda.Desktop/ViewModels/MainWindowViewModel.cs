@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using KiVenda.Application.Utilizadores;
 using KiVenda.Desktop.Autenticacao;
 using KiVenda.Desktop.Notificacoes;
+using KiVenda.Desktop.Tema;
 using KiVenda.Desktop.ViewModels.Shell;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,16 +20,18 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly SessaoUtilizadorAtual _sessao;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ServicoNotificacoes _servicoNotificacoes;
+    private readonly ServicoTema _servicoTema;
 
     [ObservableProperty]
     private ViewModelBase _conteudoAtual;
 
-    public MainWindowViewModel(LoginViewModel loginViewModel, SessaoUtilizadorAtual sessao, IServiceScopeFactory scopeFactory, Notificacoes.ServicoNotificacoes servicoNotificacoes)
+    public MainWindowViewModel(LoginViewModel loginViewModel, SessaoUtilizadorAtual sessao, IServiceScopeFactory scopeFactory, Notificacoes.ServicoNotificacoes servicoNotificacoes, ServicoTema servicoTema)
     {
         _loginViewModel = loginViewModel;
         _sessao = sessao;
         _scopeFactory = scopeFactory;
         _servicoNotificacoes = servicoNotificacoes;
+        _servicoTema = servicoTema;
 
         _loginViewModel.LoginBemSucedido += OnLoginBemSucedido;
         _conteudoAtual = _loginViewModel;
@@ -36,7 +39,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void OnLoginBemSucedido(object? sender, UtilizadorAutenticadoDto utilizador)
     {
-        var shell = new ShellViewModel(_scopeFactory, _sessao, _servicoNotificacoes);
+        var shell = new ShellViewModel(_scopeFactory, _sessao, _servicoNotificacoes, _servicoTema);
         shell.SessaoTerminada += OnSessaoTerminada;
 
         _ = _servicoNotificacoes.CarregarAsync();
