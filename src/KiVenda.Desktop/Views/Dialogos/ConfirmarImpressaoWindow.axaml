@@ -1,6 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:KiVenda.Desktop.Views.Dialogos"
         x:Class="KiVenda.Desktop.Views.Dialogos.ConfirmarImpressaoWindow"
+        x:DataType="local:ConfirmarImpressaoWindow"
         Width="520" Height="720" MinWidth="420" MinHeight="500"
         CanResize="True" WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False" Title="Pré-visualização do recibo">
