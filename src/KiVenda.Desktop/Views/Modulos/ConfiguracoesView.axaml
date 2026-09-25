@@ -14,8 +14,12 @@
                 <views:ConfiguracaoEmpresaView DataContext="{Binding Empresa}" />
             </TabItem>
             <TabItem Header="Dispositivos">
-                <views:ConfiguracaoScannerView DataContext="{Binding Scanner}" />
-                <views:ConfiguracaoImpressoraView DataContext="{Binding Impressora}" />
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="24">
+                        <views:ConfiguracaoScannerView DataContext="{Binding Scanner}" />
+                        <views:ConfiguracaoImpressoraView DataContext="{Binding Impressora}" />
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
             <TabItem Header="Licença">
                 <views:ConfiguracaoLicencaView DataContext="{Binding Licenca}" />
