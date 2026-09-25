@@ -39,6 +39,7 @@ public partial class MainWindowViewModel : ViewModelBase
         var shell = new ShellViewModel(_scopeFactory, _sessao, _servicoNotificacoes);
         shell.SessaoTerminada += OnSessaoTerminada;
 
+        _ = _servicoNotificacoes.CarregarAsync();
         ConteudoAtual = shell;
     }
 
@@ -49,6 +50,7 @@ public partial class MainWindowViewModel : ViewModelBase
             shell.SessaoTerminada -= OnSessaoTerminada;
         }
 
+        _ = _servicoNotificacoes.CarregarAsync();
         _loginViewModel.Reiniciar();
         ConteudoAtual = _loginViewModel;
     }
