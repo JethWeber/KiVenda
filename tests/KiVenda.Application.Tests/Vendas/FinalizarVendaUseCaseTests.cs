@@ -31,7 +31,7 @@ public class FinalizarVendaUseCaseTests
             "jeth",
             "hash:teste",
             contexto.Perfil);
-        utilizador.Id = contexto.UtilizadorId;
+        contexto.UtilizadorId = utilizador.Id;
         db.Utilizadores.Add(utilizador);
 
         var produto = new Produto("Açúcar", "PRD-AC01", categoria.Id, unidade.Id, precoVendaPorUnidadeBase: 1.5m, stockMinimo: 5000m);
