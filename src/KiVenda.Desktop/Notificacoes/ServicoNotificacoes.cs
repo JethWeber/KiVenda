@@ -13,6 +13,7 @@ public sealed class ServicoNotificacoes
     public ObservableCollection<Notificacao> Notificacoes { get; } = new();
     public event EventHandler? Alteradas;
     public int NaoLidas => Notificacoes.Count(x => !x.Lida);
+    private CancellationTokenSource? _atualizacaoCts;
 
     public ServicoNotificacoes(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao)
     {
@@ -54,6 +55,49 @@ public sealed class ServicoNotificacoes
         if (produtos.Any(p => p.ObterEstadoStock() is KiVenda.Core.Enums.EstadoStock.StockBaixo or KiVenda.Core.Enums.EstadoStock.SemStock))
             await uow.SaveChangesAsync(cancellationToken);
         Alteradas?.Invoke(this, EventArgs.Empty);
+    }
+
+    public async Task RemoverAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        if (_sessao.UtilizadorId == Guid.Empty) return;
+        await using var scope = _scopeFactory.CreateAsyncScope();
+        var uow = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        await uow.Notificacoes.RemoverAsync(id, _sessao.UtilizadorId, cancellationToken);
+        await uow.SaveChangesAsync(cancellationToken);
+        var item = Notificacoes.FirstOrDefault(x => x.Id == id);
+        if (item is not null)
+            Notificacoes.Remove(item);
+        Alteradas?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void IniciarAtualizacaoAutomatica()
+    {
+        if (_atualizacaoCts is not null) return;
+        _atualizacaoCts = new CancellationTokenSource();
+        _ = AtualizarPeriodicamenteAsync(_atualizacaoCts.Token);
+    }
+
+    public void PararAtualizacaoAutomatica()
+    {
+        _atualizacaoCts?.Cancel();
+        _atualizacaoCts?.Dispose();
+        _atualizacaoCts = null;
+    }
+
+    private async Task AtualizarPeriodicamenteAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3), cancellationToken);
+                if (!cancellationToken.IsCancellationRequested)
+                    await CarregarAsync(cancellationToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+        }
     }
 
     public async Task AdicionarAsync(string tipo, string titulo, string mensagem, CancellationToken cancellationToken = default)

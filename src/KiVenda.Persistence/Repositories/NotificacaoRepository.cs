@@ -22,4 +22,13 @@ internal sealed class NotificacaoRepository : INotificacaoRepository
 
     public async Task AdicionarAsync(Notificacao notificacao, CancellationToken cancellationToken = default) =>
         await _context.Notificacoes.AddAsync(notificacao, cancellationToken);
+
+    public async Task RemoverAsync(Guid id, Guid utilizadorId, CancellationToken cancellationToken = default)
+    {
+        var notificacao = await _context.Notificacoes
+            .FirstOrDefaultAsync(n => n.Id == id && n.UtilizadorId == utilizadorId, cancellationToken);
+
+        if (notificacao is not null)
+            _context.Notificacoes.Remove(notificacao);
+    }
 }

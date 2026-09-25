@@ -6,6 +6,7 @@ using KiVenda.Core.Enums;
 using KiVenda.Core.Utilizadores;
 using KiVenda.Desktop.Autenticacao;
 using KiVenda.Desktop.Notificacoes;
+using KiVenda.Desktop.Tema;
 using KiVenda.Desktop.ViewModels.Common;
 using KiVenda.Desktop.ViewModels.Modulos;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,7 @@ public partial class ShellViewModel : ViewModelBase
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly SessaoUtilizadorAtual _sessao;
     private readonly ServicoNotificacoes _servicoNotificacoes;
+    private readonly ServicoTema _servicoTema;
 
     public string NomeUtilizador => _sessao.Nome;
     public string IniciaisNome => ObterIniciais(_sessao.Nome);
@@ -38,15 +40,19 @@ public partial class ShellViewModel : ViewModelBase
     }
 
     public bool TemNotificacoesNaoLidas => _servicoNotificacoes.NaoLidas > 0;
+    public int QuantidadeNotificacoes => _servicoNotificacoes.Notificacoes.Count;
+    public string TemaBotaoTexto => _servicoTema.TemaAtual == TemaKiVenda.Dark ? "☀" : "☾";
 
     public event EventHandler? SessaoTerminada;
     public event EventHandler? MeusDadosSolicitados;
 
-    public ShellViewModel(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao, ServicoNotificacoes servicoNotificacoes)
+    public ShellViewModel(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao, ServicoNotificacoes servicoNotificacoes, ServicoTema servicoTema)
     {
         _scopeFactory = scopeFactory;
         _sessao = sessao;
         _servicoNotificacoes = servicoNotificacoes;
+        _servicoTema = servicoTema;
+        _servicoNotificacoes.IniciarAtualizacaoAutomatica();
 
         _servicoNotificacoes.Alteradas += OnNotificacoesAlteradas;
         Licensing.StatusChanged += OnLicensingStatusChanged;
@@ -125,6 +131,21 @@ public partial class ShellViewModel : ViewModelBase
     {
         OnPropertyChanged(nameof(TemNotificacoesNaoLidas));
         OnPropertyChanged(nameof(Notificacoes));
+        OnPropertyChanged(nameof(QuantidadeNotificacoes));
+    }
+
+    [RelayCommand]
+    private void AlternarTema()
+    {
+        var proximo = _servicoTema.TemaAtual == TemaKiVenda.Dark ? TemaKiVenda.Light : TemaKiVenda.Dark;
+        _servicoTema.DefinirTema(proximo);
+        OnPropertyChanged(nameof(TemaBotaoTexto));
+    }
+
+    [RelayCommand]
+    private async Task EliminarNotificacaoAsync(Notificacao notificacao)
+    {
+        await _servicoNotificacoes.RemoverAsync(notificacao.Id);
     }
 
     [RelayCommand]
@@ -152,6 +173,7 @@ public partial class ShellViewModel : ViewModelBase
     {
         Licensing.StatusChanged -= OnLicensingStatusChanged;
         _servicoNotificacoes.Alteradas -= OnNotificacoesAlteradas;
+        _servicoNotificacoes.PararAtualizacaoAutomatica();
         _sessao.TerminarSessao();
         SessaoTerminada?.Invoke(this, EventArgs.Empty);
     }

@@ -104,7 +104,7 @@
                     BorderBrush="{DynamicResource BordaBrush}"
                     BorderThickness="0,0,0,1"
                     Padding="24,14">
-                <Grid ColumnDefinitions="*,Auto,Auto,Auto" VerticalAlignment="Center">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" VerticalAlignment="Center">
                     <TextBlock Grid.Column="0"
                                Text="{Binding NomeEmpresa}"
                                FontSize="16"
@@ -125,21 +125,44 @@
                             <TextBlock Text="🔔" FontSize="18"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center" />
+                            <Border IsVisible="{Binding $parent[UserControl].DataContext.TemNotificacoesNaoLidas}"
+                                    Background="{DynamicResource ErroBrush}"
+                                    CornerRadius="8"
+                                    MinWidth="16"
+                                    Height="16"
+                                    Padding="2,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top">
+                                <TextBlock Text="{Binding $parent[UserControl].DataContext.QuantidadeNotificacoes}"
+                                           FontSize="9" FontWeight="Bold" Foreground="White"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
                             <Border IsVisible="{Binding TemNotificacoesNaoLidas}"
                                     Background="{DynamicResource ErroBrush}"
                                     CornerRadius="6"
-                                    Width="8" Height="8"
-                                    HorizontalAlignment="Right"
+                                    Width="6" Height="6"
+                                    HorizontalAlignment="Left"
                                     VerticalAlignment="Top" />
                         </Grid>
                     </Button>
 
-                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,10,0">
+                    <Button Grid.Column="2"
+                            Command="{Binding AlternarTemaCommand}"
+                            Content="{Binding TemaBotaoTexto}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Width="40"
+                            Height="40"
+                            FontSize="18"
+                            ToolTip.Tip="Alternar tema"
+                            Margin="0,0,8,0" />
+
+                    <StackPanel Grid.Column="3" VerticalAlignment="Center" Margin="0,0,10,0">
                         <TextBlock Text="{Binding NomeUtilizador}" FontWeight="SemiBold" FontSize="13" />
                         <TextBlock Text="{Binding PerfilTexto}" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
                     </StackPanel>
 
-                    <Button Grid.Column="3"
+                    <Button Grid.Column="4"
                             Background="Transparent"
                             BorderThickness="0"
                             Padding="0"
@@ -201,7 +224,17 @@
                                     <StackPanel Spacing="3">
                                         <TextBlock Text="{Binding Titulo}" FontWeight="SemiBold" />
                                         <TextBlock Text="{Binding Mensagem}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextoSecundarioBrush}" />
-                                        <TextBlock Text="{Binding DataFormatada}" FontSize="10" Foreground="{DynamicResource TextoSuaveCinzaBrush}" />
+                                                                                <Grid ColumnDefinitions="*,Auto">
+                                            <TextBlock Text="{Binding DataFormatada}" FontSize="10" Foreground="{DynamicResource TextoSuaveCinzaBrush}" />
+                                            <Button Grid.Column="1"
+                                                    Content="×"
+                                                    Command="{Binding $parent[UserControl].DataContext.EliminarNotificacaoCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Padding="5,1"
+                                                    ToolTip.Tip="Eliminar" />
+                                        </Grid>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
