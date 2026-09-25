@@ -4,63 +4,361 @@
              x:Class="KiVenda.Desktop.Views.Modulos.DashboardView"
              x:DataType="vmm:DashboardViewModel">
 
-    <StackPanel Spacing="20">
+    <UserControl.Styles>
+        <Style Selector="Border.kpi">
+            <Setter Property="Background" Value="{DynamicResource SuperficieBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BordaBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="BoxShadow" Value="0 4 10 0 #0A000000" />
+        </Style>
+        <Style Selector="Border.kpi-icon">
+            <Setter Property="Width" Value="44" />
+            <Setter Property="Height" Value="44" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+        <Style Selector="TextBlock.kpi-label">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextoSecundarioBrush}" />
+        </Style>
+        <Style Selector="TextBlock.kpi-value">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextoPrimarioBrush}" />
+        </Style>
+        <Style Selector="Border.painel">
+            <Setter Property="Background" Value="{DynamicResource SuperficieBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BordaBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="22" />
+            <Setter Property="BoxShadow" Value="0 4 10 0 #0A000000" />
+        </Style>
+    </UserControl.Styles>
 
-        <StackPanel Spacing="2">
-            <TextBlock Classes="titulo-pagina" Text="{Binding NomeUtilizador, StringFormat='Bom dia, {0}'}" />
-            <TextBlock Classes="subtitulo" Text="Resumo rápido do dia — sem complicações." />
-        </StackPanel>
+    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="26">
 
-        <TextBlock Classes="erro" Text="{Binding MensagemErro}" IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
-
-        <Border Classes="cartao-verde" IsVisible="{Binding CaixaFechado}">
-            <StackPanel Spacing="4">
-                <TextBlock Text="CAIXA FECHADO" Foreground="White" FontWeight="Bold" FontSize="13" Opacity="0.85" />
-                <TextBlock Text="Abra o caixa no módulo Caixa para começar a vender." Foreground="White" Opacity="0.9" />
+        <!-- Cabeçalho do dashboard -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+            <StackPanel Spacing="5">
+                <TextBlock Classes="titulo-pagina"
+                           FontSize="28"
+                           Text="{Binding NomeUtilizador, StringFormat='Bom dia, {0}'}" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="▣"
+                               FontSize="14"
+                               Foreground="{DynamicResource TextoSecundarioBrush}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding DataAtualTexto}"
+                               FontSize="13"
+                               Foreground="{DynamicResource TextoSecundarioBrush}" />
+                </StackPanel>
             </StackPanel>
-        </Border>
 
-        <WrapPanel ItemSpacing="16" LineSpacing="16">
+            <Button Grid.Column="1"
+                    Classes="primario"
+                    Content="＋  Nova Venda (F2)"
+                    FontSize="13"
+                    Padding="18,12"
+                    Margin="20,0,0,0" />
+        </Grid>
 
-            <Border Classes="cartao-estatistica" Width="220">
-                <StackPanel Spacing="6">
-                    <TextBlock Classes="subtitulo" Text="VENDAS DE HOJE" />
-                    <TextBlock Text="{Binding VendasDeHojeTexto}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextoPrimarioBrush}" />
+        <TextBlock Grid.Row="1"
+                   Classes="erro"
+                   Text="{Binding MensagemErro}"
+                   IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+        <!-- KPIs -->
+        <UniformGrid Grid.Row="2"
+                     Columns="5"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Top"
+                     Margin="0,0,0,0">
+
+            <Border Classes="kpi" Margin="0,0,8,0">
+                <StackPanel>
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,18">
+                        <Border Classes="kpi-icon" Background="{DynamicResource VerdeSuaveBrush}">
+                            <TextBlock Text="↗"
+                                       FontSize="24"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource VerdePrimarioBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                        <Border Grid.Column="1"
+                                Background="{DynamicResource VerdeSuaveClaroBrush}"
+                                CornerRadius="999"
+                                Padding="8,4"
+                                VerticalAlignment="Top">
+                            <TextBlock Text="Hoje"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource VerdePrimarioBrush}" />
+                        </Border>
+                    </Grid>
+                    <TextBlock Classes="kpi-label" Text="Vendas de Hoje" />
+                    <TextBlock Classes="kpi-value"
+                               Text="{Binding VendasDeHojeTexto}"
+                               Margin="0,3,0,0" />
                 </StackPanel>
             </Border>
 
-            <Border Classes="cartao-estatistica" Width="220">
-                <StackPanel Spacing="6">
-                    <TextBlock Classes="subtitulo" Text="CAIXA ATUAL" />
-                    <TextBlock Text="{Binding CaixaAtualTexto}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextoPrimarioBrush}" />
+            <Border Classes="kpi" Margin="8,0">
+                <StackPanel>
+                    <Border Classes="kpi-icon"
+                            Background="{DynamicResource InfoSuaveBrush}"
+                            Margin="0,0,0,18">
+                        <TextBlock Text="▣"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource InfoBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Classes="kpi-label" Text="Caixa Atual" />
+                    <TextBlock Classes="kpi-value"
+                               Text="{Binding CaixaAtualTexto}"
+                               Margin="0,3,0,0" />
                 </StackPanel>
             </Border>
 
-            <Border Classes="cartao-estatistica" Width="220">
-                <StackPanel Spacing="6">
-                    <TextBlock Classes="subtitulo" Text="LUCRO ESTIMADO" />
-                    <TextBlock Text="{Binding LucroEstimadoTexto}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource SucessoBrush}" />
+            <Border Classes="kpi" Margin="8,0">
+                <StackPanel>
+                    <Border Classes="kpi-icon"
+                            Background="{DynamicResource InfoSuaveBrush}"
+                            Margin="0,0,0,18">
+                        <TextBlock Text="◉"
+                                   FontSize="21"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource InfoBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Classes="kpi-label" Text="Lucro Estimado" />
+                    <TextBlock Classes="kpi-value"
+                               Text="{Binding LucroEstimadoTexto}"
+                               Margin="0,3,0,0" />
                 </StackPanel>
             </Border>
 
-            <Border Classes="cartao-estatistica" Width="220">
-                <StackPanel Spacing="6">
-                    <TextBlock Classes="subtitulo" Text="STOCK BAIXO / SEM STOCK" />
-                    <TextBlock Text="{Binding StockBaixoTexto}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource PerigoBrush}" />
+            <Border Classes="kpi" Margin="8,0">
+                <StackPanel>
+                    <Border Classes="kpi-icon"
+                            Background="{DynamicResource PerigoSuaveBrush}"
+                            Margin="0,0,0,18">
+                        <TextBlock Text="!"
+                                   FontSize="21"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource PerigoBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Classes="kpi-label" Text="Stock Baixo" />
+                    <TextBlock Classes="kpi-value"
+                               Foreground="{DynamicResource PerigoBrush}"
+                               Text="{Binding StockBaixoTexto}"
+                               Margin="0,3,0,0" />
                 </StackPanel>
             </Border>
 
-            <Border Classes="cartao-estatistica" Width="220">
-                <StackPanel Spacing="6">
-                    <TextBlock Classes="subtitulo" Text="VENDAS REALIZADAS" />
-                    <TextBlock Text="{Binding VendasRealizadasTexto}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextoPrimarioBrush}" />
+            <Border Classes="kpi" Margin="8,0,0,0">
+                <StackPanel>
+                    <Border Classes="kpi-icon"
+                            Background="{DynamicResource NeutroSuaveBrush}"
+                            Margin="0,0,0,18">
+                        <TextBlock Text="□"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource TextoPrimarioBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Classes="kpi-label" Text="Vendas Realizadas" />
+                    <TextBlock Classes="kpi-value"
+                               Text="{Binding VendasRealizadasTexto}"
+                               Margin="0,3,0,0" />
                 </StackPanel>
             </Border>
 
-        </WrapPanel>
+        </UniformGrid>
 
-        <Button Content="Atualizar" Classes="secundario" Command="{Binding CarregarCommand}" IsEnabled="{Binding !ACarregar}" HorizontalAlignment="Left" />
+        <!-- Área analítica: tendência + alertas -->
+        <Grid Grid.Row="3" RowDefinitions="Auto,Auto" ColumnDefinitions="2*,*" ColumnSpacing="24">
 
-    </StackPanel>
+            <Border Grid.Column="0" Classes="painel" Padding="26">
+                <StackPanel Spacing="18">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Spacing="3">
+                            <TextBlock Text="Tendência de Vendas"
+                                       FontSize="17"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextoPrimarioBrush}" />
+                            <TextBlock Text="Últimos 7 dias de atividade comercial"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextoSecundarioBrush}" />
+                        </StackPanel>
+                        <Border Grid.Column="1"
+                                Background="{DynamicResource NeutroSuaveBrush}"
+                                CornerRadius="8"
+                                Padding="4">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Background="{DynamicResource SuperficieBrush}"
+                                        CornerRadius="6"
+                                        Padding="12,6">
+                                    <TextBlock Text="7 Dias"
+                                               FontSize="11"
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource TextoPrimarioBrush}" />
+                                </Border>
+                                <TextBlock Text="30 Dias"
+                                           FontSize="11"
+                                           FontWeight="Bold"
+                                           Foreground="{DynamicResource TextoSecundarioBrush}"
+                                           Margin="12,6" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
 
+                    <!-- Gráfico visual: a camada de dados real pode substituir as alturas sem alterar o layout. -->
+                    <Grid Height="250" ColumnDefinitions="*,*,*,*,*,*,*" VerticalAlignment="Bottom">
+                        <Border Grid.Column="0" Height="95" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
+                        <Border Grid.Column="1" Height="145" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
+                        <Border Grid.Column="2" Height="130" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
+                        <Border Grid.Column="3" Height="205" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
+                        <Border Grid.Column="4" Height="225" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0">
+                            <Border BorderBrush="{DynamicResource VerdePrimarioBrush}" BorderThickness="0,2,0,0" />
+                        </Border>
+                        <Border Grid.Column="5" Height="110" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
+                        <Border Grid.Column="6" Height="75" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
+
+                        <StackPanel Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,-24"><TextBlock Text="Seg" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" HorizontalAlignment="Center" /></StackPanel>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Bottom" Margin="0,0,0,-24"><TextBlock Text="Ter" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" HorizontalAlignment="Center" /></StackPanel>
+                        <StackPanel Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,-24"><TextBlock Text="Qua" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" HorizontalAlignment="Center" /></StackPanel>
+                        <StackPanel Grid.Column="3" VerticalAlignment="Bottom" Margin="0,0,0,-24"><TextBlock Text="Qui" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" HorizontalAlignment="Center" /></StackPanel>
+                        <TextBlock Grid.Column="4" Text="Sex" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource VerdePrimarioBrush}" />
+                        <TextBlock Grid.Column="5" Text="Sáb" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
+                        <TextBlock Grid.Column="6" Text="Dom" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Classes="painel" Padding="24">
+                <StackPanel Spacing="18">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="!" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource VerdePrimarioBrush}" />
+                        <TextBlock Text="Alertas e Notificações"
+                                   FontSize="17"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextoPrimarioBrush}" />
+                    </StackPanel>
+
+                    <Border Background="{DynamicResource PerigoSuaveBrush}"
+                            BorderBrush="{DynamicResource PerigoBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="14">
+                        <Grid ColumnDefinitions="42,*" ColumnSpacing="12">
+                            <Border Width="42" Height="42" CornerRadius="10" Background="{DynamicResource PerigoSuaveBrush}">
+                                <TextBlock Text="!"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           Foreground="{DynamicResource PerigoBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Spacing="3">
+                                <TextBlock Text="Stock Crítico" FontSize="12" FontWeight="Bold" />
+                                <TextBlock Text="{Binding StockBaixoTexto, StringFormat='Existem {0} produtos com stock baixo ou sem stock.'}"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextoSecundarioBrush}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Background="{DynamicResource InfoSuaveBrush}"
+                            BorderBrush="{DynamicResource InfoBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="14">
+                        <Grid ColumnDefinitions="42,*" ColumnSpacing="12">
+                            <Border Width="42" Height="42" CornerRadius="10" Background="{DynamicResource InfoSuaveBrush}">
+                                <TextBlock Text="☁"
+                                           FontSize="17"
+                                           Foreground="{DynamicResource InfoBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Spacing="3">
+                                <TextBlock Text="Backup" FontSize="12" FontWeight="Bold" />
+                                <TextBlock Text="Verifique o estado do backup de dados nas configurações."
+                                           FontSize="11"
+                                           TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextoSecundarioBrush}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Background="{DynamicResource NeutroSuaveBrush}"
+                            BorderBrush="{DynamicResource BordaBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="14">
+                        <Grid ColumnDefinitions="42,*" ColumnSpacing="12">
+                            <Border Width="42" Height="42" CornerRadius="10" Background="{DynamicResource SuperficieBrush}">
+                                <TextBlock Text="◷"
+                                           FontSize="18"
+                                           Foreground="{DynamicResource TextoSecundarioBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Spacing="3">
+                                <TextBlock Text="Sessão de Caixa" FontSize="12" FontWeight="Bold" />
+                                <TextBlock Text="{Binding CaixaFechado, StringFormat='Caixa fechado: {0}'}"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource TextoSecundarioBrush}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Button Classes="secundario"
+                            Content="Ver Todos os Alertas"
+                            HorizontalContentAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <!-- Placeholder visual para a próxima etapa de dados históricos. -->
+            <Border Grid.Row="1" Grid.ColumnSpan="2" Classes="painel" Padding="26" Margin="0,24,0,0">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="14">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel>
+                            <TextBlock Text="Vendas Recentes"
+                                       FontSize="17"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextoPrimarioBrush}" />
+                            <TextBlock Text="Resumo das operações mais recentes"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextoSecundarioBrush}" />
+                        </StackPanel>
+                        <Button Grid.Column="1"
+                                Classes="secundario"
+                                Content="Exportar Relatório  ↓"
+                                Padding="12,7" />
+                    </Grid>
+                    <Border Grid.Row="1"
+                            Background="{DynamicResource NeutroSuaveBrush}"
+                            CornerRadius="10"
+                            Padding="18">
+                        <TextBlock Text="O histórico detalhado de vendas será ligado aos dados reais nesta etapa."
+                                   FontSize="12"
+                                   Foreground="{DynamicResource TextoSecundarioBrush}"
+                                   HorizontalAlignment="Center" />
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
 </UserControl>
