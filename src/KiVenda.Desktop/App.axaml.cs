@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using KiVenda.Application.Abstractions.Auth;
 using KiVenda.Application.DependencyInjection;
 using KiVenda.Desktop.Autenticacao;
+using KiVenda.Desktop.Tema;
 using KiVenda.Desktop.ViewModels;
 using KiVenda.Desktop.ViewModels.Modulos;
 using KiVenda.Desktop.Views;
@@ -32,6 +33,7 @@ public partial class App : Avalonia.Application
     public override void OnFrameworkInitializationCompleted()
     {
         Services = ConfigureServices();
+        Services.GetRequiredService<ServicoTema>().CarregarEAplicar();
         InicializarBaseDeDadosAsync().GetAwaiter().GetResult();
         InicializarLicenciamento();
 
@@ -73,6 +75,7 @@ public partial class App : Avalonia.Application
         services.AddApplicationUseCases();
         services.AddInfrastructure();
         services.AddSingleton<IServicoBackup>(_ => new ServicoBackupSqlite(CaminhosAplicacao.CaminhoBaseDeDados));
+        services.AddSingleton<ServicoTema>();
         services.AddTransient<ConfiguracoesViewModel>();
 
         services.AddSingleton<SessaoUtilizadorAtual>();
