@@ -17,15 +17,17 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly LoginViewModel _loginViewModel;
     private readonly SessaoUtilizadorAtual _sessao;
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly Notificacoes.ServicoNotificacoes _servicoNotificacoes;
 
     [ObservableProperty]
     private ViewModelBase _conteudoAtual;
 
-    public MainWindowViewModel(LoginViewModel loginViewModel, SessaoUtilizadorAtual sessao, IServiceScopeFactory scopeFactory)
+    public MainWindowViewModel(LoginViewModel loginViewModel, SessaoUtilizadorAtual sessao, IServiceScopeFactory scopeFactory, Notificacoes.ServicoNotificacoes servicoNotificacoes)
     {
         _loginViewModel = loginViewModel;
         _sessao = sessao;
         _scopeFactory = scopeFactory;
+        _servicoNotificacoes = servicoNotificacoes;
 
         _loginViewModel.LoginBemSucedido += OnLoginBemSucedido;
         _conteudoAtual = _loginViewModel;
@@ -33,7 +35,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void OnLoginBemSucedido(object? sender, UtilizadorAutenticadoDto utilizador)
     {
-        var shell = new ShellViewModel(_scopeFactory, _sessao);
+        var shell = new ShellViewModel(_scopeFactory, _sessao, _servicoNotificacoes);
         shell.SessaoTerminada += OnSessaoTerminada;
 
         ConteudoAtual = shell;
