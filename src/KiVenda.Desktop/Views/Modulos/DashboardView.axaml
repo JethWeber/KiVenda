@@ -38,7 +38,7 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="26">
+    <Grid RowDefinitions="Auto,Auto,Auto,*" RowSpacing="26">
 
         <!-- Cabeçalho do dashboard -->
         <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
