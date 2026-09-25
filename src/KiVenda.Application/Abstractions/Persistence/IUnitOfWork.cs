@@ -17,6 +17,7 @@ public interface IUnitOfWork : IAsyncDisposable
     IMovimentoStockRepository MovimentosStock { get; }
 
     IClienteRepository Clientes { get; }
+    IEmpresaRepository Empresas { get; }
 
     IFornecedorRepository Fornecedores { get; }
 
