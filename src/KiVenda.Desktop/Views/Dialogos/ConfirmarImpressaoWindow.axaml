@@ -10,8 +10,8 @@
         <TextBlock Grid.Row="0" Text="Imprimir recibo?"
                    FontSize="20" FontWeight="SemiBold"
                    HorizontalAlignment="Center" />
-        <Border Grid.Row="1" Background="#F7F7F7"
-                BorderBrush="#D0D0D0" BorderThickness="1"
+        <Border Grid.Row="1" Background="{DynamicResource SuperficieBrush}"
+                BorderBrush="{DynamicResource BordaBrush}" BorderThickness="1"
                 CornerRadius="6" Padding="18">
             <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                           VerticalScrollBarVisibility="Auto">
