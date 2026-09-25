@@ -39,10 +39,11 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid>
+    <Grid VerticalAlignment="Top">
         <Grid RowDefinitions="Auto,Auto,Auto,Auto"
               RowSpacing="26"
-              Margin="0,0,8,24">
+              Margin="0,0,8,24"
+              VerticalAlignment="Top">
 
                 <!-- Cabeçalho do dashboard -->
                 <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
