@@ -3,6 +3,7 @@ using KiVenda.Core.Auditoria;
 using KiVenda.Core.Clientes;
 using KiVenda.Core.Compras;
 using KiVenda.Core.Fornecedores;
+using KiVenda.Core.Empresas;
 using KiVenda.Core.Produtos;
 using KiVenda.Core.Utilizadores;
 using KiVenda.Core.Vendas;
@@ -24,6 +25,7 @@ public sealed class InMemoryUnitOfWork : IUnitOfWork
     public IUnidadeMedidaRepository UnidadesMedida => new FakeUnidadeMedidaRepository(_db);
     public IMovimentoStockRepository MovimentosStock => new FakeMovimentoStockRepository(_db);
     public IClienteRepository Clientes => new FakeClienteRepository(_db);
+    public IEmpresaRepository Empresas => new FakeEmpresaRepository(_db);
     public IFornecedorRepository Fornecedores => new FakeFornecedorRepository(_db);
     public ICompraRepository Compras => new FakeCompraRepository(_db);
     public IVendaRepository Vendas => new FakeVendaRepository(_db);
@@ -85,6 +87,20 @@ file sealed class FakeClienteRepository(InMemoryDatabase db) : IClienteRepositor
     public Task<Cliente?> ObterPorIdAsync(Guid id, CancellationToken ct = default) => Task.FromResult(db.Clientes.FirstOrDefault(c => c.Id == id));
     public Task<IReadOnlyList<Cliente>> ListarAsync(string? termoPesquisa = null, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<Cliente>>(db.Clientes.ToList());
     public Task AdicionarAsync(Cliente cliente, CancellationToken ct = default) { db.Clientes.Add(cliente); return Task.CompletedTask; }
+}
+
+file sealed class FakeEmpresaRepository(InMemoryDatabase db) : IEmpresaRepository
+{
+    public Task<Empresa?> ObterAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult(db.Empresas.FirstOrDefault());
+
+    public Task AdicionarAsync(Empresa empresa, CancellationToken cancellationToken = default)
+    {
+        db.Empresas.Add(empresa);
+        return Task.CompletedTask;
+    }
+
+    public void Remover(Empresa empresa) => db.Empresas.Remove(empresa);
 }
 
 file sealed class FakeFornecedorRepository(InMemoryDatabase db) : IFornecedorRepository
