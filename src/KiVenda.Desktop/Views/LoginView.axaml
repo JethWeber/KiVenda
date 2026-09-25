@@ -35,7 +35,6 @@
                             BorderBrush="{DynamicResource BordaBrush}"
                             BorderThickness="1"
                             CornerRadius="14"
-                            BoxShadow="0 8 24 0 #0F000000"
                             Clip="True">
 
                         <StackPanel>
