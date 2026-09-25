@@ -17,6 +17,7 @@ public partial class MeusDadosViewModel : ViewModelBase
     [ObservableProperty] private string? _mensagem;
 
     public event EventHandler? GuardadoComSucesso;
+    public event EventHandler? Cancelado;
 
     public MeusDadosViewModel(SessaoUtilizadorAtual sessao)
     {
@@ -39,7 +40,7 @@ public partial class MeusDadosViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void Cancelar() => GuardadoComSucesso?.Invoke(this, EventArgs.Empty);
+    private void Cancelar() => Cancelado?.Invoke(this, EventArgs.Empty);
 
     [RelayCommand]
     private async Task GuardarAsync()
