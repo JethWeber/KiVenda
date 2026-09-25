@@ -1,64 +1,81 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <!--
-    Paleta extraída dos mockups (Dashboard, Caixa, Produtos, Vendas):
-    verde como cor de marca (logótipo, botões primários, cartão "Caixa
-    Aberto", item de menu ativo), fundo cinza muito claro, cartões
-    brancos com cantos arredondados, badges de estado com fundo suave.
-  -->
+  <!-- Paleta do KiVenda com suporte real a Light/Dark. -->
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <Color x:Key="VerdeEscuroColor">#14532D</Color>
+      <Color x:Key="VerdePrimarioColor">#15803D</Color>
+      <Color x:Key="VerdeClaroColor">#16A34A</Color>
+      <Color x:Key="VerdeSuaveColor">#DCFCE7</Color>
+      <Color x:Key="VerdeSuaveClaroColor">#F0FDF4</Color>
+      <Color x:Key="FundoPaginaColor">#F8FAFC</Color>
+      <Color x:Key="SuperficieColor">#FFFFFF</Color>
+      <Color x:Key="BordaColor">#E5E7EB</Color>
+      <Color x:Key="TextoPrimarioColor">#111827</Color>
+      <Color x:Key="TextoSecundarioColor">#6B7280</Color>
+      <Color x:Key="TextoSuaveCinzaColor">#475569</Color>
+      <Color x:Key="SucessoColor">#16A34A</Color>
+      <Color x:Key="SucessoSuaveColor">#DCFCE7</Color>
+      <Color x:Key="PerigoColor">#DC2626</Color>
+      <Color x:Key="PerigoSuaveColor">#FEE2E2</Color>
+      <Color x:Key="AvisoColor">#D97706</Color>
+      <Color x:Key="AvisoSuaveColor">#FEF3C7</Color>
+      <Color x:Key="InfoColor">#2563EB</Color>
+      <Color x:Key="InfoSuaveColor">#DBEAFE</Color>
+      <Color x:Key="NeutroSuaveColor">#F1F5F9</Color>
+    </ResourceDictionary>
 
-  <!-- Marca / Verde -->
-  <Color x:Key="VerdeEscuroColor">#14532D</Color>
-  <Color x:Key="VerdePrimarioColor">#15803D</Color>
-  <Color x:Key="VerdeClaroColor">#16A34A</Color>
-  <Color x:Key="VerdeSuaveColor">#DCFCE7</Color>
-  <Color x:Key="VerdeSuaveClaroColor">#F0FDF4</Color>
+    <ResourceDictionary x:Key="Dark">
+      <Color x:Key="VerdeEscuroColor">#86EFAC</Color>
+      <Color x:Key="VerdePrimarioColor">#4ADE80</Color>
+      <Color x:Key="VerdeClaroColor">#22C55E</Color>
+      <Color x:Key="VerdeSuaveColor">#123B24</Color>
+      <Color x:Key="VerdeSuaveClaroColor">#0E2A1A</Color>
+      <Color x:Key="FundoPaginaColor">#0F1411</Color>
+      <Color x:Key="SuperficieColor">#171D19</Color>
+      <Color x:Key="BordaColor">#2B352E</Color>
+      <Color x:Key="TextoPrimarioColor">#F1F5F3</Color>
+      <Color x:Key="TextoSecundarioColor">#AAB6AF</Color>
+      <Color x:Key="TextoSuaveCinzaColor">#94A3B8</Color>
+      <Color x:Key="SucessoColor">#4ADE80</Color>
+      <Color x:Key="SucessoSuaveColor">#123B24</Color>
+      <Color x:Key="PerigoColor">#F87171</Color>
+      <Color x:Key="PerigoSuaveColor">#3A1717</Color>
+      <Color x:Key="AvisoColor">#FBBF24</Color>
+      <Color x:Key="AvisoSuaveColor">#3A2A0F</Color>
+      <Color x:Key="InfoColor">#60A5FA</Color>
+      <Color x:Key="InfoSuaveColor">#132B4A</Color>
+      <Color x:Key="NeutroSuaveColor">#202722</Color>
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
 
-  <SolidColorBrush x:Key="VerdeEscuroBrush" Color="{StaticResource VerdeEscuroColor}" />
-  <SolidColorBrush x:Key="VerdePrimarioBrush" Color="{StaticResource VerdePrimarioColor}" />
-  <SolidColorBrush x:Key="VerdeClaroBrush" Color="{StaticResource VerdeClaroColor}" />
-  <SolidColorBrush x:Key="VerdeSuaveBrush" Color="{StaticResource VerdeSuaveColor}" />
-  <SolidColorBrush x:Key="VerdeSuaveClaroBrush" Color="{StaticResource VerdeSuaveClaroColor}" />
+  <SolidColorBrush x:Key="VerdeEscuroBrush" Color="{DynamicResource VerdeEscuroColor}" />
+  <SolidColorBrush x:Key="VerdePrimarioBrush" Color="{DynamicResource VerdePrimarioColor}" />
+  <SolidColorBrush x:Key="VerdeClaroBrush" Color="{DynamicResource VerdeClaroColor}" />
+  <SolidColorBrush x:Key="VerdeSuaveBrush" Color="{DynamicResource VerdeSuaveColor}" />
+  <SolidColorBrush x:Key="VerdeSuaveClaroBrush" Color="{DynamicResource VerdeSuaveClaroColor}" />
 
   <LinearGradientBrush x:Key="VerdeGradienteBrush" StartPoint="0%,0%" EndPoint="100%,100%">
-    <GradientStop Color="{StaticResource VerdeEscuroColor}" Offset="0" />
-    <GradientStop Color="{StaticResource VerdePrimarioColor}" Offset="1" />
+    <GradientStop Color="{DynamicResource VerdeEscuroColor}" Offset="0" />
+    <GradientStop Color="{DynamicResource VerdePrimarioColor}" Offset="1" />
   </LinearGradientBrush>
 
-  <!-- Neutros -->
-  <Color x:Key="FundoPaginaColor">#F8FAFC</Color>
-  <Color x:Key="SuperficieColor">#FFFFFF</Color>
-  <Color x:Key="BordaColor">#E5E7EB</Color>
-  <Color x:Key="TextoPrimarioColor">#111827</Color>
-  <Color x:Key="TextoSecundarioColor">#6B7280</Color>
+  <SolidColorBrush x:Key="FundoPaginaBrush" Color="{DynamicResource FundoPaginaColor}" />
+  <SolidColorBrush x:Key="SuperficieBrush" Color="{DynamicResource SuperficieColor}" />
+  <SolidColorBrush x:Key="BordaBrush" Color="{DynamicResource BordaColor}" />
+  <SolidColorBrush x:Key="TextoPrimarioBrush" Color="{DynamicResource TextoPrimarioColor}" />
+  <SolidColorBrush x:Key="TextoSecundarioBrush" Color="{DynamicResource TextoSecundarioColor}" />
+  <SolidColorBrush x:Key="TextoSuaveCinzaBrush" Color="{DynamicResource TextoSuaveCinzaColor}" />
 
-  <SolidColorBrush x:Key="FundoPaginaBrush" Color="{StaticResource FundoPaginaColor}" />
-  <SolidColorBrush x:Key="SuperficieBrush" Color="{StaticResource SuperficieColor}" />
-  <SolidColorBrush x:Key="BordaBrush" Color="{StaticResource BordaColor}" />
-  <SolidColorBrush x:Key="TextoPrimarioBrush" Color="{StaticResource TextoPrimarioColor}" />
-  <SolidColorBrush x:Key="TextoSecundarioBrush" Color="{StaticResource TextoSecundarioColor}" />
-
-  <!-- Estados / Badges -->
-  <Color x:Key="SucessoColor">#16A34A</Color>
-  <Color x:Key="SucessoSuaveColor">#DCFCE7</Color>
-  <Color x:Key="PerigoColor">#DC2626</Color>
-  <Color x:Key="PerigoSuaveColor">#FEE2E2</Color>
-  <Color x:Key="AvisoColor">#D97706</Color>
-  <Color x:Key="AvisoSuaveColor">#FEF3C7</Color>
-  <Color x:Key="InfoColor">#2563EB</Color>
-  <Color x:Key="InfoSuaveColor">#DBEAFE</Color>
-  <Color x:Key="NeutroSuaveColor">#F1F5F9</Color>
-
-  <SolidColorBrush x:Key="SucessoBrush" Color="{StaticResource SucessoColor}" />
-  <SolidColorBrush x:Key="SucessoSuaveBrush" Color="{StaticResource SucessoSuaveColor}" />
-  <SolidColorBrush x:Key="PerigoBrush" Color="{StaticResource PerigoColor}" />
-  <SolidColorBrush x:Key="PerigoSuaveBrush" Color="{StaticResource PerigoSuaveColor}" />
-  <SolidColorBrush x:Key="AvisoBrush" Color="{StaticResource AvisoColor}" />
-  <SolidColorBrush x:Key="AvisoSuaveBrush" Color="{StaticResource AvisoSuaveColor}" />
-  <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}" />
-  <SolidColorBrush x:Key="InfoSuaveBrush" Color="{StaticResource InfoSuaveColor}" />
-  <SolidColorBrush x:Key="NeutroSuaveBrush" Color="{StaticResource NeutroSuaveColor}" />
-  <SolidColorBrush x:Key="TextoSuaveCinzaBrush" Color="#475569" />
+  <SolidColorBrush x:Key="SucessoBrush" Color="{DynamicResource SucessoColor}" />
+  <SolidColorBrush x:Key="SucessoSuaveBrush" Color="{DynamicResource SucessoSuaveColor}" />
+  <SolidColorBrush x:Key="PerigoBrush" Color="{DynamicResource PerigoColor}" />
+  <SolidColorBrush x:Key="PerigoSuaveBrush" Color="{DynamicResource PerigoSuaveColor}" />
+  <SolidColorBrush x:Key="AvisoBrush" Color="{DynamicResource AvisoColor}" />
+  <SolidColorBrush x:Key="AvisoSuaveBrush" Color="{DynamicResource AvisoSuaveColor}" />
+  <SolidColorBrush x:Key="InfoBrush" Color="{DynamicResource InfoColor}" />
+  <SolidColorBrush x:Key="InfoSuaveBrush" Color="{DynamicResource InfoSuaveColor}" />
+  <SolidColorBrush x:Key="NeutroSuaveBrush" Color="{DynamicResource NeutroSuaveColor}" />
 
 </ResourceDictionary>
