@@ -8,69 +8,39 @@
              x:DataType="vm:ShellViewModel">
 
     <UserControl.DataTemplates>
-        <DataTemplate DataType="vmm:DashboardViewModel">
-            <views:DashboardView />
-        </DataTemplate>
-        <DataTemplate DataType="vmm:VendasViewModel">
-            <views:VendasView />
-        </DataTemplate>
-        <DataTemplate DataType="vmm:CaixaViewModel">
-            <views:CaixaView />
-        </DataTemplate>
-        <DataTemplate DataType="vmm:ProdutosViewModel">
-            <views:ProdutosView />
-        </DataTemplate>
-        <DataTemplate DataType="vmm:ClientesViewModel">
-            <views:ClientesView />
-        </DataTemplate>
-        <DataTemplate DataType="vmm:FornecedoresViewModel">
-            <views:FornecedoresView />
-        </DataTemplate>
-        <DataTemplate DataType="vmm:ComprasViewModel">
-            <views:ComprasView />
-        </DataTemplate>
-        <DataTemplate DataType="vmm:UtilizadoresViewModel">
-            <views:UtilizadoresView />
-        </DataTemplate>
-        <DataTemplate DataType="vmm:RelatoriosViewModel">
-            <views:RelatoriosView />
-        </DataTemplate>
-        <DataTemplate DataType="vmm:AuditoriaViewModel">
-            <views:AuditoriaView />
-        </DataTemplate>
-        <DataTemplate DataType="vmm:ConfiguracoesViewModel">
-            <views:ConfiguracoesView />
-        </DataTemplate>
-        <DataTemplate DataType="vmm:EmBreveViewModel">
-            <views:EmBreveView />
-        </DataTemplate>
+        <DataTemplate DataType="vmm:DashboardViewModel"><views:DashboardView /></DataTemplate>
+        <DataTemplate DataType="vmm:VendasViewModel"><views:VendasView /></DataTemplate>
+        <DataTemplate DataType="vmm:CaixaViewModel"><views:CaixaView /></DataTemplate>
+        <DataTemplate DataType="vmm:ProdutosViewModel"><views:ProdutosView /></DataTemplate>
+        <DataTemplate DataType="vmm:ClientesViewModel"><views:ClientesView /></DataTemplate>
+        <DataTemplate DataType="vmm:FornecedoresViewModel"><views:FornecedoresView /></DataTemplate>
+        <DataTemplate DataType="vmm:ComprasViewModel"><views:ComprasView /></DataTemplate>
+        <DataTemplate DataType="vmm:UtilizadoresViewModel"><views:UtilizadoresView /></DataTemplate>
+        <DataTemplate DataType="vmm:RelatoriosViewModel"><views:RelatoriosView /></DataTemplate>
+        <DataTemplate DataType="vmm:AuditoriaViewModel"><views:AuditoriaView /></DataTemplate>
+        <DataTemplate DataType="vmm:ConfiguracoesViewModel"><views:ConfiguracoesView /></DataTemplate>
+        <DataTemplate DataType="vmm:EmBreveViewModel"><views:EmBreveView /></DataTemplate>
     </UserControl.DataTemplates>
 
-    <Grid ColumnDefinitions="260,*" Background="{StaticResource FundoPaginaBrush}">
-
-        <!-- ===================== Sidebar ===================== -->
+    <Grid ColumnDefinitions="250,*" Background="{DynamicResource FundoPaginaBrush}">
+        <!-- Sidebar -->
         <Border Grid.Column="0"
-                Background="{StaticResource SuperficieBrush}"
-                BorderBrush="{StaticResource BordaBrush}"
+                Background="{DynamicResource SuperficieBrush}"
+                BorderBrush="{DynamicResource BordaBrush}"
                 BorderThickness="0,0,1,0">
             <Grid RowDefinitions="Auto,*,Auto">
-
-                <!-- Logótipo -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="20,24,20,16">
-                    <Border Background="{StaticResource VerdePrimarioBrush}" CornerRadius="10" Width="40" Height="40">
-                        <TextBlock Text="K" Foreground="White" FontWeight="Bold" FontSize="18"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="KiVenda" FontWeight="Bold" FontSize="18" Foreground="{StaticResource VerdePrimarioBrush}" />
-                        <TextBlock Text="Angolan ERP" FontSize="11" Foreground="{StaticResource TextoSecundarioBrush}" />
-                    </StackPanel>
+                <StackPanel Grid.Row="0" Margin="20,24,20,18" Spacing="3">
+                    <TextBlock Text="KiVenda"
+                               FontWeight="Bold"
+                               FontSize="22"
+                               Foreground="{DynamicResource VerdePrimarioBrush}" />
+                    <TextBlock Text="Quem vende, controla."
+                               FontSize="10"
+                               Foreground="{DynamicResource TextoSecundarioBrush}" />
                 </StackPanel>
 
-                <!-- Menu: estilos locais (aplicam-se só a este ListBox,
-                     sem depender de classes globais) -->
                 <ListBox Grid.Row="1"
-                         Margin="12,4"
+                         Margin="12,0"
                          Background="Transparent"
                          BorderThickness="0"
                          ItemsSource="{Binding ItensMenu}"
@@ -78,18 +48,18 @@
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">
                             <Setter Property="Padding" Value="14,11" />
-                            <Setter Property="CornerRadius" Value="10" />
+                            <Setter Property="CornerRadius" Value="9" />
                             <Setter Property="Margin" Value="0,2" />
                         </Style>
                         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-                            <Setter Property="Background" Value="{StaticResource VerdeSuaveBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource VerdeSuaveBrush}" />
                         </Style>
                         <Style Selector="ListBoxItem:selected TextBlock">
-                            <Setter Property="Foreground" Value="{StaticResource VerdePrimarioBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource VerdePrimarioBrush}" />
                             <Setter Property="FontWeight" Value="SemiBold" />
                         </Style>
                         <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-                            <Setter Property="Background" Value="{StaticResource NeutroSuaveBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource NeutroSuaveBrush}" />
                         </Style>
                     </ListBox.Styles>
                     <ListBox.ItemTemplate>
@@ -102,39 +72,143 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <!-- Rodapé: utilizador atual -->
-                <Border Grid.Row="2" Padding="16" BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0">
-                    <Grid ColumnDefinitions="Auto,*">
-                        <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18" Background="{StaticResource VerdeSuaveBrush}">
-                            <TextBlock Text="{Binding InicialNome}"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       Foreground="{StaticResource VerdePrimarioBrush}" FontWeight="Bold" />
-                        </Border>
-                        <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding NomeUtilizador}" FontWeight="SemiBold" FontSize="13" />
-                            <TextBlock Text="{Binding PerfilTexto}" FontSize="11" Foreground="{StaticResource TextoSecundarioBrush}" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
-
+                <StackPanel Grid.Row="2" Margin="12,0,12,14">
+                    <Border Height="1" Background="{DynamicResource BordaBrush}" Margin="4,0,4,8" />
+                    <ItemsControl ItemsSource="{Binding ItensMenuInferiores}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="vmc:ItemMenuLateral">
+                                <Button Command="{Binding DataContext.SelecionarItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Classes="secundario"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        HorizontalContentAlignment="Left"
+                                        Padding="14,11"
+                                        Margin="0,2">
+                                    <StackPanel Orientation="Horizontal" Spacing="12">
+                                        <TextBlock Text="{Binding Icone}" FontSize="16" Width="22" />
+                                        <TextBlock Text="{Binding Nome}" FontSize="14" />
+                                    </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
             </Grid>
         </Border>
 
-        <!-- ===================== Área principal ===================== -->
+        <!-- Main -->
         <Grid Grid.Column="1" RowDefinitions="Auto,*">
+            <Border Grid.Row="0"
+                    Background="{DynamicResource SuperficieBrush}"
+                    BorderBrush="{DynamicResource BordaBrush}"
+                    BorderThickness="0,0,0,1"
+                    Padding="24,14">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto" VerticalAlignment="Center">
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding NomeEmpresa}"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextoPrimarioBrush}" />
 
-            <!-- Topbar -->
-            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="24,20,24,0">
-                <TextBox Grid.Column="0" Watermark="Pesquisar transação ou recibo..." MaxWidth="420" HorizontalAlignment="Left" IsReadOnly="True" />
-                <Button Grid.Column="1" Content="Terminar sessão" Command="{Binding TerminarSessaoCommand}" Classes="secundario" />
-            </Grid>
+                    <Button Grid.Column="1"
+                            Command="{Binding AbrirNotificacoesCommand}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Width="44"
+                            Height="44"
+                            Padding="0"
+                            Margin="0,0,12,0"
+                            ToolTip.Tip="Notificações">
+                        <Grid>
+                            <TextBlock Text="🔔" FontSize="18"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                            <Border IsVisible="{Binding TemNotificacoesNaoLidas}"
+                                    Background="{DynamicResource ErroBrush}"
+                                    CornerRadius="6"
+                                    Width="8" Height="8"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top" />
+                        </Grid>
+                    </Button>
+
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,10,0">
+                        <TextBlock Text="{Binding NomeUtilizador}" FontWeight="SemiBold" FontSize="13" />
+                        <TextBlock Text="{Binding PerfilTexto}" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
+                    </StackPanel>
+
+                    <Button Grid.Column="3"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="0"
+                            Width="42"
+                            Height="42"
+                            CornerRadius="21">
+                        <Border Width="38" Height="38"
+                                CornerRadius="19"
+                                Background="{DynamicResource VerdeSuaveBrush}">
+                            <TextBlock Text="{Binding IniciaisNome}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource VerdePrimarioBrush}" />
+                        </Border>
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight">
+                                <StackPanel Width="220" Spacing="2">
+                                    <TextBlock Text="{Binding NomeUtilizador}" FontWeight="Bold" Margin="12,10,12,0" />
+                                    <TextBlock Text="{Binding PerfilTexto}" Foreground="{DynamicResource TextoSecundarioBrush}" Margin="12,0,12,8" />
+                                    <Border Height="1" Background="{DynamicResource BordaBrush}" />
+                                    <Button Content="Meus Dados" Command="{Binding MeusDadosCommand}" HorizontalContentAlignment="Left" Background="Transparent" BorderThickness="0" />
+                                    <Button Content="Terminar Sessão" Command="{Binding TerminarSessaoCommand}" HorizontalContentAlignment="Left" Background="Transparent" BorderThickness="0" />
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </Grid>
+            </Border>
 
             <ScrollViewer Grid.Row="1" Padding="24">
                 <ContentControl Content="{Binding ConteudoAtual}" />
             </ScrollViewer>
-
         </Grid>
 
+        <!-- Notification panel -->
+        <Border Grid.Column="1"
+                IsVisible="{Binding NotificacoesAbertas}"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,70,24,0"
+                Width="360"
+                MaxHeight="520"
+                Background="{DynamicResource SuperficieBrush}"
+                BorderBrush="{DynamicResource BordaBrush}"
+                BorderThickness="1"
+                CornerRadius="12"
+                Panel.ZIndex="20">
+            <StackPanel>
+                <Grid ColumnDefinitions="*,Auto" Margin="16,14">
+                    <TextBlock Text="Notificações" FontSize="16" FontWeight="Bold" />
+                    <Button Grid.Column="1" Content="×" Command="{Binding FecharNotificacoesCommand}" Background="Transparent" BorderThickness="0" />
+                </Grid>
+                <ScrollViewer MaxHeight="430">
+                    <ItemsControl ItemsSource="{Binding Notificacoes}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{DynamicResource BordaBrush}" BorderThickness="0,1,0,0" Padding="14,12">
+                                    <StackPanel Spacing="3">
+                                        <TextBlock Text="{Binding Titulo}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Mensagem}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextoSecundarioBrush}" />
+                                        <TextBlock Text="{Binding DataFormatada}" FontSize="10" Foreground="{DynamicResource TextoSuaveCinzaBrush}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+        </Border>
     </Grid>
-
 </UserControl>
