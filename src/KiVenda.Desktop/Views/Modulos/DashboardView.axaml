@@ -239,17 +239,7 @@
                 </StackPanel>
             </Border>
 
-            <Border Grid.Row="1" Grid.ColumnSpan="2" Classes="painel" Padding="26" Margin="0,24,0,0">
-                <Grid RowDefinitions="Auto,Auto" RowSpacing="14">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <StackPanel>
-                            <TextBlock Text="Vendas Recentes" FontSize="17" FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextoPrimarioBrush}" />
-                            <TextBlock Text="Resumo das operações mais recentes" FontSize="12"
-                                       Foreground="{DynamicResource TextoSecundarioBrush}" />
-                        </StackPanel>
-                        <Button Grid.Column="1" Classes="secundario" Content="Exportar Relatório  ↓" Padding="12,7" />
-                    </Grid>
+        </Grid>
                     <Border Grid.Row="1" Background="{DynamicResource NeutroSuaveBrush}" CornerRadius="10" Padding="18">
                         <TextBlock Text="O histórico detalhado de vendas será ligado aos dados reais nesta etapa."
                                    FontSize="12" Foreground="{DynamicResource TextoSecundarioBrush}"
