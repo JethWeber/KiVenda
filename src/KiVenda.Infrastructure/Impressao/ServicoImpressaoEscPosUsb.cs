@@ -4,22 +4,25 @@ using KiVenda.Infrastructure.Configuracao;
 namespace KiVenda.Infrastructure.Impressao;
 
 /// <summary>
-/// Serviço de impressão térmica baseado em ESC/POS.
-/// A configuração é carregada do JSON local para que o utilizador possa
-/// alterar o dispositivo sem reiniciar nem editar variáveis de ambiente.
+/// Serviço de impressão térmica ESC/POS multiplataforma.
+/// A camada de infraestrutura escolhe o detector e transporte adequados ao
+/// sistema operativo; a UI trabalha apenas com identificadores descobertos.
 /// </summary>
 public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao
 {
     private readonly IArmazenamentoConfiguracaoLocal _armazenamento;
-    private readonly TransporteImpressoraUsb _transporte;
+    private readonly IDetectorImpressoras _detector;
+    private readonly ITransporteImpressora _transporte;
     private readonly ServicoImpressaoTexto _servicoRelatorios;
 
     public ServicoImpressaoEscPosUsb(
         IArmazenamentoConfiguracaoLocal armazenamento,
-        TransporteImpressoraUsb transporte,
+        IDetectorImpressoras detector,
+        ITransporteImpressora transporte,
         ServicoImpressaoTexto servicoRelatorios)
     {
         _armazenamento = armazenamento;
+        _detector = detector;
         _transporte = transporte;
         _servicoRelatorios = servicoRelatorios;
     }
@@ -39,18 +42,18 @@ public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao
         if (string.IsNullOrWhiteSpace(configuracao.Dispositivo))
         {
             throw new InvalidOperationException(
-                "A impressora térmica está ativada, mas nenhum dispositivo foi configurado.");
+                "A impressão térmica está ativa, mas nenhuma impressora foi selecionada.");
         }
 
         var gerador = new GeradorEscPos(configuracao);
         var dados = gerador.GerarRecibo(recibo, dadosLoja);
 
-        await _transporte.EnviarAsync(configuracao.Dispositivo, dados, cancellationToken);
+        await _transporte.EnviarAsync(
+            configuracao.Dispositivo,
+            dados,
+            cancellationToken);
     }
 
-    /// <summary>
-    /// Relatórios continuam a usar a impressão normal/textual.
-    /// </summary>
     public Task ImprimirTextoAsync(
         string titulo,
         string conteudo,
@@ -60,22 +63,38 @@ public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao
     public async Task<IReadOnlyList<string>> ListarImpressorasDisponiveisAsync(
         CancellationToken cancellationToken = default)
     {
+        var dispositivos = await _detector.DetarAsync(cancellationToken);
+
+        return dispositivos
+            .Where(d => d.Disponivel)
+            .Select(d => d.Nome)
+            .ToList();
+    }
+
+    public async Task TestarImpressoraAsync(
+        string dispositivo,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(dispositivo))
+        {
+            throw new InvalidOperationException(
+                "Selecione uma impressora antes de executar o teste.");
+        }
+
         var configuracao = await ObterConfiguracaoAsync(cancellationToken);
-
-        if (!configuracao.Ativo || string.IsNullOrWhiteSpace(configuracao.Dispositivo))
+        var configuracaoTeste = configuracao with
         {
-            return Array.Empty<string>();
-        }
+            Dispositivo = dispositivo,
+            Ativo = true
+        };
 
-        if (File.Exists(configuracao.Dispositivo))
-        {
-            return
-            [
-                $"Térmica ESC/POS ({configuracao.Dispositivo})"
-            ];
-        }
+        var gerador = new GeradorEscPos(configuracaoTeste);
+        var dados = gerador.GerarTeste("TESTE KIVENDA");
 
-        return Array.Empty<string>();
+        await _transporte.EnviarAsync(
+            dispositivo,
+            dados,
+            cancellationToken);
     }
 
     private async Task<ConfiguracaoImpressoraTermica> ObterConfiguracaoAsync(
