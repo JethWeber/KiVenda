@@ -236,7 +236,7 @@
                             BorderThickness="1"
                             CornerRadius="12"
                             Padding="14"
-                            IsVisible="{Binding TemAlertas, Converter={x:Static ObjectConverters.IsFalse}}">
+                            IsVisible="{Binding SemAlertas}">
                         <TextBlock Text="Nenhum alerta pendente."
                                    FontSize="11"
                                    Foreground="{DynamicResource TextoSecundarioBrush}"
