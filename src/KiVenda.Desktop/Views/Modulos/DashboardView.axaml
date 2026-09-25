@@ -240,14 +240,6 @@
             </Border>
 
         </Grid>
-                    <Border Grid.Row="1" Background="{DynamicResource NeutroSuaveBrush}" CornerRadius="10" Padding="18">
-                        <TextBlock Text="O histórico detalhado de vendas será ligado aos dados reais nesta etapa."
-                                   FontSize="12" Foreground="{DynamicResource TextoSecundarioBrush}"
-                                   HorizontalAlignment="Center" />
-                    </Border>
-                </Grid>
-            </Border>
-        </Grid>
 
         <!-- Popup/modal de alertas -->
         <Border Grid.RowSpan="4"
