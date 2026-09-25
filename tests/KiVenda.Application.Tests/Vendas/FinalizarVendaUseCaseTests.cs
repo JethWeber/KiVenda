@@ -6,6 +6,7 @@ using KiVenda.Core.Caixa;
 using KiVenda.Core.Enums;
 using KiVenda.Core.Exceptions;
 using KiVenda.Core.Produtos;
+using KiVenda.Core.Utilizadores;
 using KiVenda.Core.Vendas;
 using Xunit;
 
@@ -24,6 +25,14 @@ public class FinalizarVendaUseCaseTests
         db.UnidadesMedida.Add(unidade);
 
         var contexto = new FakeContextoAutenticacao { Perfil = PerfilUtilizador.Atendente };
+
+        var utilizador = new Utilizador(
+            "Jeth Weber",
+            "jeth",
+            "hash:teste",
+            contexto.Perfil);
+        utilizador.Id = contexto.UtilizadorId;
+        db.Utilizadores.Add(utilizador);
 
         var produto = new Produto("Açúcar", "PRD-AC01", categoria.Id, unidade.Id, precoVendaPorUnidadeBase: 1.5m, stockMinimo: 5000m);
         var apresentacao1kg = produto.AdicionarApresentacao("1 kg", 1000m);
