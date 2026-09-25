@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using KiVenda.Desktop.ViewModels.Common;
 using KiVenda.Desktop.Autenticacao;
 using KiVenda.Desktop.ViewModels.Shell;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,15 @@ public partial class ShellView : UserControl
     {
         InitializeComponent();
         DataContextChanged += OnDataContextChanged;
+    }
+
+    private void OnMenuSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is not ShellViewModel vm)
+            return;
+
+        if (e.AddedItems.Count > 0 && e.AddedItems[0] is ItemMenuLateral item)
+            vm.SelecionarItemCommand.Execute(item);
     }
 
     private void OnDataContextChanged(object? sender, System.EventArgs e)
