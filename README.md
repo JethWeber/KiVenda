@@ -903,6 +903,39 @@ A Fase 11 está concluída em termos de implementação. **Hoje, 22/09/2026, o p
 
 ---
 
+## Impressão térmica ESC/POS — camada base 🟡
+
+A impressão de recibos térmicos deixou de depender do gerador de `.txt` e passou a ter uma camada ESC/POS genérica, separada do transporte físico.
+
+### Implementado
+
+- [x] ConfiguracaoImpressoraTermica — perfil configurável para largura/colunas, alimentação final, corte e encoding.
+- [x] GeradorEscPos — transforma ReciboVendaDto em bytes ESC/POS sem depender de hardware.
+- [x] TransporteImpressoraUsb — envia os bytes diretamente para um dispositivo exposto pelo sistema operativo.
+- [x] ServicoImpressaoEscPosUsb — implementação de IServicoImpressao para recibos térmicos.
+- [x] Impressão de relatórios continua delegada ao ServicoImpressaoTexto; o ESC/POS fica concentrado no recibo térmico.
+- [x] Testes automatizados da geração dos comandos ESC/POS.
+- [x] Caminho USB Linux configurável por KIVENDA_PRINTER_DEVICE; por omissão, /dev/usb/lp0.
+- [x] Colunas configuráveis por KIVENDA_PRINTER_COLUMNS.
+- [x] Encoding configurável por KIVENDA_PRINTER_ENCODING (por omissão, cp850).
+
+### Ainda não validado fisicamente
+
+A impressora térmica real ainda não está disponível. Portanto, esta etapa valida geração dos comandos e arquitetura, não compatibilidade com uma marca/modelo específico.
+
+Quando houver hardware real, serão validados:
+- [ ] comunicação USB;
+- [ ] encoding/acentuação;
+- [ ] largura 58 mm / 80 mm;
+- [ ] corte de papel;
+- [ ] alinhamento/negrito/tamanhos;
+- [ ] QR Code/código de barras, quando implementados;
+- [ ] comportamento em diferentes modelos ESC/POS.
+
+### Princípio
+
+> O KiVenda implementa ESC/POS como protocolo de impressão térmica e trata marca/modelo como perfil de capacidades, não como código específico espalhado pela aplicação.
+
 ## Fase 12 — Destruição e Validação do MVP ⬜
 
 > **Proposta — NÃO EXECUTADA AINDA.** Esta secção regista o plano de ataque para a próxima etapa. Nenhum destes testes deve ser tratado como já realizado.
