@@ -11,7 +11,7 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
 {
     private readonly IArmazenamentoConfiguracaoLocal _armazenamento;
     private readonly IDetectorImpressoras _detector;
-    private readonly IServicoImpressao _servicoImpressao;
+    private readonly IServicoImpressaoTermica _servicoImpressao;
 
     public ObservableCollection<DispositivoImpressora> Dispositivos { get; } = [];
 
@@ -33,7 +33,7 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
     {
         _armazenamento = App.Services.GetRequiredService<IArmazenamentoConfiguracaoLocal>();
         _detector = App.Services.GetRequiredService<IDetectorImpressoras>();
-        _servicoImpressao = App.Services.GetRequiredService<IServicoImpressao>();
+        _servicoImpressao = App.Services.GetRequiredService<IServicoImpressaoTermica>();
 
         _ = InicializarAsync();
     }
