@@ -38,8 +38,5 @@
     <ProjectReference Include="..\..\..\WeberTech.Licensing\WeberTech.Licensing\WeberTech.Licensing.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <AvaloniaResource Include="**\*.axaml" />
-  </ItemGroup>
 
 </Project>
