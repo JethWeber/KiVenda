@@ -3,6 +3,7 @@ using FluentAssertions;
 using KiVenda.Application.Vendas;
 using KiVenda.Core.Enums;
 using KiVenda.Infrastructure.Impressao;
+using Xunit;
 
 namespace KiVenda.Infrastructure.Tests.Impressao;
 
