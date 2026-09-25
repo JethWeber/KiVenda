@@ -35,6 +35,7 @@ public partial class ShellViewModel : ViewModelBase
     public bool TemNotificacoesNaoLidas => _servicoNotificacoes.NaoLidas > 0;
 
     public event EventHandler? SessaoTerminada;
+    public event EventHandler? MeusDadosSolicitados;
 
     public ShellViewModel(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao, ServicoNotificacoes servicoNotificacoes)
     {
@@ -139,11 +140,7 @@ public partial class ShellViewModel : ViewModelBase
     private void FecharNotificacoes() => NotificacoesAbertas = false;
 
     [RelayCommand]
-    private void MeusDados()
-    {
-        // A abertura do editor de dados pessoais será feita pelo ShellView,
-        // mantendo a janela principal responsável pelo ciclo de vida do popup.
-    }
+    private void MeusDados() => MeusDadosSolicitados?.Invoke(this, EventArgs.Empty);
 
     [RelayCommand]
     private void TerminarSessao()
