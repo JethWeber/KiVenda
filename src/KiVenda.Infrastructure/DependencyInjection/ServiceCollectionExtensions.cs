@@ -44,7 +44,9 @@ public static class ServiceCollectionExtensions
             services.AddSingleton<ITransporteImpressora, TransporteImpressoraNaoSuportado>();
         }
 
-        services.AddSingleton<IServicoImpressao, ServicoImpressaoEscPosUsb>();
+        services.AddSingleton<ServicoImpressaoEscPosUsb>();
+        services.AddSingleton<IServicoImpressao>(provider => provider.GetRequiredService<ServicoImpressaoEscPosUsb>());
+        services.AddSingleton<IServicoImpressaoTermica>(provider => provider.GetRequiredService<ServicoImpressaoEscPosUsb>());
 
         services.AddSingleton<IServicoBackup>(
             _ => new ServicoBackupSqlite(CaminhosAplicacao.CaminhoBaseDeDados));
