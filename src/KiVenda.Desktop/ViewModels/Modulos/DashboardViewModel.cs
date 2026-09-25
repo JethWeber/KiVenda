@@ -18,6 +18,8 @@ public partial class DashboardViewModel : ViewModelBase
 
     public string NomeUtilizador { get; }
 
+    public string DataAtualTexto { get; } = DateTime.Now.ToString("dddd, dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("pt-AO"));
+
     [ObservableProperty]
     private bool _aCarregar;
 
