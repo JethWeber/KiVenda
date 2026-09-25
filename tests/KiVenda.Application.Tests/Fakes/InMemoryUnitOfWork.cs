@@ -44,6 +44,19 @@ file sealed class FakeProdutoRepository(InMemoryDatabase db) : IProdutoRepositor
     public Task<Produto?> ObterPorIdAsync(Guid id, CancellationToken ct = default) => Task.FromResult(db.Produtos.FirstOrDefault(p => p.Id == id));
     public Task<Produto?> ObterPorCodigoBarrasAsync(string codigoBarras, CancellationToken ct = default) => Task.FromResult(db.Produtos.FirstOrDefault(p => p.CodigoBarras == codigoBarras || p.Apresentacoes.Any(a => a.CodigoBarras == codigoBarras)));
     public Task<Produto?> ObterPorCodigoInternoAsync(string codigoInterno, CancellationToken ct = default) => Task.FromResult(db.Produtos.FirstOrDefault(p => p.CodigoInterno == codigoInterno));
+    public Task<string> ObterProximoCodigoInternoAsync(CancellationToken ct = default)
+    {
+        const string prefixo = "PRD-";
+        var maiorNumero = -1;
+        foreach (var codigo in db.Produtos.Select(p => p.CodigoInterno))
+        {
+            if (codigo.StartsWith(prefixo, StringComparison.OrdinalIgnoreCase) &&
+                int.TryParse(codigo.AsSpan(prefixo.Length), out var numero))
+                maiorNumero = Math.Max(maiorNumero, numero);
+        }
+
+        return Task.FromResult($"PRD-{maiorNumero + 1:0000}");
+    }
     public Task<IReadOnlyList<Produto>> ListarAsync(string? termoPesquisa = null, Guid? categoriaId = null, bool apenasAtivos = true, CancellationToken ct = default)
     {
         var query = db.Produtos.AsEnumerable();
@@ -168,6 +181,14 @@ file sealed class FakeNotificacaoRepository(InMemoryDatabase db) : INotificacaoR
     public Task AdicionarAsync(Notificacao notificacao, CancellationToken ct = default)
     {
         db.Notificacoes.Add(notificacao);
+        return Task.CompletedTask;
+    }
+
+    public Task RemoverAsync(Guid id, Guid utilizadorId, CancellationToken ct = default)
+    {
+        var notificacao = db.Notificacoes.FirstOrDefault(n => n.Id == id && n.UtilizadorId == utilizadorId);
+        if (notificacao is not null)
+            db.Notificacoes.Remove(notificacao);
         return Task.CompletedTask;
     }
 }
