@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using KiVenda.Application.Utilizadores;
 using KiVenda.Desktop.Autenticacao;
+using KiVenda.Desktop.Notificacoes;
 using KiVenda.Desktop.ViewModels.Shell;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +18,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly LoginViewModel _loginViewModel;
     private readonly SessaoUtilizadorAtual _sessao;
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly Notificacoes.ServicoNotificacoes _servicoNotificacoes;
+    private readonly ServicoNotificacoes _servicoNotificacoes;
 
     [ObservableProperty]
     private ViewModelBase _conteudoAtual;
