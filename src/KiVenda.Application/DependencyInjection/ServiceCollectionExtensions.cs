@@ -100,6 +100,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<AutenticarUtilizadorUseCase>();
         services.AddScoped<AlterarPasswordUseCase>();
         services.AddScoped<ListarUtilizadoresUseCase>();
+        services.AddScoped<EditarMeusDadosUseCase>();
 
         return services;
     }
