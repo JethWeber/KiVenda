@@ -22,6 +22,8 @@ public interface IProdutoRepository
 
     Task<Produto?> ObterPorCodigoInternoAsync(string codigoInterno, CancellationToken cancellationToken = default);
 
+    Task<string> ObterProximoCodigoInternoAsync(CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<Produto>> ListarAsync(
         string? termoPesquisa = null,
         Guid? categoriaId = null,

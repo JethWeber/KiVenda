@@ -10,7 +10,6 @@ namespace KiVenda.Application.Produtos;
 
 public sealed record CriarProdutoCommand(
     string Nome,
-    string CodigoInterno,
     Guid CategoriaId,
     Guid UnidadeBaseId,
     decimal PrecoVendaPorUnidadeBase,
@@ -24,21 +23,17 @@ public sealed class CriarProdutoUseCase(IUnitOfWork uow, IContextoAutenticacao c
     {
         PermissaoGuard.Exigir(contexto, Acao.CadastrarProdutos);
 
-        var existente = await uow.Produtos.ObterPorCodigoInternoAsync(comando.CodigoInterno, cancellationToken);
-        if (existente is not null)
-        {
-            throw new DomainException($"Já existe um produto com o código \"{comando.CodigoInterno}\".");
-        }
-
         _ = await uow.Categorias.ObterPorIdAsync(comando.CategoriaId, cancellationToken)
             ?? throw new DomainException("Categoria não encontrada.");
 
         _ = await uow.UnidadesMedida.ObterPorIdAsync(comando.UnidadeBaseId, cancellationToken)
             ?? throw new DomainException("Unidade de medida base não encontrada.");
 
+        var codigoInterno = await uow.Produtos.ObterProximoCodigoInternoAsync(cancellationToken);
+
         var produto = new Produto(
             comando.Nome,
-            comando.CodigoInterno,
+            codigoInterno,
             comando.CategoriaId,
             comando.UnidadeBaseId,
             comando.PrecoVendaPorUnidadeBase,

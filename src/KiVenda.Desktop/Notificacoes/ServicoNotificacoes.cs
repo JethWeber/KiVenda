@@ -29,6 +29,30 @@ public sealed class ServicoNotificacoes
         var itens = await repo.ListarPorUtilizadorAsync(_sessao.UtilizadorId, cancellationToken: cancellationToken);
         foreach (var item in itens)
             Notificacoes.Add(Mapear(item));
+
+        var uow = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        var produtos = await uow.Produtos.ListarAsync(apenasAtivos: true, cancellationToken: cancellationToken);
+        var ultimaPorTipo = itens.GroupBy(x => x.Tipo).ToDictionary(g => g.Key, g => g.Max(x => x.DataCriacao));
+
+        foreach (var produto in produtos.Where(p => p.ObterEstadoStock() is KiVenda.Core.Enums.EstadoStock.StockBaixo or KiVenda.Core.Enums.EstadoStock.SemStock))
+        {
+            var tipo = $"STOCK_BAIXO:{produto.Id:N}";
+            if (ultimaPorTipo.TryGetValue(tipo, out var ultima) && DateTime.UtcNow - ultima < TimeSpan.FromDays(3))
+                continue;
+
+            var titulo = produto.EstoqueAtual <= 0 ? "Produto sem stock" : "Stock baixo";
+            var mensagem = produto.EstoqueAtual <= 0
+                ? $"O produto {produto.Nome} ficou sem stock."
+                : $"O stock de {produto.Nome} está baixo: {produto.EstoqueAtual:0.####} unidade(s).";
+
+            var entidade = new KiVenda.Core.Notificacoes.Notificacao(_sessao.UtilizadorId, tipo, titulo, mensagem);
+            await uow.Notificacoes.AdicionarAsync(entidade, cancellationToken);
+            Notificacoes.Insert(0, Mapear(entidade));
+            ultimaPorTipo[tipo] = entidade.DataCriacao;
+        }
+
+        if (produtos.Any(p => p.ObterEstadoStock() is KiVenda.Core.Enums.EstadoStock.StockBaixo or KiVenda.Core.Enums.EstadoStock.SemStock))
+            await uow.SaveChangesAsync(cancellationToken);
         Alteradas?.Invoke(this, EventArgs.Empty);
     }
 

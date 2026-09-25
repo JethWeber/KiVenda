@@ -29,12 +29,8 @@
                     <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
                         <TextBlock Classes="rotulo-campo" Text="Nome" />
                         <TextBox Text="{Binding NovoNome}" Watermark="ex.: Açúcar" />
+                        <TextBlock Text="O código interno é gerado automaticamente pelo sistema." Classes="subtitulo" FontSize="11" />
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
-                        <TextBlock Classes="rotulo-campo" Text="Código interno" />
-                        <TextBox Text="{Binding NovoCodigoInterno}" Watermark="ex.: PRD-001" />
-                    </StackPanel>
-
                     <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
                         <TextBlock Classes="rotulo-campo" Text="Categoria" />
                         <ComboBox ItemsSource="{Binding Categorias}" SelectedItem="{Binding CategoriaSelecionada}" HorizontalAlignment="Stretch">

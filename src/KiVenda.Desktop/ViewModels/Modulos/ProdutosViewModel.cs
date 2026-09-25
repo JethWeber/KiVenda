@@ -28,9 +28,6 @@ public partial class ProdutosViewModel : ListaModuloViewModelBase<ProdutoDto>
     private string _novoNome = string.Empty;
 
     [ObservableProperty]
-    private string _novoCodigoInterno = string.Empty;
-
-    [ObservableProperty]
     private string _novoCodigoBarras = string.Empty;
 
     [ObservableProperty]
@@ -106,9 +103,9 @@ public partial class ProdutosViewModel : ListaModuloViewModelBase<ProdutoDto>
     {
         MensagemErroFormulario = null;
 
-        if (string.IsNullOrWhiteSpace(NovoNome) || string.IsNullOrWhiteSpace(NovoCodigoInterno))
+        if (string.IsNullOrWhiteSpace(NovoNome))
         {
-            MensagemErroFormulario = "Nome e código são obrigatórios.";
+            MensagemErroFormulario = "O nome é obrigatório.";
             return;
         }
 
@@ -138,7 +135,6 @@ public partial class ProdutosViewModel : ListaModuloViewModelBase<ProdutoDto>
 
             await useCase.ExecutarAsync(new CriarProdutoCommand(
                 NovoNome,
-                NovoCodigoInterno,
                 CategoriaSelecionada.Id,
                 UnidadeSelecionada.Id,
                 precoVenda,
@@ -162,7 +158,6 @@ public partial class ProdutosViewModel : ListaModuloViewModelBase<ProdutoDto>
     private void LimparFormulario()
     {
         NovoNome = string.Empty;
-        NovoCodigoInterno = string.Empty;
         NovoCodigoBarras = string.Empty;
         NovoPrecoVenda = string.Empty;
         NovoStockMinimo = string.Empty;

@@ -54,6 +54,21 @@ internal sealed class ProdutoRepository : IProdutoRepository
             .FirstOrDefaultAsync(p => p.CodigoInterno == codigoInterno, cancellationToken);
     }
 
+    public async Task<string> ObterProximoCodigoInternoAsync(CancellationToken cancellationToken = default)
+    {
+        const string prefixo = "PRD-";
+        var codigos = await _context.Produtos.Where(p => p.CodigoInterno.StartsWith(prefixo)).Select(p => p.CodigoInterno).ToListAsync(cancellationToken);
+        var maiorNumero = -1;
+        foreach (var codigo in codigos)
+        {
+            if (codigo.Length == 8 && int.TryParse(codigo.AsSpan(4), out var numero))
+                maiorNumero = Math.Max(maiorNumero, numero);
+        }
+        if (maiorNumero >= 9999)
+            throw new KiVenda.Core.Exceptions.DomainException("O limite de códigos internos PRD-9999 foi atingido.");
+        return $"PRD-{maiorNumero + 1:0000}";
+    }
+
     public async Task<IReadOnlyList<Produto>> ListarAsync(
         string? termoPesquisa = null,
         Guid? categoriaId = null,
