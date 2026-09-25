@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KiVenda.Application.Relatorios;
@@ -15,10 +16,28 @@ namespace KiVenda.Desktop.ViewModels.Modulos;
 public partial class DashboardViewModel : ViewModelBase
 {
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly SessaoUtilizadorAtual _sessao;
 
     public string NomeUtilizador { get; }
 
-    public string DataAtualTexto { get; } = DateTime.Now.ToString("dddd, dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("pt-AO"));
+    public string SaudacaoAtual
+    {
+        get
+        {
+            var hora = DateTime.Now.Hour;
+            return hora switch
+            {
+                >= 1 and <= 4 => "Boa madrugada",
+                >= 5 and <= 11 => "Bom dia",
+                >= 12 and <= 17 => "Boa tarde",
+                _ => "Boa noite"
+            };
+        }
+    }
+
+    public string DataAtualTexto => DateTime.Now.ToString(
+        "dddd, dd 'de' MMMM 'de' yyyy",
+        new System.Globalization.CultureInfo("pt-AO"));
 
     [ObservableProperty]
     private bool _aCarregar;
@@ -44,9 +63,15 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty]
     private bool _caixaFechado;
 
+    [ObservableProperty]
+    private bool _alertasPopupAberto;
+
+    public ObservableCollection<AlertaDashboard> Alertas { get; } = new();
+
     public DashboardViewModel(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao)
     {
         _scopeFactory = scopeFactory;
+        _sessao = sessao;
         NomeUtilizador = sessao.Nome;
 
         _ = CarregarAsync();
@@ -70,7 +95,42 @@ public partial class DashboardViewModel : ViewModelBase
             VendasRealizadasTexto = resumo.VendasRealizadasHoje.ToString();
 
             CaixaFechado = resumo.CaixaAtual is null;
-            CaixaAtualTexto = resumo.CaixaAtual is null ? "Caixa fechado" : FormatadorKz.Formatar(resumo.CaixaAtual.Value);
+            CaixaAtualTexto = resumo.CaixaAtual is null
+                ? "Caixa fechado"
+                : FormatadorKz.Formatar(resumo.CaixaAtual.Value);
+
+            Alertas.Clear();
+
+            // Stock baixo/sem stock é sempre o primeiro alerta do dashboard.
+            if (resumo.ProdutosStockBaixoOuSemStock > 0)
+            {
+                Alertas.Add(new AlertaDashboard(
+                    null,
+                    "stock",
+                    "Stock Crítico",
+                    $"Existem {resumo.ProdutosStockBaixoOuSemStock} produtos com stock baixo ou sem stock.",
+                    true));
+            }
+
+            foreach (var alerta in resumo.Alertas)
+            {
+                Alertas.Add(new AlertaDashboard(
+                    alerta.Id,
+                    alerta.Tipo,
+                    alerta.Titulo,
+                    alerta.Mensagem,
+                    true));
+            }
+
+            if (CaixaFechado)
+            {
+                Alertas.Add(new AlertaDashboard(
+                    null,
+                    "caixa",
+                    "Sessão de Caixa",
+                    "Não existe uma sessão de caixa aberta neste momento.",
+                    true));
+            }
         }
         catch (Exception ex)
         {
@@ -81,4 +141,51 @@ public partial class DashboardViewModel : ViewModelBase
             ACarregar = false;
         }
     }
+
+    [RelayCommand]
+    private void AbrirAlertas()
+    {
+        AlertasPopupAberto = true;
+    }
+
+    [RelayCommand]
+    private void FecharAlertas()
+    {
+        AlertasPopupAberto = false;
+    }
+
+    [RelayCommand]
+    private async Task RemoverAlertaAsync(AlertaDashboard? alerta)
+    {
+        if (alerta is null)
+        {
+            return;
+        }
+
+        Alertas.Remove(alerta);
+
+        if (alerta.Id is not Guid notificacaoId)
+        {
+            return;
+        }
+
+        try
+        {
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            var uow = scope.ServiceProvider.GetRequiredService<KiVenda.Application.Abstractions.Persistence.IUnitOfWork>();
+            await uow.Notificacoes.RemoverAsync(notificacaoId, _sessao.UtilizadorId);
+            await uow.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            MensagemErro = ex.Message;
+        }
+    }
 }
+
+public sealed record AlertaDashboard(
+    Guid? Id,
+    string Tipo,
+    string Titulo,
+    string Mensagem,
+    bool PodeEliminar);
