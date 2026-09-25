@@ -6,7 +6,6 @@ using KiVenda.Application.Vendas;
 using KiVenda.Core.Enums;
 using KiVenda.Core.Exceptions;
 using KiVenda.Desktop.ViewModels.Common;
-using KiVenda.Infrastructure.Impressao;
 using KiVenda.Infrastructure.Scanner;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -88,6 +87,8 @@ public partial class VendasViewModel : ViewModelBase
 
     public IReadOnlyList<MetodoPagamento> MetodosPagamento { get; } =
         new[] { MetodoPagamento.Dinheiro, MetodoPagamento.Multicaixa, MetodoPagamento.Tpa };
+
+    public event Func<ReciboVendaDto, Task<bool>>? SolicitarImpressaoRecibo;
 
     public VendasViewModel(IServiceScopeFactory scopeFactory)
     {
@@ -412,12 +413,12 @@ public partial class VendasViewModel : ViewModelBase
                 _vendaId.Value,
                 new[] { new PagamentoCommand(MetodoSelecionado, valorPago) }));
 
-            var servicoImpressao = scope.ServiceProvider.GetRequiredService<IServicoImpressao>();
-            // Dados da loja fixos por agora — o ecrã de edição (Fase 11,
-            // Configurações → Dados da Loja) vai substituir isto por dados reais.
-            await servicoImpressao.ImprimirReciboVendaAsync(recibo, new DadosLoja("KiVenda"));
+            var imprimir = SolicitarImpressaoRecibo is not null
+                && await SolicitarImpressaoRecibo.Invoke(recibo);
 
-            MensagemSucesso = $"Venda concluída — recibo {recibo.VendaId.ToString()[..8].ToUpperInvariant()}.";
+            MensagemSucesso = imprimir
+                ? $"Venda concluída — recibo {recibo.VendaId.ToString()[..8].ToUpperInvariant()} impresso."
+                : $"Venda concluída — recibo {recibo.VendaId.ToString()[..8].ToUpperInvariant()}.";
 
             await NovaVendaAsync();
         }

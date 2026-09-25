@@ -23,10 +23,10 @@ public sealed record ReciboVendaDto(
     DateTime Data,
     IReadOnlyList<ItemReciboDto> Itens,
     decimal Subtotal,
-    decimal Desconto,
     decimal Total,
     decimal LucroEstimado,
-    IReadOnlyList<PagamentoCommand> Pagamentos);
+    MetodoPagamento MetodoPagamento,
+    string OperadorNome);
 
 /// <summary>
 /// Módulo central do sistema. Numa única transação (um único
@@ -87,16 +87,29 @@ public sealed class FinalizarVendaUseCase(IUnitOfWork uow, IContextoAutenticacao
             new LogAuditoria(contexto.UtilizadorId, "Venda realizada", "Venda", venda.Id, dadosDepois: venda.Total.ToString("0.00")),
             cancellationToken);
 
+        var utilizador = await uow.Utilizadores.ObterPorIdAsync(contexto.UtilizadorId, cancellationToken)
+            ?? throw new DomainException("Utilizador da venda não encontrado.");
+
         await uow.SaveChangesAsync(cancellationToken);
+
+        var partesNome = utilizador.Nome
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        var operadorNome = partesNome.Length switch
+        {
+            0 => "Operador",
+            1 => partesNome[0],
+            _ => $"{partesNome[0]} {partesNome[^1]}"
+        };
 
         return new ReciboVendaDto(
             venda.Id,
             venda.Data,
             itensRecibo,
             venda.Subtotal,
-            venda.Desconto,
             venda.Total,
             venda.LucroEstimado,
-            comando.Pagamentos);
+            comando.Pagamentos.First().Metodo,
+            operadorNome);
     }
 }

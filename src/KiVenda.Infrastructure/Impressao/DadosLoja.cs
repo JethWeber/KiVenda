@@ -1,9 +1,12 @@
 namespace KiVenda.Infrastructure.Impressao;
 
-/// <summary>
-/// Dados da loja usados no cabeçalho do recibo (Secção 4.9,
-/// "Configurações → Dados da Loja"). Modelo mínimo para a Fase 4; o
-/// ecrã completo de edição (com logótipo) pertence à Fase 11 — esta
-/// classe só define o que o serviço de impressão precisa de conhecer.
-/// </summary>
-public sealed record DadosLoja(string Nome, string? Endereco = null, string? Contacto = null);
+public sealed record DadosLoja(
+    string Nome,
+    string? Nif = null,
+    string? Endereco = null,
+    string? Municipio = null,
+    string? Provincia = null,
+    string? Contacto = null,
+    string? Website = null,
+    byte[]? Logo = null,
+    string? LogoMimeType = null);
