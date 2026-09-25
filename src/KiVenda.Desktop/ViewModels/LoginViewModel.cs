@@ -33,12 +33,28 @@ public partial class LoginViewModel : ViewModelBase
     [ObservableProperty]
     private bool _aEntrar;
 
+    [ObservableProperty]
+    private bool _mostrarSenha;
+
+    public char PasswordChar => MostrarSenha ? '\0' : '•';
+
     public event EventHandler<UtilizadorAutenticadoDto>? LoginBemSucedido;
 
     public LoginViewModel(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao)
     {
         _scopeFactory = scopeFactory;
         _sessao = sessao;
+    }
+
+    partial void OnMostrarSenhaChanged(bool value)
+    {
+        OnPropertyChanged(nameof(PasswordChar));
+    }
+
+    [RelayCommand]
+    private void AlternarVisibilidadeSenha()
+    {
+        MostrarSenha = !MostrarSenha;
     }
 
     [RelayCommand]
@@ -88,5 +104,6 @@ public partial class LoginViewModel : ViewModelBase
         Senha = string.Empty;
         MensagemErro = null;
         AEntrar = false;
+        MostrarSenha = false;
     }
 }
