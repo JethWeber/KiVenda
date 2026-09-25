@@ -35,27 +35,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ServicoImpressaoTexto>(
             _ => new ServicoImpressaoTexto(CaminhosAplicacao.PastaRecibos));
 
-        services.AddSingleton<ConfiguracaoImpressoraTermica>(_ =>
-        {
-            var dispositivo = Environment.GetEnvironmentVariable("KIVENDA_PRINTER_DEVICE");
-            if (string.IsNullOrWhiteSpace(dispositivo))
-            {
-                dispositivo = OperatingSystem.IsLinux()
-                    ? "/dev/usb/lp0"
-                    : "KIVENDA_PRINTER_DEVICE";
-            }
-
-            var colunas = 48;
-            var colunasTexto = Environment.GetEnvironmentVariable("KIVENDA_PRINTER_COLUMNS");
-            if (int.TryParse(colunasTexto, out var colunasConfiguradas) && colunasConfiguradas > 0)
-                colunas = colunasConfiguradas;
-
-            return new ConfiguracaoImpressoraTermica(
-                dispositivo,
-                Colunas: colunas,
-                EncodingNome: Environment.GetEnvironmentVariable("KIVENDA_PRINTER_ENCODING") ?? "cp850");
-        });
-
         services.AddSingleton<TransporteImpressoraUsb>();
         services.AddSingleton<IServicoImpressao, ServicoImpressaoEscPosUsb>();
 
