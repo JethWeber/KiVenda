@@ -17,25 +17,33 @@ namespace KiVenda.Infrastructure.DependencyInjection;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
-    /// <param name="services">Coleção de serviços do composition root.</param>
-    /// <param name="chavePublicaLicenciamento">
-    /// Chave pública real da Weber Tech para verificar assinaturas de
-    /// licença. Se omitida, é gerada uma chave descartável só para
-    /// desenvolvimento — nenhuma licença emitida anteriormente vai
-    /// validar depois de reiniciar a aplicação nesse cenário. O Desktop
-    /// (Fase 6) deve fornecer a chave real assim que disponível (ver
-    /// EnvelopeLicenca.cs para o aviso sobre o formato de licença ainda
-    /// ser uma implementação de referência).
-    /// </param>
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, RSA? chavePublicaLicenciamento = null)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        RSA? chavePublicaLicenciamento = null)
     {
         services.AddSingleton<IArmazenamentoConfiguracaoLocal>(
-            _ => new ArmazenamentoConfiguracaoLocalJson(CaminhosAplicacao.CaminhoConfiguracaoLocal));
+            _ => new ArmazenamentoConfiguracaoLocalJson(
+                CaminhosAplicacao.CaminhoConfiguracaoLocal));
 
         services.AddSingleton<ServicoImpressaoTexto>(
             _ => new ServicoImpressaoTexto(CaminhosAplicacao.PastaRecibos));
 
-        services.AddSingleton<TransporteImpressoraUsb>();
+        if (OperatingSystem.IsWindows())
+        {
+            services.AddSingleton<IDetectorImpressoras, DetectorImpressorasWindows>();
+            services.AddSingleton<ITransporteImpressora, TransporteImpressoraWindows>();
+        }
+        else if (OperatingSystem.IsLinux())
+        {
+            services.AddSingleton<IDetectorImpressoras, DetectorImpressorasLinux>();
+            services.AddSingleton<ITransporteImpressora, TransporteImpressoraLinux>();
+        }
+        else
+        {
+            services.AddSingleton<IDetectorImpressoras, DetectorImpressorasLinux>();
+            services.AddSingleton<ITransporteImpressora, TransporteImpressoraLinux>();
+        }
+
         services.AddSingleton<IServicoImpressao, ServicoImpressaoEscPosUsb>();
 
         services.AddSingleton<IServicoBackup>(
@@ -47,15 +55,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IServicoLicenciamento>(
             _ => new ServicoLicenciamentoRsa(CaminhosAplicacao.CaminhoLicenca, chavePublica));
 
-        // Fase 8, Parte 1: singleton (não scoped) porque o buffer de
-        // timing entre teclas tem de sobreviver entre chamadas
-        // sucessivas de ProcessarCaracter/ProcessarEnter ao longo de
-        // toda a sessão do PDV — um scope por operação, como os casos
-        // de uso da Application, destruiria o estado a meio de uma
-        // leitura. Depende de IArmazenamentoConfiguracaoLocal, já
-        // registado acima como singleton.
         services.AddSingleton<IServicoScanner>(
-            provider => new ServicoScannerTeclado(provider.GetRequiredService<IArmazenamentoConfiguracaoLocal>()));
+            provider => new ServicoScannerTeclado(
+                provider.GetRequiredService<IArmazenamentoConfiguracaoLocal>()));
 
         return services;
     }
