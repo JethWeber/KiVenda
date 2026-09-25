@@ -44,8 +44,11 @@
         <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
             <StackPanel Spacing="5">
                 <TextBlock Classes="titulo-pagina"
-                           FontSize="28"
-                           Text="{Binding NomeUtilizador, StringFormat='Bom dia, {0}'}" />
+                           FontSize="28">
+                    <Run Text="{Binding SaudacaoAtual}" />
+                    <Run Text=", " />
+                    <Run Text="{Binding NomeUtilizador}" />
+                </TextBlock>
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBlock Text="▣"
                                FontSize="14"
@@ -74,115 +77,75 @@
         <UniformGrid Grid.Row="2"
                      Columns="5"
                      HorizontalAlignment="Stretch"
-                     VerticalAlignment="Top"
-                     Margin="0,0,0,0">
+                     VerticalAlignment="Top">
 
             <Border Classes="kpi" Margin="0,0,8,0">
                 <StackPanel>
                     <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,18">
                         <Border Classes="kpi-icon" Background="{DynamicResource VerdeSuaveBrush}">
-                            <TextBlock Text="↗"
-                                       FontSize="24"
-                                       FontWeight="Bold"
+                            <TextBlock Text="↗" FontSize="24" FontWeight="Bold"
                                        Foreground="{DynamicResource VerdePrimarioBrush}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
-                        <Border Grid.Column="1"
-                                Background="{DynamicResource VerdeSuaveClaroBrush}"
-                                CornerRadius="999"
-                                Padding="8,4"
-                                VerticalAlignment="Top">
-                            <TextBlock Text="Hoje"
-                                       FontSize="10"
-                                       FontWeight="Bold"
+                        <Border Grid.Column="1" Background="{DynamicResource VerdeSuaveClaroBrush}"
+                                CornerRadius="999" Padding="8,4" VerticalAlignment="Top">
+                            <TextBlock Text="Hoje" FontSize="10" FontWeight="Bold"
                                        Foreground="{DynamicResource VerdePrimarioBrush}" />
                         </Border>
                     </Grid>
                     <TextBlock Classes="kpi-label" Text="Vendas de Hoje" />
-                    <TextBlock Classes="kpi-value"
-                               Text="{Binding VendasDeHojeTexto}"
-                               Margin="0,3,0,0" />
+                    <TextBlock Classes="kpi-value" Text="{Binding VendasDeHojeTexto}" Margin="0,3,0,0" />
                 </StackPanel>
             </Border>
 
             <Border Classes="kpi" Margin="8,0">
                 <StackPanel>
-                    <Border Classes="kpi-icon"
-                            Background="{DynamicResource InfoSuaveBrush}"
-                            Margin="0,0,0,18">
-                        <TextBlock Text="▣"
-                                   FontSize="22"
-                                   FontWeight="Bold"
+                    <Border Classes="kpi-icon" Background="{DynamicResource InfoSuaveBrush}" Margin="0,0,0,18">
+                        <TextBlock Text="▣" FontSize="22" FontWeight="Bold"
                                    Foreground="{DynamicResource InfoBrush}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <TextBlock Classes="kpi-label" Text="Caixa Atual" />
-                    <TextBlock Classes="kpi-value"
-                               Text="{Binding CaixaAtualTexto}"
-                               Margin="0,3,0,0" />
+                    <TextBlock Classes="kpi-value" Text="{Binding CaixaAtualTexto}" Margin="0,3,0,0" />
                 </StackPanel>
             </Border>
 
             <Border Classes="kpi" Margin="8,0">
                 <StackPanel>
-                    <Border Classes="kpi-icon"
-                            Background="{DynamicResource InfoSuaveBrush}"
-                            Margin="0,0,0,18">
-                        <TextBlock Text="◉"
-                                   FontSize="21"
-                                   FontWeight="Bold"
+                    <Border Classes="kpi-icon" Background="{DynamicResource InfoSuaveBrush}" Margin="0,0,0,18">
+                        <TextBlock Text="◉" FontSize="21" FontWeight="Bold"
                                    Foreground="{DynamicResource InfoBrush}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <TextBlock Classes="kpi-label" Text="Lucro Estimado" />
-                    <TextBlock Classes="kpi-value"
-                               Text="{Binding LucroEstimadoTexto}"
-                               Margin="0,3,0,0" />
+                    <TextBlock Classes="kpi-value" Text="{Binding LucroEstimadoTexto}" Margin="0,3,0,0" />
                 </StackPanel>
             </Border>
 
             <Border Classes="kpi" Margin="8,0">
                 <StackPanel>
-                    <Border Classes="kpi-icon"
-                            Background="{DynamicResource PerigoSuaveBrush}"
-                            Margin="0,0,0,18">
-                        <TextBlock Text="!"
-                                   FontSize="21"
-                                   FontWeight="Bold"
+                    <Border Classes="kpi-icon" Background="{DynamicResource PerigoSuaveBrush}" Margin="0,0,0,18">
+                        <TextBlock Text="!" FontSize="21" FontWeight="Bold"
                                    Foreground="{DynamicResource PerigoBrush}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <TextBlock Classes="kpi-label" Text="Stock Baixo" />
-                    <TextBlock Classes="kpi-value"
-                               Foreground="{DynamicResource PerigoBrush}"
-                               Text="{Binding StockBaixoTexto}"
-                               Margin="0,3,0,0" />
+                    <TextBlock Classes="kpi-value" Foreground="{DynamicResource PerigoBrush}"
+                               Text="{Binding StockBaixoTexto}" Margin="0,3,0,0" />
                 </StackPanel>
             </Border>
 
             <Border Classes="kpi" Margin="8,0,0,0">
                 <StackPanel>
-                    <Border Classes="kpi-icon"
-                            Background="{DynamicResource NeutroSuaveBrush}"
-                            Margin="0,0,0,18">
-                        <TextBlock Text="□"
-                                   FontSize="22"
-                                   FontWeight="Bold"
+                    <Border Classes="kpi-icon" Background="{DynamicResource NeutroSuaveBrush}" Margin="0,0,0,18">
+                        <TextBlock Text="□" FontSize="22" FontWeight="Bold"
                                    Foreground="{DynamicResource TextoPrimarioBrush}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <TextBlock Classes="kpi-label" Text="Vendas Realizadas" />
-                    <TextBlock Classes="kpi-value"
-                               Text="{Binding VendasRealizadasTexto}"
-                               Margin="0,3,0,0" />
+                    <TextBlock Classes="kpi-value" Text="{Binding VendasRealizadasTexto}" Margin="0,3,0,0" />
                 </StackPanel>
             </Border>
-
         </UniformGrid>
 
         <!-- Área analítica: tendência + alertas -->
@@ -192,37 +155,24 @@
                 <StackPanel Spacing="18">
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Spacing="3">
-                            <TextBlock Text="Tendência de Vendas"
-                                       FontSize="17"
-                                       FontWeight="SemiBold"
+                            <TextBlock Text="Tendência de Vendas" FontSize="17" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextoPrimarioBrush}" />
-                            <TextBlock Text="Últimos 7 dias de atividade comercial"
-                                       FontSize="12"
+                            <TextBlock Text="Últimos 7 dias de atividade comercial" FontSize="12"
                                        Foreground="{DynamicResource TextoSecundarioBrush}" />
                         </StackPanel>
-                        <Border Grid.Column="1"
-                                Background="{DynamicResource NeutroSuaveBrush}"
-                                CornerRadius="8"
-                                Padding="4">
+                        <Border Grid.Column="1" Background="{DynamicResource NeutroSuaveBrush}"
+                                CornerRadius="8" Padding="4">
                             <StackPanel Orientation="Horizontal">
-                                <Border Background="{DynamicResource SuperficieBrush}"
-                                        CornerRadius="6"
-                                        Padding="12,6">
-                                    <TextBlock Text="7 Dias"
-                                               FontSize="11"
-                                               FontWeight="Bold"
+                                <Border Background="{DynamicResource SuperficieBrush}" CornerRadius="6" Padding="12,6">
+                                    <TextBlock Text="7 Dias" FontSize="11" FontWeight="Bold"
                                                Foreground="{DynamicResource TextoPrimarioBrush}" />
                                 </Border>
-                                <TextBlock Text="30 Dias"
-                                           FontSize="11"
-                                           FontWeight="Bold"
-                                           Foreground="{DynamicResource TextoSecundarioBrush}"
-                                           Margin="12,6" />
+                                <TextBlock Text="30 Dias" FontSize="11" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextoSecundarioBrush}" Margin="12,6" />
                             </StackPanel>
                         </Border>
                     </Grid>
 
-                    <!-- Gráfico visual: a camada de dados real pode substituir as alturas sem alterar o layout. -->
                     <Grid Height="250" ColumnDefinitions="*,*,*,*,*,*,*" VerticalAlignment="Bottom">
                         <Border Grid.Column="0" Height="95" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
                         <Border Grid.Column="1" Height="145" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
@@ -234,10 +184,10 @@
                         <Border Grid.Column="5" Height="110" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
                         <Border Grid.Column="6" Height="75" Background="{DynamicResource VerdeSuaveBrush}" CornerRadius="8,8,0,0" VerticalAlignment="Bottom" Margin="6,0" />
 
-                        <StackPanel Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,-24"><TextBlock Text="Seg" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" HorizontalAlignment="Center" /></StackPanel>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Bottom" Margin="0,0,0,-24"><TextBlock Text="Ter" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" HorizontalAlignment="Center" /></StackPanel>
-                        <StackPanel Grid.Column="2" VerticalAlignment="Bottom" Margin="0,0,0,-24"><TextBlock Text="Qua" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" HorizontalAlignment="Center" /></StackPanel>
-                        <StackPanel Grid.Column="3" VerticalAlignment="Bottom" Margin="0,0,0,-24"><TextBlock Text="Qui" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" HorizontalAlignment="Center" /></StackPanel>
+                        <TextBlock Grid.Column="0" Text="Seg" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
+                        <TextBlock Grid.Column="1" Text="Ter" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
+                        <TextBlock Grid.Column="2" Text="Qua" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
+                        <TextBlock Grid.Column="3" Text="Qui" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
                         <TextBlock Grid.Column="4" Text="Sex" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource VerdePrimarioBrush}" />
                         <TextBlock Grid.Column="5" Text="Sáb" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
                         <TextBlock Grid.Column="6" Text="Dom" VerticalAlignment="Bottom" Margin="0,0,0,-24" HorizontalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextoSecundarioBrush}" />
@@ -249,116 +199,147 @@
                 <StackPanel Spacing="18">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBlock Text="!" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource VerdePrimarioBrush}" />
-                        <TextBlock Text="Alertas e Notificações"
-                                   FontSize="17"
-                                   FontWeight="SemiBold"
+                        <TextBlock Text="Alertas e Notificações" FontSize="17" FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextoPrimarioBrush}" />
                     </StackPanel>
 
-                    <Border Background="{DynamicResource PerigoSuaveBrush}"
-                            BorderBrush="{DynamicResource PerigoBrush}"
-                            BorderThickness="1"
-                            CornerRadius="12"
-                            Padding="14">
-                        <Grid ColumnDefinitions="42,*" ColumnSpacing="12">
-                            <Border Width="42" Height="42" CornerRadius="10" Background="{DynamicResource PerigoSuaveBrush}">
-                                <TextBlock Text="!"
-                                           FontSize="18"
-                                           FontWeight="Bold"
-                                           Foreground="{DynamicResource PerigoBrush}"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </Border>
-                            <StackPanel Grid.Column="1" Spacing="3">
-                                <TextBlock Text="Stock Crítico" FontSize="12" FontWeight="Bold" />
-                                <TextBlock Text="{Binding StockBaixoTexto, StringFormat='Existem {0} produtos com stock baixo ou sem stock.'}"
-                                           FontSize="11"
-                                           TextWrapping="Wrap"
-                                           Foreground="{DynamicResource TextoSecundarioBrush}" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <Border Background="{DynamicResource InfoSuaveBrush}"
-                            BorderBrush="{DynamicResource InfoBrush}"
-                            BorderThickness="1"
-                            CornerRadius="12"
-                            Padding="14">
-                        <Grid ColumnDefinitions="42,*" ColumnSpacing="12">
-                            <Border Width="42" Height="42" CornerRadius="10" Background="{DynamicResource InfoSuaveBrush}">
-                                <TextBlock Text="☁"
-                                           FontSize="17"
-                                           Foreground="{DynamicResource InfoBrush}"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </Border>
-                            <StackPanel Grid.Column="1" Spacing="3">
-                                <TextBlock Text="Backup" FontSize="12" FontWeight="Bold" />
-                                <TextBlock Text="Verifique o estado do backup de dados nas configurações."
-                                           FontSize="11"
-                                           TextWrapping="Wrap"
-                                           Foreground="{DynamicResource TextoSecundarioBrush}" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+                    <ItemsControl ItemsSource="{Binding Alertas}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource PerigoSuaveBrush}"
+                                        BorderBrush="{DynamicResource PerigoBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="12"
+                                        Padding="14"
+                                        Margin="0,0,0,10">
+                                    <Grid ColumnDefinitions="42,*" ColumnSpacing="12">
+                                        <Border Width="42" Height="42" CornerRadius="10"
+                                                Background="{DynamicResource PerigoSuaveBrush}">
+                                            <TextBlock Text="!" FontSize="18" FontWeight="Bold"
+                                                       Foreground="{DynamicResource PerigoBrush}"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Spacing="3">
+                                            <TextBlock Text="{Binding Titulo}" FontSize="12" FontWeight="Bold" />
+                                            <TextBlock Text="{Binding Mensagem}" FontSize="11"
+                                                       TextWrapping="Wrap"
+                                                       Foreground="{DynamicResource TextoSecundarioBrush}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
                     <Border Background="{DynamicResource NeutroSuaveBrush}"
                             BorderBrush="{DynamicResource BordaBrush}"
                             BorderThickness="1"
                             CornerRadius="12"
-                            Padding="14">
-                        <Grid ColumnDefinitions="42,*" ColumnSpacing="12">
-                            <Border Width="42" Height="42" CornerRadius="10" Background="{DynamicResource SuperficieBrush}">
-                                <TextBlock Text="◷"
-                                           FontSize="18"
-                                           Foreground="{DynamicResource TextoSecundarioBrush}"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </Border>
-                            <StackPanel Grid.Column="1" Spacing="3">
-                                <TextBlock Text="Sessão de Caixa" FontSize="12" FontWeight="Bold" />
-                                <TextBlock Text="{Binding CaixaFechado, StringFormat='Caixa fechado: {0}'}"
-                                           FontSize="11"
-                                           Foreground="{DynamicResource TextoSecundarioBrush}" />
-                            </StackPanel>
-                        </Grid>
+                            Padding="14"
+                            IsVisible="{Binding Alertas.Count, Converter={x:Static ObjectConverters.IsEqualToZero}}">
+                        <TextBlock Text="Nenhum alerta pendente."
+                                   FontSize="11"
+                                   Foreground="{DynamicResource TextoSecundarioBrush}"
+                                   HorizontalAlignment="Center" />
                     </Border>
 
                     <Button Classes="secundario"
                             Content="Ver Todos os Alertas"
-                            HorizontalContentAlignment="Center" />
+                            HorizontalContentAlignment="Center"
+                            Command="{Binding AbrirAlertasCommand}" />
                 </StackPanel>
             </Border>
 
-            <!-- Placeholder visual para a próxima etapa de dados históricos. -->
             <Border Grid.Row="1" Grid.ColumnSpan="2" Classes="painel" Padding="26" Margin="0,24,0,0">
                 <Grid RowDefinitions="Auto,Auto" RowSpacing="14">
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel>
-                            <TextBlock Text="Vendas Recentes"
-                                       FontSize="17"
-                                       FontWeight="SemiBold"
+                            <TextBlock Text="Vendas Recentes" FontSize="17" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextoPrimarioBrush}" />
-                            <TextBlock Text="Resumo das operações mais recentes"
-                                       FontSize="12"
+                            <TextBlock Text="Resumo das operações mais recentes" FontSize="12"
                                        Foreground="{DynamicResource TextoSecundarioBrush}" />
                         </StackPanel>
-                        <Button Grid.Column="1"
-                                Classes="secundario"
-                                Content="Exportar Relatório  ↓"
-                                Padding="12,7" />
+                        <Button Grid.Column="1" Classes="secundario" Content="Exportar Relatório  ↓" Padding="12,7" />
                     </Grid>
-                    <Border Grid.Row="1"
-                            Background="{DynamicResource NeutroSuaveBrush}"
-                            CornerRadius="10"
-                            Padding="18">
+                    <Border Grid.Row="1" Background="{DynamicResource NeutroSuaveBrush}" CornerRadius="10" Padding="18">
                         <TextBlock Text="O histórico detalhado de vendas será ligado aos dados reais nesta etapa."
-                                   FontSize="12"
-                                   Foreground="{DynamicResource TextoSecundarioBrush}"
+                                   FontSize="12" Foreground="{DynamicResource TextoSecundarioBrush}"
                                    HorizontalAlignment="Center" />
                     </Border>
                 </Grid>
             </Border>
         </Grid>
+
+        <!-- Popup/modal de alertas -->
+        <Border Grid.RowSpan="4"
+                ZIndex="100"
+                Background="#66000000"
+                IsVisible="{Binding AlertasPopupAberto}"
+                Padding="40">
+            <Border Background="{DynamicResource SuperficieBrush}"
+                    BorderBrush="{DynamicResource BordaBrush}"
+                    BorderThickness="1"
+                    CornerRadius="20"
+                    Padding="26"
+                    MaxWidth="620"
+                    MaxHeight="600"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    BoxShadow="0 18 40 0 #33000000">
+                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="18">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Spacing="3">
+                            <TextBlock Text="Todos os Alertas" FontSize="20" FontWeight="Bold"
+                                       Foreground="{DynamicResource TextoPrimarioBrush}" />
+                            <TextBlock Text="{Binding Alertas.Count, StringFormat='Pendentes: {0}'}"
+                                       FontSize="12" Foreground="{DynamicResource TextoSecundarioBrush}" />
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="✕" Classes="secundario"
+                                Width="38" Height="38" Padding="0"
+                                Command="{Binding FecharAlertasCommand}" />
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding Alertas}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{DynamicResource NeutroSuaveBrush}"
+                                            BorderBrush="{DynamicResource BordaBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="12"
+                                            Padding="14"
+                                            Margin="0,0,0,10">
+                                        <Grid ColumnDefinitions="42,*,Auto" ColumnSpacing="12">
+                                            <Border Width="42" Height="42" CornerRadius="10"
+                                                    Background="{DynamicResource PerigoSuaveBrush}">
+                                                <TextBlock Text="!" FontSize="18" FontWeight="Bold"
+                                                           Foreground="{DynamicResource PerigoBrush}"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Spacing="3">
+                                                <TextBlock Text="{Binding Titulo}" FontSize="12" FontWeight="Bold" />
+                                                <TextBlock Text="{Binding Mensagem}" FontSize="11"
+                                                           TextWrapping="Wrap"
+                                                           Foreground="{DynamicResource TextoSecundarioBrush}" />
+                                            </StackPanel>
+                                            <Button Grid.Column="2"
+                                                    Content="Eliminar"
+                                                    Classes="perigo"
+                                                    Padding="10,6"
+                                                    Command="{Binding $parent[UserControl].DataContext.RemoverAlertaCommand}"
+                                                    CommandParameter="{Binding}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                        <Button Classes="secundario" Content="Fechar" Command="{Binding FecharAlertasCommand}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Border>
     </Grid>
 </UserControl>
