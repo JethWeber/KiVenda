@@ -77,7 +77,7 @@
                     <ItemsControl ItemsSource="{Binding ItensMenuInferiores}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="vmc:ItemMenuLateral">
-                                <Button Command="{Binding DataContext.SelecionarItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                <Button Command="{Binding $parent[UserControl].DataContext.SelecionarItemCommand}"
                                         CommandParameter="{Binding}"
                                         Classes="secundario"
                                         Background="Transparent"
