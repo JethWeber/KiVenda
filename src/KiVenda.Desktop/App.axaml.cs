@@ -36,6 +36,7 @@ public partial class App : Avalonia.Application
         Services.GetRequiredService<ServicoTema>().CarregarEAplicar();
         InicializarBaseDeDadosAsync().GetAwaiter().GetResult();
         InicializarLicenciamento();
+        Services.GetRequiredService<KiVenda.Desktop.Notificacoes.ServicoMonitorLicenca>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -77,6 +78,7 @@ public partial class App : Avalonia.Application
         services.AddSingleton<IServicoBackup>(_ => new ServicoBackupSqlite(CaminhosAplicacao.CaminhoBaseDeDados));
         services.AddSingleton<ServicoTema>();
         services.AddSingleton<KiVenda.Desktop.Notificacoes.ServicoNotificacoes>();
+        services.AddSingleton<KiVenda.Desktop.Notificacoes.ServicoMonitorLicenca>();
         services.AddTransient<ConfiguracoesViewModel>();
 
         services.AddSingleton<SessaoUtilizadorAtual>();
