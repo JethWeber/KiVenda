@@ -187,7 +187,7 @@
                 BorderBrush="{DynamicResource BordaBrush}"
                 BorderThickness="1"
                 CornerRadius="12"
-                Panel.ZIndex="20">
+                >
             <StackPanel>
                 <Grid ColumnDefinitions="*,Auto" Margin="16,14">
                     <TextBlock Text="Notificações" FontSize="16" FontWeight="Bold" />
