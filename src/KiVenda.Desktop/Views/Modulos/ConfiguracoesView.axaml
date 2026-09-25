@@ -13,8 +13,9 @@
             <TabItem Header="Empresa">
                 <views:ConfiguracaoEmpresaView DataContext="{Binding Empresa}" />
             </TabItem>
-            <TabItem Header="Scanner">
+            <TabItem Header="Dispositivos">
                 <views:ConfiguracaoScannerView DataContext="{Binding Scanner}" />
+                <views:ConfiguracaoImpressoraView DataContext="{Binding Impressora}" />
             </TabItem>
             <TabItem Header="Licença">
                 <views:ConfiguracaoLicencaView DataContext="{Binding Licenca}" />
