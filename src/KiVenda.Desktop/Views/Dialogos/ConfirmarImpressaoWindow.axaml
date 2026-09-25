@@ -1,26 +1,30 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="KiVenda.Desktop.Views.Dialogos.ConfirmarImpressaoWindow"
-        Width="360"
-        Height="180"
-        CanResize="False"
-        WindowStartupLocation="CenterOwner"
-        ShowInTaskbar="False"
-        Title="Recibo">
-    <StackPanel Margin="24" Spacing="20">
-        <TextBlock Text="Imprimir recibo?"
-                   FontSize="20"
-                   FontWeight="SemiBold"
+        Width="520" Height="720" MinWidth="420" MinHeight="500"
+        CanResize="True" WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False" Title="Pré-visualização do recibo">
+    <Grid RowDefinitions="Auto,*,Auto" Margin="20" RowSpacing="16">
+        <TextBlock Grid.Row="0" Text="Imprimir recibo?"
+                   FontSize="20" FontWeight="SemiBold"
                    HorizontalAlignment="Center" />
-        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-            <Button Grid.Column="0"
-                    Content="NÃO"
-                    Classes="secundario"
-                    Click="Nao_Click" />
-            <Button Grid.Column="1"
-                    Content="SIM"
-                    Classes="primario"
-                    Click="Sim_Click" />
+        <Border Grid.Row="1" Background="#F7F7F7"
+                BorderBrush="#D0D0D0" BorderThickness="1"
+                CornerRadius="6" Padding="18">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding Preview}"
+                           FontFamily="Courier New, monospace"
+                           FontSize="12" LineHeight="15"
+                           TextWrapping="NoWrap"
+                           HorizontalAlignment="Center" />
+            </ScrollViewer>
+        </Border>
+        <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="12">
+            <Button Grid.Column="0" Content="NÃO"
+                    Classes="secundario" Click="Nao_Click" />
+            <Button Grid.Column="1" Content="SIM"
+                    Classes="primario" Click="Sim_Click" />
         </Grid>
-    </StackPanel>
+    </Grid>
 </Window>

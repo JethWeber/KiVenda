@@ -19,7 +19,7 @@ public sealed class ServicoImpressaoTexto : IServicoImpressao
         DadosLoja dadosLoja,
         CancellationToken cancellationToken = default)
     {
-        var conteudo = FormatarRecibo(recibo, dadosLoja);
+        var conteudo = GerarPreview(recibo, dadosLoja);
         var nomeFicheiro = $"recibo-{recibo.VendaId:N}.txt";
 
         await EscreverParaDestinoAsync(nomeFicheiro, conteudo, cancellationToken);
@@ -40,7 +40,7 @@ public sealed class ServicoImpressaoTexto : IServicoImpressao
         return Task.FromResult<IReadOnlyList<string>>(Array.Empty<string>());
     }
 
-    private static string FormatarRecibo(ReciboVendaDto recibo, DadosLoja dadosLoja)
+    public static string GerarPreview(ReciboVendaDto recibo, DadosLoja dadosLoja)
     {
         var cultura = ObterCulturaFormatacao();
         var sb = new StringBuilder();

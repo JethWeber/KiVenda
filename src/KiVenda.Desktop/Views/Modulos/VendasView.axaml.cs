@@ -65,14 +65,6 @@ public partial class VendasView : UserControl
             return false;
         }
 
-        var dialogo = new ConfirmarImpressaoWindow();
-        var imprimir = await dialogo.ShowDialog<bool>(owner);
-
-        if (!imprimir)
-        {
-            return false;
-        }
-
         await using var scope = App.Services.CreateAsyncScope();
         var empresa = await scope.ServiceProvider
             .GetRequiredService<IUnitOfWork>()
@@ -91,6 +83,15 @@ public partial class VendasView : UserControl
                 empresa.Website,
                 empresa.Logo,
                 empresa.LogoMimeType);
+
+        var preview = ServicoImpressaoTexto.GerarPreview(recibo, dadosLoja);
+        var dialogo = new ConfirmarImpressaoWindow(preview);
+        var imprimir = await dialogo.ShowDialog<bool>(owner);
+
+        if (!imprimir)
+        {
+            return false;
+        }
 
         var servicoImpressao = scope.ServiceProvider.GetRequiredService<IServicoImpressao>();
         await servicoImpressao.ImprimirReciboVendaAsync(recibo, dadosLoja);
