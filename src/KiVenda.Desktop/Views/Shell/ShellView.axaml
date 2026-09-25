@@ -193,8 +193,15 @@
                 </Grid>
             </Border>
 
-            <ScrollViewer Grid.Row="1" Padding="24">
-                <ContentControl Content="{Binding ConteudoAtual}" />
+            <ScrollViewer Grid.Row="1"
+                          Padding="24"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <ContentControl Content="{Binding ConteudoAtual}"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Top"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Top" />
             </ScrollViewer>
         </Grid>
 
