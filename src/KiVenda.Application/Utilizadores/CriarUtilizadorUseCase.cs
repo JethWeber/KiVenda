@@ -5,6 +5,7 @@ using KiVenda.Core.Auditoria;
 using KiVenda.Core.Enums;
 using KiVenda.Core.Exceptions;
 using KiVenda.Core.Utilizadores;
+using KiVenda.Core.Notificacoes;
 
 namespace KiVenda.Application.Utilizadores;
 
@@ -26,6 +27,14 @@ public sealed class CriarUtilizadorUseCase(IUnitOfWork uow, IContextoAutenticaca
         var utilizador = new Utilizador(comando.Nome, comando.NomeUtilizador, hash, comando.Perfil);
 
         await uow.Utilizadores.AdicionarAsync(utilizador, cancellationToken);
+
+        await uow.Notificacoes.AdicionarAsync(
+            new Notificacao(
+                contexto.UtilizadorId,
+                "UTILIZADOR_ADICIONADO",
+                "Utilizador adicionado",
+                $"O utilizador {utilizador.Nome} ({utilizador.NomeUtilizador}) foi criado com o perfil {utilizador.Perfil}."),
+            cancellationToken);
 
         await uow.LogsAuditoria.AdicionarAsync(
             new LogAuditoria(
