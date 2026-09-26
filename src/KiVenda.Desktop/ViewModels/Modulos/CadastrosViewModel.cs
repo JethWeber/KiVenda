@@ -32,7 +32,7 @@ public partial class CadastrosViewModel : ViewModelBase
     [ObservableProperty] private string _cargo = "";
     [ObservableProperty] private string _departamento = "";
     [ObservableProperty] private string _turno = "";
-    [ObservableProperty] private DateTimeOffset? _dataAdmissao = DateTimeOffset.Today;
+    [ObservableProperty] private DateTimeOffset? _dataAdmissao = new(DateTime.Today);
     [ObservableProperty] private decimal _salarioBase;
     [ObservableProperty] private bool _ativo = true;
     [ObservableProperty] private bool _ehFornecedor;
@@ -57,7 +57,7 @@ public partial class CadastrosViewModel : ViewModelBase
     [RelayCommand] private void NovoCliente()=>Abrir("Cliente");
     [RelayCommand] private void NovoFornecedor()=>Abrir("Fornecedor");
     [RelayCommand] private void NovoFuncionario()=>Abrir("Funcionario");
-    private void Abrir(string tipo){EntidadeEmEdicao=tipo;IdEmEdicao=null;FormularioAberto=true;MensagemErro=null;Nome=Telefone=Email=Nif=ProdutosFornecidos=Bi=Cargo=Departamento=Turno="";DataAdmissao=DateTime.Today;SalarioBase=0;Ativo=true;}
+    private void Abrir(string tipo){EntidadeEmEdicao=tipo;IdEmEdicao=null;FormularioAberto=true;MensagemErro=null;Nome=Telefone=Email=Nif=ProdutosFornecidos=Bi=Cargo=Departamento=Turno="";DataAdmissao=new DateTimeOffset(DateTime.Today);SalarioBase=0;Ativo=true;}
     [RelayCommand] private void EditarCliente(ClienteCadastroDto x){Abrir("Cliente");IdEmEdicao=x.Id;Nome=x.Nome;Telefone=x.Telefone??"";Email=x.Email??"";Nif=x.Nif??"";}
     [RelayCommand] private void EditarFornecedor(FornecedorCadastroDto x){Abrir("Fornecedor");IdEmEdicao=x.Id;Nome=x.Nome;Telefone=x.Telefone??"";Email=x.Email??"";Nif=x.Nif??"";ProdutosFornecidos=x.ProdutosFornecidos??"";}
     [RelayCommand] private void EditarFuncionario(FuncionarioDto x){Abrir("Funcionario");IdEmEdicao=x.Id;Nome=x.Nome;Telefone=x.Telefone??"";Email=x.Email??"";Bi=x.BI??"";Cargo=x.Cargo??"";Departamento=x.Departamento??"";Turno=x.Turno??"";DataAdmissao=new DateTimeOffset(x.DataAdmissao);SalarioBase=x.SalarioBase;Ativo=x.Ativo;}
@@ -69,7 +69,7 @@ public partial class CadastrosViewModel : ViewModelBase
         try{await using var s=_scopeFactory.CreateAsyncScope();
             if(EntidadeEmEdicao=="Cliente"){await s.ServiceProvider.GetRequiredService<GuardarClienteCadastroUseCase>().ExecutarAsync(IdEmEdicao,Nome,Telefone,Email,Nif);await CarregarClientesAsync();}
             else if(EntidadeEmEdicao=="Fornecedor"){await s.ServiceProvider.GetRequiredService<GuardarFornecedorCadastroUseCase>().ExecutarAsync(IdEmEdicao,Nome,Telefone,Email,Nif,ProdutosFornecidos);await CarregarFornecedoresAsync();}
-            else{await s.ServiceProvider.GetRequiredService<GuardarFuncionarioUseCase>().ExecutarAsync(IdEmEdicao,Nome,Telefone,Email,Bi,Cargo,Departamento,Turno,DataAdmissao,SalarioBase,Ativo);await CarregarFuncionariosAsync();}
+            else{await s.ServiceProvider.GetRequiredService<GuardarFuncionarioUseCase>().ExecutarAsync(IdEmEdicao,Nome,Telefone,Email,Bi,Cargo,Departamento,Turno,DataAdmissao?.DateTime ?? DateTime.Today,SalarioBase,Ativo);await CarregarFuncionariosAsync();}
             FecharFormulario();
         }catch(DomainException ex){MensagemErro=ex.Message;}catch(Exception ex){MensagemErro=$"Não foi possível guardar: {ex.Message}";}finally{AGuardar=false;}
     }
