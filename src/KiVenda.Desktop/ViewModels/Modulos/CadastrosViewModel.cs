@@ -32,7 +32,7 @@ public partial class CadastrosViewModel : ViewModelBase
     [ObservableProperty] private string _cargo = "";
     [ObservableProperty] private string _departamento = "";
     [ObservableProperty] private string _turno = "";
-    [ObservableProperty] private DateTime _dataAdmissao = DateTime.Today;
+    [ObservableProperty] private DateTimeOffset? _dataAdmissao = DateTimeOffset.Today;
     [ObservableProperty] private decimal _salarioBase;
     [ObservableProperty] private bool _ativo = true;
     [ObservableProperty] private bool _ehFornecedor;
@@ -60,7 +60,7 @@ public partial class CadastrosViewModel : ViewModelBase
     private void Abrir(string tipo){EntidadeEmEdicao=tipo;IdEmEdicao=null;FormularioAberto=true;MensagemErro=null;Nome=Telefone=Email=Nif=ProdutosFornecidos=Bi=Cargo=Departamento=Turno="";DataAdmissao=DateTime.Today;SalarioBase=0;Ativo=true;}
     [RelayCommand] private void EditarCliente(ClienteCadastroDto x){Abrir("Cliente");IdEmEdicao=x.Id;Nome=x.Nome;Telefone=x.Telefone??"";Email=x.Email??"";Nif=x.Nif??"";}
     [RelayCommand] private void EditarFornecedor(FornecedorCadastroDto x){Abrir("Fornecedor");IdEmEdicao=x.Id;Nome=x.Nome;Telefone=x.Telefone??"";Email=x.Email??"";Nif=x.Nif??"";ProdutosFornecidos=x.ProdutosFornecidos??"";}
-    [RelayCommand] private void EditarFuncionario(FuncionarioDto x){Abrir("Funcionario");IdEmEdicao=x.Id;Nome=x.Nome;Telefone=x.Telefone??"";Email=x.Email??"";Bi=x.BI??"";Cargo=x.Cargo??"";Departamento=x.Departamento??"";Turno=x.Turno??"";DataAdmissao=x.DataAdmissao;SalarioBase=x.SalarioBase;Ativo=x.Ativo;}
+    [RelayCommand] private void EditarFuncionario(FuncionarioDto x){Abrir("Funcionario");IdEmEdicao=x.Id;Nome=x.Nome;Telefone=x.Telefone??"";Email=x.Email??"";Bi=x.BI??"";Cargo=x.Cargo??"";Departamento=x.Departamento??"";Turno=x.Turno??"";DataAdmissao=new DateTimeOffset(x.DataAdmissao);SalarioBase=x.SalarioBase;Ativo=x.Ativo;}
     [RelayCommand] private void FecharFormulario(){FormularioAberto=false;EntidadeEmEdicao=null;IdEmEdicao=null;MensagemErro=null;}
 
     [RelayCommand] private async Task GuardarAsync()
