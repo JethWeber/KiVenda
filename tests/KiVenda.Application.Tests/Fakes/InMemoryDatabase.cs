@@ -3,6 +3,7 @@ using KiVenda.Core.Caixa;
 using KiVenda.Core.Clientes;
 using KiVenda.Core.Compras;
 using KiVenda.Core.Fornecedores;
+using KiVenda.Core.Funcionarios;
 using KiVenda.Core.Empresas;
 using KiVenda.Core.Produtos;
 using KiVenda.Core.Notificacoes;
@@ -28,6 +29,7 @@ public sealed class InMemoryDatabase
     public List<Cliente> Clientes { get; } = new();
     public List<Empresa> Empresas { get; } = new();
     public List<Fornecedor> Fornecedores { get; } = new();
+    public List<Funcionario> Funcionarios { get; } = new();
     public List<Compra> Compras { get; } = new();
     public List<Venda> Vendas { get; } = new();
     public List<SessaoCaixa> SessoesCaixa { get; } = new();
