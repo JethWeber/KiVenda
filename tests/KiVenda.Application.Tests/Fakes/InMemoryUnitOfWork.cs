@@ -3,6 +3,7 @@ using KiVenda.Core.Auditoria;
 using KiVenda.Core.Clientes;
 using KiVenda.Core.Compras;
 using KiVenda.Core.Fornecedores;
+using KiVenda.Core.Funcionarios;
 using KiVenda.Core.Empresas;
 using KiVenda.Core.Produtos;
 using KiVenda.Core.Notificacoes;
@@ -28,6 +29,7 @@ public sealed class InMemoryUnitOfWork : IUnitOfWork
     public IClienteRepository Clientes => new FakeClienteRepository(_db);
     public IEmpresaRepository Empresas => new FakeEmpresaRepository(_db);
     public IFornecedorRepository Fornecedores => new FakeFornecedorRepository(_db);
+    public IFuncionarioRepository Funcionarios => new FakeFuncionarioRepository(_db);
     public ICompraRepository Compras => new FakeCompraRepository(_db);
     public IVendaRepository Vendas => new FakeVendaRepository(_db);
     public ISessaoCaixaRepository SessoesCaixa => new FakeSessaoCaixaRepository(_db);
@@ -102,6 +104,7 @@ file sealed class FakeClienteRepository(InMemoryDatabase db) : IClienteRepositor
     public Task<Cliente?> ObterPorIdAsync(Guid id, CancellationToken ct = default) => Task.FromResult(db.Clientes.FirstOrDefault(c => c.Id == id));
     public Task<IReadOnlyList<Cliente>> ListarAsync(string? termoPesquisa = null, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<Cliente>>(db.Clientes.ToList());
     public Task AdicionarAsync(Cliente cliente, CancellationToken ct = default) { db.Clientes.Add(cliente); return Task.CompletedTask; }
+    public void Remover(Cliente cliente) => db.Clientes.Remove(cliente);
 }
 
 file sealed class FakeEmpresaRepository(InMemoryDatabase db) : IEmpresaRepository
@@ -123,6 +126,45 @@ file sealed class FakeFornecedorRepository(InMemoryDatabase db) : IFornecedorRep
     public Task<Fornecedor?> ObterPorIdAsync(Guid id, CancellationToken ct = default) => Task.FromResult(db.Fornecedores.FirstOrDefault(f => f.Id == id));
     public Task<IReadOnlyList<Fornecedor>> ListarAsync(string? termoPesquisa = null, CancellationToken ct = default) => Task.FromResult<IReadOnlyList<Fornecedor>>(db.Fornecedores.ToList());
     public Task AdicionarAsync(Fornecedor fornecedor, CancellationToken ct = default) { db.Fornecedores.Add(fornecedor); return Task.CompletedTask; }
+    public void Remover(Fornecedor fornecedor) => db.Fornecedores.Remove(fornecedor);
+}
+
+file sealed class FakeFuncionarioRepository(InMemoryDatabase db) : IFuncionarioRepository
+{
+    public Task<Funcionario?> ObterPorIdAsync(Guid id, CancellationToken ct = default) =>
+        Task.FromResult(db.Funcionarios.FirstOrDefault(f => f.Id == id));
+
+    public Task<IReadOnlyList<Funcionario>> ListarAsync(string? termoPesquisa = null, CancellationToken ct = default)
+    {
+        var query = db.Funcionarios.AsEnumerable();
+        if (!string.IsNullOrWhiteSpace(termoPesquisa))
+            query = query.Where(f =>
+                f.Nome.Contains(termoPesquisa, StringComparison.OrdinalIgnoreCase) ||
+                (f.Codigo?.Contains(termoPesquisa, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (f.BI?.Contains(termoPesquisa, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (f.Cargo?.Contains(termoPesquisa, StringComparison.OrdinalIgnoreCase) ?? false));
+        return Task.FromResult<IReadOnlyList<Funcionario>>(query.ToList());
+    }
+
+    public Task AdicionarAsync(Funcionario funcionario, CancellationToken ct = default)
+    {
+        db.Funcionarios.Add(funcionario);
+        return Task.CompletedTask;
+    }
+
+    public void Remover(Funcionario funcionario) => db.Funcionarios.Remove(funcionario);
+
+    public Task<string> ObterProximoCodigoAsync(CancellationToken ct = default)
+    {
+        const string prefixo = "FUNC-";
+        var maior = db.Funcionarios
+            .Select(f => f.Codigo)
+            .Where(c => c.StartsWith(prefixo, StringComparison.OrdinalIgnoreCase))
+            .Select(c => int.TryParse(c[prefixo.Length..], out var n) ? n : 0)
+            .DefaultIfEmpty(0)
+            .Max();
+        return Task.FromResult($"FUNC-{maior + 1:000}");
+    }
 }
 
 file sealed class FakeCompraRepository(InMemoryDatabase db) : ICompraRepository
