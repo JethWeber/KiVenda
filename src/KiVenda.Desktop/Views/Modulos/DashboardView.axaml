@@ -62,9 +62,7 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <Button Grid.Column="1" Classes="primario"
-                            Content="＋  Nova Venda (F2)" FontSize="13"
-                            Padding="18,12" Margin="20,0,0,0" />
+
                 </Grid>
 
                 <TextBlock Grid.Row="1" Classes="erro"
@@ -146,10 +144,13 @@
                 </UniformGrid>
 
                 <!-- Área analítica: tendência + alertas -->
-                <Grid Grid.Row="3" RowDefinitions="Auto,Auto"
-                      ColumnDefinitions="2*,*" ColumnSpacing="24">
+                <Grid Grid.Row="3"
+                      ColumnDefinitions="2*,*"
+                      ColumnSpacing="24"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Top">
 
-                    <Border Grid.Column="0" Classes="painel" Padding="26">
+                    <Border Grid.Column="0" Classes="painel" Padding="26" VerticalAlignment="Top">
                         <StackPanel Spacing="18">
                             <Grid ColumnDefinitions="*,Auto">
                                 <StackPanel Spacing="3">
@@ -177,7 +178,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="1" Classes="painel" Padding="24">
+                    <Border Grid.Column="1" Classes="painel" Padding="24" VerticalAlignment="Top">
                         <StackPanel Spacing="18">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="!" FontSize="18" FontWeight="Bold"
@@ -228,6 +229,19 @@
                     </Border>
                 </Grid>
         </Grid>
+
+        <!-- Rodapé -->
+        <Border Grid.Row="0"
+                VerticalAlignment="Bottom"
+                Margin="0,20,8,0"
+                Padding="0,20,0,0"
+                BorderBrush="{DynamicResource BordaBrush}"
+                BorderThickness="0,1,0,0">
+            <TextBlock Text="KiVenda - QUEM VENDE, CONTROLA."
+                       FontSize="11"
+                       Foreground="{DynamicResource TextoSecundarioBrush}"
+                       HorizontalAlignment="Center" />
+        </Border>
 
         <!-- Popup/modal de alertas -->
         <Border ZIndex="100"
