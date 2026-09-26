@@ -9,16 +9,12 @@ public sealed class ClienteConfiguration : IEntityTypeConfiguration<Cliente>
     public void Configure(EntityTypeBuilder<Cliente> builder)
     {
         builder.ToTable("Clientes");
-
         builder.HasKey(c => c.Id);
-
-        builder.Property(c => c.Nome)
-            .IsRequired()
-            .HasMaxLength(150);
-
-        builder.Property(c => c.Telefone)
-            .HasMaxLength(30);
-
+        builder.Property(c => c.Nome).IsRequired().HasMaxLength(150);
+        builder.Property(c => c.Telefone).HasMaxLength(30);
+        builder.Property(c => c.Email).HasMaxLength(150);
+        builder.Property(c => c.Nif).HasMaxLength(30);
         builder.HasIndex(c => c.Nome);
+        builder.HasIndex(c => c.Nif);
     }
 }

@@ -9,19 +9,13 @@ public sealed class FornecedorConfiguration : IEntityTypeConfiguration<Fornecedo
     public void Configure(EntityTypeBuilder<Fornecedor> builder)
     {
         builder.ToTable("Fornecedores");
-
         builder.HasKey(f => f.Id);
-
-        builder.Property(f => f.Nome)
-            .IsRequired()
-            .HasMaxLength(150);
-
-        builder.Property(f => f.Telefone)
-            .HasMaxLength(30);
-
-        builder.Property(f => f.ProdutosFornecidos)
-            .HasMaxLength(500);
-
+        builder.Property(f => f.Nome).IsRequired().HasMaxLength(150);
+        builder.Property(f => f.Telefone).HasMaxLength(30);
+        builder.Property(f => f.Email).HasMaxLength(150);
+        builder.Property(f => f.Nif).HasMaxLength(30);
+        builder.Property(f => f.ProdutosFornecidos).HasMaxLength(500);
         builder.HasIndex(f => f.Nome);
+        builder.HasIndex(f => f.Nif);
     }
 }

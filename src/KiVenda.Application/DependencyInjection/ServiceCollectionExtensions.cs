@@ -1,5 +1,6 @@
 using KiVenda.Application.Auditoria;
 using KiVenda.Application.Caixa;
+using KiVenda.Application.Cadastros;
 using KiVenda.Application.Clientes;
 using KiVenda.Application.Compras;
 using KiVenda.Application.Fornecedores;
@@ -70,6 +71,17 @@ public static class ServiceCollectionExtensions
         services.AddScoped<RegistarSuprimentoUseCase>();
         services.AddScoped<RegistarSangriaUseCase>();
         services.AddScoped<ConsultarMovimentacoesCaixaUseCase>();
+
+        // Cadastros
+        services.AddScoped<ListarClientesCadastroUseCase>();
+        services.AddScoped<GuardarClienteCadastroUseCase>();
+        services.AddScoped<EliminarClienteUseCase>();
+        services.AddScoped<ListarFornecedoresCadastroUseCase>();
+        services.AddScoped<GuardarFornecedorCadastroUseCase>();
+        services.AddScoped<EliminarFornecedorUseCase>();
+        services.AddScoped<ListarFuncionariosUseCase>();
+        services.AddScoped<GuardarFuncionarioUseCase>();
+        services.AddScoped<EliminarFuncionarioUseCase>();
 
         // Clientes
         services.AddScoped<CriarClienteUseCase>();

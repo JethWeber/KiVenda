@@ -97,10 +97,8 @@ public partial class ShellViewModel : ViewModelBase
         if (Permissoes.Permite(_sessao.Perfil, Acao.RegistarCompras))
             ItensMenu.Add(Item("Compras", "🧾", () => new ComprasViewModel(_scopeFactory)));
 
-        ItensMenu.Add(Item("Clientes", "👥", () => new ClientesViewModel(_scopeFactory)));
+        ItensMenu.Add(Item("Cadastros", "👥", () => new CadastrosViewModel(_scopeFactory)));
 
-        if (Permissoes.Permite(_sessao.Perfil, Acao.RegistarCompras))
-            ItensMenu.Add(Item("Fornecedores", "🚚", () => new FornecedoresViewModel(_scopeFactory)));
 
         if (Permissoes.Permite(_sessao.Perfil, Acao.GerirCaixa))
             ItensMenu.Add(Item("Caixa", "🏦", () => new CaixaViewModel(_scopeFactory)));

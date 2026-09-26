@@ -12,8 +12,8 @@
         <DataTemplate DataType="vmm:VendasViewModel"><views:VendasView /></DataTemplate>
         <DataTemplate DataType="vmm:CaixaViewModel"><views:CaixaView /></DataTemplate>
         <DataTemplate DataType="vmm:ProdutosViewModel"><views:ProdutosView /></DataTemplate>
-        <DataTemplate DataType="vmm:ClientesViewModel"><views:ClientesView /></DataTemplate>
-        <DataTemplate DataType="vmm:FornecedoresViewModel"><views:FornecedoresView /></DataTemplate>
+        <DataTemplate DataType="vmm:CadastrosViewModel"><views:CadastrosView /></DataTemplate>
+        
         <DataTemplate DataType="vmm:ComprasViewModel"><views:ComprasView /></DataTemplate>
         <DataTemplate DataType="vmm:UtilizadoresViewModel"><views:UtilizadoresView /></DataTemplate>
         <DataTemplate DataType="vmm:RelatoriosViewModel"><views:RelatoriosView /></DataTemplate>
