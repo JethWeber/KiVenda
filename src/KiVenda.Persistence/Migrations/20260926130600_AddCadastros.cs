@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 #nullable disable
 namespace KiVenda.Persistence.Migrations;
+[Migration("20260926130600_AddCadastros")]
 public partial class AddCadastros:Migration
 {
  protected override void Up(MigrationBuilder m)
