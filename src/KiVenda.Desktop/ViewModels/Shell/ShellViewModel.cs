@@ -24,7 +24,7 @@ public partial class ShellViewModel : ViewModelBase
     public string PerfilTexto=>_sessao.Perfil==PerfilUtilizador.Gerente?"GERENTE":"OPERADOR DE CAIXA";
     public string NomeEmpresa{get;private set;}="KiVenda";
     public ObservableCollection<ItemMenuLateral> ItensMenu{get;}=new(); public ObservableCollection<ItemMenuLateral> ItensMenuInferiores{get;}=new();
-    public ObservableCollection<Notificacoes.Notificacao> Notificacoes=>_servicoNotificacoes.Notificacoes;
+    public ObservableCollection<Notificacao> Notificacoes=>_servicoNotificacoes.Notificacoes;
     [ObservableProperty] private ItemMenuLateral? _itemSelecionado; [ObservableProperty] private ViewModelBase? _conteudoAtual; [ObservableProperty] private bool _notificacoesAbertas;
     partial void OnItemSelecionadoChanged(ItemMenuLateral? value)=>ConteudoAtual=value?.FabricaConteudo();
     public bool TemNotificacoesNaoLidas=>_servicoNotificacoes.NaoLidas>0; public int QuantidadeNotificacoes=>_servicoNotificacoes.Notificacoes.Count; public string TemaBotaoTexto=>_servicoTema.TemaAtual==TemaKiVenda.Dark?"☀":"☾";
@@ -36,7 +36,7 @@ public partial class ShellViewModel : ViewModelBase
     private void OnLicensingStatusChanged(object? sender,EventArgs e){ConstruirMenu();ItemSelecionado=ItensMenu.FirstOrDefault();}
     private void OnNotificacoesAlteradas(object? sender,EventArgs e){OnPropertyChanged(nameof(TemNotificacoesNaoLidas));OnPropertyChanged(nameof(Notificacoes));OnPropertyChanged(nameof(QuantidadeNotificacoes));}
     [RelayCommand] private void AlternarTema(){_servicoTema.DefinirTema(_servicoTema.TemaAtual==TemaKiVenda.Dark?TemaKiVenda.Light:TemaKiVenda.Dark);OnPropertyChanged(nameof(TemaBotaoTexto));}
-    [RelayCommand] private async Task EliminarNotificacaoAsync(Notificacoes.Notificacao n)=>await _servicoNotificacoes.RemoverAsync(n.Id);
+    [RelayCommand] private async Task EliminarNotificacaoAsync(Notificacao n)=>await _servicoNotificacoes.RemoverAsync(n.Id);
     [RelayCommand] private void SelecionarItem(ItemMenuLateral item)=>ItemSelecionado=item;
     [RelayCommand] private async Task AbrirNotificacoesAsync(){NotificacoesAbertas=!NotificacoesAbertas;if(NotificacoesAbertas)await _servicoNotificacoes.MarcarTodasComoLidasAsync();}
     [RelayCommand] private void FecharNotificacoes()=>NotificacoesAbertas=false; [RelayCommand] private void MeusDados()=>MeusDadosSolicitados?.Invoke(this,EventArgs.Empty);
