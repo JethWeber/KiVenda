@@ -39,10 +39,12 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid VerticalAlignment="Top">
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto"
+    <Grid RowDefinitions="Auto,Auto"
+          VerticalAlignment="Top">
+        <Grid Grid.Row="0"
+              RowDefinitions="Auto,Auto,Auto,Auto"
               RowSpacing="26"
-              Margin="0,0,8,24"
+              Margin="0,0,8,0"
               VerticalAlignment="Top">
 
                 <!-- Cabeçalho do dashboard -->
@@ -178,7 +180,11 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Grid.Column="1" Classes="painel" Padding="24" VerticalAlignment="Top">
+                    <Border Grid.Column="1"
+                            Classes="painel"
+                            Padding="24"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Stretch">
                         <StackPanel Spacing="18">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <TextBlock Text="!" FontSize="18" FontWeight="Bold"
@@ -231,9 +237,9 @@
         </Grid>
 
         <!-- Rodapé -->
-        <Border Grid.Row="0"
-                VerticalAlignment="Bottom"
-                Margin="0,20,8,0"
+        <Border Grid.Row="1"
+                VerticalAlignment="Top"
+                Margin="0,20,8,20"
                 Padding="0,20,0,0"
                 BorderBrush="{DynamicResource BordaBrush}"
                 BorderThickness="0,1,0,0">
@@ -244,7 +250,7 @@
         </Border>
 
         <!-- Popup/modal de alertas -->
-        <Border ZIndex="100"
+        <Border Grid.RowSpan="2" ZIndex="100"
                 Background="#66000000"
                 IsVisible="{Binding AlertasPopupAberto}"
                 Padding="40">
