@@ -1,6 +1,5 @@
 namespace KiVenda.Application.Abstractions.Persistence;
 
-/// <summary>Unidade de trabalho sobre a base local SQLite.</summary>
 public interface IUnitOfWork : IAsyncDisposable
 {
     IProdutoRepository Produtos { get; }
@@ -8,8 +7,9 @@ public interface IUnitOfWork : IAsyncDisposable
     IUnidadeMedidaRepository UnidadesMedida { get; }
     IMovimentoStockRepository MovimentosStock { get; }
     IClienteRepository Clientes { get; }
-    IEmpresaRepository Empresas { get; }
     IFornecedorRepository Fornecedores { get; }
+    IFuncionarioRepository Funcionarios { get; }
+    IEmpresaRepository Empresas { get; }
     ICompraRepository Compras { get; }
     IVendaRepository Vendas { get; }
     ISessaoCaixaRepository SessoesCaixa { get; }

@@ -4,6 +4,7 @@ using KiVenda.Core.Clientes;
 using KiVenda.Core.Compras;
 using KiVenda.Core.Empresas;
 using KiVenda.Core.Fornecedores;
+using KiVenda.Core.Funcionarios;
 using KiVenda.Core.Notificacoes;
 using KiVenda.Core.Produtos;
 using KiVenda.Core.Utilizadores;
@@ -12,9 +13,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KiVenda.Persistence;
 
-public sealed class KiVendaDbContext : DbContext
+public sealed class KiVendaDbContext(DbContextOptions<KiVendaDbContext> options) : DbContext(options)
 {
-    public KiVendaDbContext(DbContextOptions<KiVendaDbContext> options) : base(options) { }
     public DbSet<UnidadeMedida> UnidadesMedida => Set<UnidadeMedida>();
     public DbSet<Categoria> Categorias => Set<Categoria>();
     public DbSet<Produto> Produtos => Set<Produto>();
@@ -23,6 +23,7 @@ public sealed class KiVendaDbContext : DbContext
     public DbSet<MovimentoStock> MovimentosStock => Set<MovimentoStock>();
     public DbSet<Cliente> Clientes => Set<Cliente>();
     public DbSet<Fornecedor> Fornecedores => Set<Fornecedor>();
+    public DbSet<Funcionario> Funcionarios => Set<Funcionario>();
     public DbSet<Empresa> Empresas => Set<Empresa>();
     public DbSet<Compra> Compras => Set<Compra>();
     public DbSet<ItemCompra> ItensCompra => Set<ItemCompra>();

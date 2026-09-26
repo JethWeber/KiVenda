@@ -1,5 +1,6 @@
 using KiVenda.Application.Auditoria;
 using KiVenda.Application.Caixa;
+using KiVenda.Application.Cadastros;
 using KiVenda.Application.Clientes;
 using KiVenda.Application.Compras;
 using KiVenda.Application.Fornecedores;
@@ -13,26 +14,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace KiVenda.Application.DependencyInjection;
 
-/// <summary>
-/// Ponto único de registo desta camada no composition root do Desktop
-/// (Fase 6). Todos os casos de uso são <c>Scoped</c> — cada operação da
-/// UI (ex.: um clique num botão) resolve o seu próprio grafo, incluindo
-/// um <see cref="Abstractions.Persistence.IUnitOfWork"/> novo, evitando
-/// que alterações rastreadas por um ecrã "vazem" para outro.
-///
-/// NÃO regista aqui: <see cref="Abstractions.Persistence.IUnitOfWork"/>
-/// (vem da Persistence, Fase 2), <see cref="Abstractions.Auth.IContextoAutenticacao"/>
-/// e <see cref="Abstractions.Auth.ISenhaHasher"/> (vêm do Desktop/Infrastructure,
-/// Fase 4/5) — esta camada só regista o que é seu.
-/// </summary>
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplicationUseCases(this IServiceCollection services)
     {
-        // Auditoria
         services.AddScoped<ConsultarAuditoriaUseCase>();
-
-        // Produtos
         services.AddScoped<CriarProdutoUseCase>();
         services.AddScoped<EditarProdutoUseCase>();
         services.AddScoped<InativarProdutoUseCase>();
@@ -42,20 +28,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ListarCategoriasUseCase>();
         services.AddScoped<ListarUnidadesMedidaUseCase>();
         services.AddScoped<LocalizarProdutoPorCodigoUseCase>();
-
-        // Stock
         services.AddScoped<RegistarEntradaStockUseCase>();
         services.AddScoped<RegistarSaidaStockUseCase>();
         services.AddScoped<RegistarAjusteStockUseCase>();
         services.AddScoped<ConsultarStockUseCase>();
         services.AddScoped<ConsultarMovimentosStockUseCase>();
         services.AddScoped<RecalcularEstoqueMaterializadoUseCase>();
-
-        // Compras
         services.AddScoped<RegistarCompraUseCase>();
         services.AddScoped<ListarComprasUseCase>();
-
-        // Vendas
         services.AddScoped<IniciarVendaUseCase>();
         services.AddScoped<AdicionarItemVendaUseCase>();
         services.AddScoped<RemoverItemVendaUseCase>();
@@ -63,45 +43,41 @@ public static class ServiceCollectionExtensions
         services.AddScoped<FinalizarVendaUseCase>();
         services.AddScoped<ConsultarVendaUseCase>();
         services.AddScoped<CancelarVendaUseCase>();
-
-        // Caixa
         services.AddScoped<AbrirCaixaUseCase>();
         services.AddScoped<FecharCaixaUseCase>();
         services.AddScoped<RegistarSuprimentoUseCase>();
         services.AddScoped<RegistarSangriaUseCase>();
         services.AddScoped<ConsultarMovimentacoesCaixaUseCase>();
-
-        // Clientes
         services.AddScoped<CriarClienteUseCase>();
         services.AddScoped<EditarClienteUseCase>();
         services.AddScoped<ListarClientesUseCase>();
         services.AddScoped<ConsultarHistoricoComprasUseCase>();
-
-        // Empresa
-        services.AddScoped<ObterEmpresaUseCase>();
         services.AddScoped<CriarEmpresaUseCase>();
         services.AddScoped<EditarEmpresaUseCase>();
+        services.AddScoped<ObterEmpresaUseCase>();
         services.AddScoped<RemoverEmpresaUseCase>();
-
-        // Fornecedores
         services.AddScoped<CriarFornecedorUseCase>();
         services.AddScoped<EditarFornecedorUseCase>();
         services.AddScoped<ListarFornecedoresUseCase>();
-
-        // Relatórios
-        services.AddScoped<GerarRelatorioDiarioUseCase>();
-        services.AddScoped<GerarRelatorioMensalUseCase>();
-        services.AddScoped<GerarRelatorioStockUseCase>();
-        services.AddScoped<ObterResumoDashboardUseCase>();
-
-        // Utilizadores
+        services.AddScoped<ListarClientesCadastroUseCase>();
+        services.AddScoped<GuardarClienteCadastroUseCase>();
+        services.AddScoped<EliminarClienteUseCase>();
+        services.AddScoped<ListarFornecedoresCadastroUseCase>();
+        services.AddScoped<GuardarFornecedorCadastroUseCase>();
+        services.AddScoped<EliminarFornecedorUseCase>();
+        services.AddScoped<ListarFuncionariosUseCase>();
+        services.AddScoped<GuardarFuncionarioUseCase>();
+        services.AddScoped<EliminarFuncionarioUseCase>();
         services.AddScoped<CriarUtilizadorUseCase>();
         services.AddScoped<DefinirPerfilUseCase>();
         services.AddScoped<AutenticarUtilizadorUseCase>();
         services.AddScoped<AlterarPasswordUseCase>();
         services.AddScoped<ListarUtilizadoresUseCase>();
         services.AddScoped<EditarMeusDadosUseCase>();
-
+        services.AddScoped<GerarRelatorioDiarioUseCase>();
+        services.AddScoped<GerarRelatorioMensalUseCase>();
+        services.AddScoped<GerarRelatorioStockUseCase>();
+        services.AddScoped<ObterResumoDashboardUseCase>();
         return services;
     }
 }
