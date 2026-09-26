@@ -1,0 +1,541 @@
+<!DOCTYPE html><html lang="pt"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KiVenda - ERP e Ponto de Venda</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e5eeff",
+                    "on-surface-variant": "#3e4a3d",
+                    "surface": "#f8f9ff",
+                    "tertiary-fixed": "#c9e6ff",
+                    "error-container": "#ffdad6",
+                    "secondary": "#4059aa",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#dce1ff",
+                    "background": "#f8f9ff",
+                    "on-primary-fixed": "#002109",
+                    "on-secondary-fixed": "#00164e",
+                    "tertiary": "#00628d",
+                    "surface-container-high": "#dce9ff",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-primary-container": "#f7fff2",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-fixed-variant": "#004c6e",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#d3e4fe",
+                    "tertiary-fixed-dim": "#89ceff",
+                    "outline-variant": "#bdcaba",
+                    "primary": "#006b2c",
+                    "on-background": "#0b1c30",
+                    "primary-fixed-dim": "#62df7d",
+                    "surface-container-highest": "#d3e4fe",
+                    "inverse-surface": "#213145",
+                    "outline": "#6e7b6c",
+                    "error": "#ba1a1a",
+                    "primary-container": "#00873a",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-fixed-variant": "#005320",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f8f9ff",
+                    "tertiary-container": "#007cb1",
+                    "inverse-primary": "#62df7d",
+                    "on-tertiary-container": "#fcfcff",
+                    "secondary-container": "#8fa7fe",
+                    "secondary-fixed-dim": "#b6c4ff",
+                    "surface-dim": "#cbdbf5",
+                    "on-surface": "#0b1c30",
+                    "on-tertiary-fixed": "#001e2f",
+                    "on-secondary-container": "#1d3989",
+                    "surface-tint": "#006e2d",
+                    "on-secondary-fixed-variant": "#264191",
+                    "primary-fixed": "#7ffc97"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "card-gap": "20px",
+                    "sidebar-width": "260px",
+                    "gutter": "16px",
+                    "unit": "4px",
+                    "container-padding": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "title-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        @layer base {
+            html, body {
+                overscroll-behavior: none;
+            }
+        }
+    </style>
+<meta content="web_dashboard" name="shell-type"></head>
+<body class="bg-background text-on-surface antialiased">
+<!-- SIDEBAR -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-surface-container-lowest/90 dark:bg-inverse-surface/90 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50 overflow-y-auto">
+<div class="px-6 mb-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">storefront</span>
+</div>
+<div class="overflow-hidden">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim leading-none">KiVenda</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70 mt-1 truncate">ERP &amp; PDV Angola</p>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1" data-active-classes="text-primary font-bold bg-primary-fixed/30 dark:bg-primary-container/30 relative before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-6 before:bg-primary before:rounded-r-full">
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="dashboard---kivenda" href="#">
+Dashboard
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="vendas-(pdv)---kivenda" href="#">
+Vendas (PDV)
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="caixa---kivenda" href="#">
+Caixa &amp; Turnos
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="produtos---kivenda" href="#">
+Produtos &amp; Estoque
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="cadastros---kivenda" href="#">
+Cadastros Gerais
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="relatorios---kivenda" href="#">
+Relatórios &amp; Faturação
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="configuracoes---kivenda" href="#">
+Configurações
+</a>
+</nav>
+<div class="mt-auto px-3 pt-4 border-t border-outline-variant/30 space-y-1">
+<div class="px-4 py-3 mt-2 rounded-xl bg-surface-container-low border border-outline-variant/30 flex items-center justify-between">
+<div>
+<p class="font-label-sm text-label-sm text-primary font-bold">AGT Certificado</p>
+<p class="text-[10px] text-on-surface-variant opacity-75">Regime Geral IVA</p>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+</div>
+</div>
+</aside>
+<!-- TOP BAR -->
+<header class="fixed top-0 right-0 left-[260px] h-16 bg-surface-container-lowest/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-96 max-w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60 text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low border border-outline-variant/40 rounded-full font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Pesquisar clientes, NIF, produtos ou faturas..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-5">
+<button class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-all text-on-surface-variant" title="Notificações">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-label-md font-bold text-on-surface leading-tight">João Manuel</p>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-semibold opacity-70">Operador de Caixa</p>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 p-0.5 shadow-sm overflow-hidden">
+<img alt="Foto de perfil do operador João Manuel" class="w-full h-full rounded-full object-cover" data-alt="Foto profissional em close do operador angolano sorrindo com uniforme corporativo limpo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_oYVyZ9_HneETTDVlaoCfi6PbmKmvUtI_IUogk7z4JEj7fzjg40s3NyTRpMv6qneA95RX1IWRewp04Lbdz-yW5f4f_YVKFnixNu-Bf2LcLedzGsk2_mb676f9yy4uoMHUlu8sPxxJCDFS7cxyYQ31aO02ILnpIc4zyaIMR43GWX4Shw5Sdmz0l0N2huypztwxyrC1RY9naO1Ud1IBSXD5XDRB7syR6g-ukYj0xfE-sX-V7msYr2C0">
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="pl-[260px] pt-16 min-h-screen bg-background"><div class="flex flex-col w-full">
+<div class="p-8 max-w-[1600px] w-full mx-auto space-y-8">
+<!-- HEADER & MAIN ACTIONS -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
+<div class="space-y-2">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">tune</span>
+<span>ADMINISTRAÇÃO DO SISTEMA • VERSÃO 4.2</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Configurações do Sistema</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+          Gerencie as preferências fiscais, periféricos de ponto de venda e parâmetros do KiVenda.
+        </p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<button class="px-5 h-11 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold transition-all shadow-sm flex items-center gap-2 active:scale-95" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+<span>Restaurar Padrões</span>
+</button>
+<button class="px-6 h-11 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-2 active:scale-95 group" type="button">
+<span class="material-symbols-outlined text-[18px] group-hover:rotate-12 transition-transform">save</span>
+<span>Guardar Alterações</span>
+</button>
+</div>
+</div>
+<!-- TAB NAVIGATION BAR -->
+<div class="bg-surface-container-lowest shadow-sm rounded-xl p-1.5 flex items-center gap-2 overflow-x-auto">
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-surface-container text-primary font-label-md text-label-md font-bold shadow-xs transition-all relative">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">store</span>
+<span>Empresa</span>
+<span class="w-2 h-2 rounded-full bg-primary ml-1"></span>
+</button>
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-lg hover:bg-surface-container-low text-on-surface-variant font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined text-[20px]">barcode_scanner</span>
+<span>Scanner</span>
+</button>
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-lg hover:bg-surface-container-low text-on-surface-variant font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined text-[20px]">print</span>
+<span>Impressão</span>
+</button>
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-lg hover:bg-surface-container-low text-on-surface-variant font-label-md text-label-md transition-all">
+<span class="material-symbols-outlined text-[20px]">settings_ethernet</span>
+<span>Sistema</span>
+</button>
+<div class="ml-auto pr-3 hidden sm:flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm opacity-70">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span>Sincronizado com a base local</span>
+</div>
+</div>
+<!-- MAIN TWO COLUMN CONFIGURATION VIEW -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN: IDENTIFICAÇÃO FISCAL & CADASTRO -->
+<div class="xl:col-span-7 space-y-6">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-7 space-y-6 relative overflow-hidden">
+<div class="absolute -top-12 -right-12 w-48 h-48 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">badge</span>
+</div>
+<div>
+<h2 class="font-title-lg text-title-lg font-bold text-on-surface">Identificação da Empresa &amp; Fiscal</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">Dados comerciais impressos em documentos certificados pela AGT</p>
+</div>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 bg-surface-container rounded-full text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span>Validado na AGT</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+<!-- Nome Comercial -->
+<div class="space-y-1.5 md:col-span-2">
+<label class="font-label-md text-label-md font-semibold text-on-surface">Nome Comercial da Loja</label>
+<div class="relative">
+<input class="w-full h-11 px-4 bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container transition-all" type="text" value="Supermercado Luanda Express, Lda">
+<span class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-50 text-[18px]">storefront</span>
+</div>
+</div>
+<!-- Razão Social -->
+<div class="space-y-1.5 md:col-span-2">
+<label class="font-label-md text-label-md font-semibold text-on-surface">Razão Social Registada (Conservatória)</label>
+<input class="w-full h-11 px-4 bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container transition-all" type="text" value="Luanda Express Comércio Geral e Retalho, Sociedade Unipessoal Lda">
+</div>
+<!-- NIF Angolano -->
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md font-semibold text-on-surface flex items-center justify-between">
+<span>NIF (Angola)</span>
+<span class="text-[10px] text-primary font-bold tracking-wider uppercase">Certificação Ativa</span>
+</label>
+<div class="relative">
+<input class="w-full h-11 px-4 bg-surface-container-low rounded-xl font-body-md text-body-md font-mono text-on-surface tracking-wide focus:outline-none focus:bg-surface-container transition-all" type="text" value="5417089201LA042">
+<span class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Província e Município -->
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md font-semibold text-on-surface">Província / Município</label>
+<div class="relative">
+<input class="w-full h-11 px-4 bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container transition-all" type="text" value="Luanda / Talatona">
+<span class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-50 text-[18px]">location_on</span>
+</div>
+</div>
+<!-- Endereço Completo -->
+<div class="space-y-1.5 md:col-span-2">
+<label class="font-label-md text-label-md font-semibold text-on-surface">Endereço Físico Completo</label>
+<input class="w-full h-11 px-4 bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container transition-all" type="text" value="Avenida Pedro de Castro Van-Dúnem Loy, Edifício Bengo nº 14, Talatona, Luanda - Angola">
+</div>
+<!-- Contacto Telefónico Principal -->
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md font-semibold text-on-surface">Telefone Principal</label>
+<div class="relative">
+<input class="w-full h-11 px-4 bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container transition-all" type="text" value="+244 923 881 204">
+<span class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-50 text-[18px]">call</span>
+</div>
+</div>
+<!-- Contacto WhatsApp -->
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md font-semibold text-on-surface">Telefone Secundário / WhatsApp</label>
+<div class="relative">
+<input class="w-full h-11 px-4 bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container transition-all" type="text" value="+244 912 405 119">
+<span class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-50 text-[18px]">chat</span>
+</div>
+</div>
+<!-- Email Comercial -->
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md font-semibold text-on-surface">Email Comercial</label>
+<div class="relative">
+<input class="w-full h-11 px-4 bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container transition-all" type="email" value="financeiro@luandaexpress.ao">
+<span class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-50 text-[18px]">mail</span>
+</div>
+</div>
+<!-- Website / Domínio -->
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md font-semibold text-on-surface">Website Corporativo</label>
+<div class="relative">
+<input class="w-full h-11 px-4 bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container transition-all" type="text" value="www.luandaexpress.ao">
+<span class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-50 text-[18px]">language</span>
+</div>
+</div>
+</div>
+</div>
+<!-- INDICADOR INLINE DE REGIME FISCAL -->
+<div class="p-5 rounded-xl bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[24px]">gavel</span>
+<div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Regime Fiscal Aplicado: Regime Geral (IVA 14%)</p>
+<p class="text-[12px] text-on-surface-variant">Conformidade com o Decreto Presidencial nº 180/19 e orientações AGT Luanda.</p>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high text-secondary font-label-sm text-label-sm font-semibold hover:bg-surface-variant transition-colors">
+            Ver Certidão
+          </button>
+</div>
+</div>
+<!-- RIGHT COLUMN: LOGÓTIPO & PARAMETRIZAÇÃO DE FATURAS -->
+<div class="xl:col-span-5 space-y-6">
+<!-- CARD: LOGÓTIPO DA MARCA -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-7 space-y-5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[22px]">image</span>
+</div>
+<div>
+<h2 class="font-title-lg text-title-lg font-bold text-on-surface">Logótipo da Marca</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">Impressão gráfica em faturas e talões térmicos</p>
+</div>
+</div>
+</div>
+<!-- Preview & Container -->
+<div class="p-6 bg-surface-container-low rounded-xl flex flex-col items-center justify-center text-center space-y-4">
+<div class="w-64 h-24 bg-surface-container-lowest rounded-xl shadow-inner p-3 flex items-center justify-center overflow-hidden">
+<img class="max-h-full max-w-full object-contain" data-alt="Logótipo minimalista de alta qualidade para o supermercado Luanda Express, com curvas verdes e azuis modernas, tipografia nítida sobre fundo branco transparente, design corporativo angolano de prestígio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUdacRQIraP41H3o-siBUquCxKIjlrMeXpVNzXh8zR8tyHB6IrJkPx2I6NPKk4J3rnYcdKfrf_FN09QSC0JYFCLXl2PgDdstfTPjmqn5bcKTu5D1XT1lS232xWc2UggXR0gyA5ysQEbiFID1K4oYtIswmlPQct3OGclKg_Vfl3hUTBqA3aoGk6ZCCxd3rsXQvOoggMNyyugl9bdlSPuKXUf64mYD9Mv4BSVTfy9COSuMt8vKXNxyO6">
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-xl bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-md text-label-md font-semibold transition-all flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[16px]">upload_file</span>
+<span>Substituir Imagem</span>
+</button>
+<button class="px-4 py-2 rounded-xl bg-error-container hover:bg-red-200 text-on-error-container font-label-md text-label-md font-semibold transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">delete</span>
+<span>Remover</span>
+</button>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-75 max-w-xs leading-relaxed">
+              Formatos recomendados: PNG ou SVG transparente (máx. 2MB). Dimensões recomendadas: 400x120px.
+            </p>
+</div>
+</div>
+<!-- CARD: DADOS NOS DOCUMENTOS DE VENDA -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-7 space-y-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">receipt_long</span>
+</div>
+<div>
+<h2 class="font-title-lg text-title-lg font-bold text-on-surface">Documentos de Venda (AGT)</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">Configurações para Faturas FR, Recibos VD e Talão PDV</p>
+</div>
+</div>
+<!-- Switches / Toggles -->
+<div class="space-y-4 pt-1">
+<label class="flex items-center justify-between p-3.5 bg-surface-container-low rounded-xl cursor-pointer hover:bg-surface-container transition-colors">
+<div class="space-y-0.5">
+<span class="font-label-md text-label-md font-bold text-on-surface block">Incluir NIF nos recibos térmicos</span>
+<span class="text-[12px] text-on-surface-variant block">Imprime o NIF do consumidor mesmo em talões simplificados</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</label>
+<label class="flex items-center justify-between p-3.5 bg-surface-container-low rounded-xl cursor-pointer hover:bg-surface-container transition-colors">
+<div class="space-y-0.5">
+<span class="font-label-md text-label-md font-bold text-on-surface block">Menção Regime Geral &amp; Certificação</span>
+<span class="text-[12px] text-on-surface-variant block">Exibe obrigação fiscal e número de homologação</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</label>
+</div>
+<!-- Rodapé Legal e Mensagem de Saudação -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md font-semibold text-on-surface flex items-center justify-between">
+<span>Texto de rodapé legal e saudação</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant opacity-60">Pré-formatado</span>
+</label>
+<textarea class="w-full p-3.5 bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container transition-all resize-none leading-relaxed" rows="4">Obrigado pela preferência! Volte sempre ao Luanda Express.
+Software Certificado nº 284/AGT/2024 - KiVenda ERP.
+Regime Geral do IVA. Processado por Programa Validado pela AGT.</textarea>
+</div>
+<!-- IBAN Bancário para Faturas -->
+<div class="space-y-1.5">
+<label class="font-label-md text-label-md font-semibold text-on-surface">IBAN para transferências nos documentos</label>
+<div class="relative">
+<input class="w-full h-11 px-4 bg-surface-container-low rounded-xl font-body-md text-body-md font-mono text-on-surface focus:outline-none focus:bg-surface-container transition-all" type="text" value="AO06 0040 0000 1234 5678 9012 3 (BAI)">
+<span class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-50 text-[18px]">account_balance</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- SEÇÃO INFERIOR: MÁQUINAS E TERMINAIS AUTORIZADOS -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-7 space-y-6">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">desktop_windows</span>
+</div>
+<div>
+<h2 class="font-title-lg text-title-lg font-bold text-on-surface">Máquinas e Terminais Autorizados</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">Conexões ativas locais, pontos de venda físicos e licenciamento de hardware</p>
+</div>
+</div>
+<button class="px-5 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-variant text-secondary font-label-md text-label-md font-bold transition-all flex items-center gap-2 self-start sm:self-auto shadow-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">dns</span>
+<span>Gerir Terminais de Rede</span>
+</button>
+</div>
+<!-- Bento Grid de Terminais & Status da Máquina Atual -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+<!-- Terminal Principal (Atual) -->
+<div class="p-5 rounded-xl bg-surface-container-low relative overflow-hidden flex flex-col justify-between space-y-4">
+<div class="flex items-center justify-between">
+<span class="px-2.5 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-bold flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+              ESTE COMPUTADOR
+            </span>
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<p class="font-title-lg text-title-lg font-bold text-on-surface">Terminal PDV 01</p>
+<p class="text-[12px] font-mono text-on-surface-variant">WIN11-PDV-LUANDA</p>
+</div>
+<div class="pt-3 border-t border-outline-variant/20 space-y-1.5 text-[12px]">
+<div class="flex justify-between text-on-surface-variant">
+<span>IP Local:</span>
+<span class="font-mono font-semibold text-on-surface">192.168.1.45</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>MAC Address:</span>
+<span class="font-mono text-on-surface">00:1A:2B:3C:4D:5E</span>
+</div>
+<div class="flex justify-between text-on-surface-variant items-center pt-1">
+<span>Licença:</span>
+<span class="font-semibold text-primary">Ativa (31 Dez 2026)</span>
+</div>
+</div>
+</div>
+<!-- Terminal PDV 02 -->
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between space-y-4">
+<div class="flex items-center justify-between">
+<span class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-bold">
+              CAIXA RÁPIDO
+            </span>
+<span class="material-symbols-outlined text-primary text-[18px]">wifi</span>
+</div>
+<div>
+<p class="font-title-lg text-title-lg font-bold text-on-surface">Terminal PDV 02</p>
+<p class="text-[12px] font-mono text-on-surface-variant">WIN11-CAIXA-02</p>
+</div>
+<div class="pt-3 border-t border-outline-variant/20 space-y-1.5 text-[12px]">
+<div class="flex justify-between text-on-surface-variant">
+<span>IP Local:</span>
+<span class="font-mono font-semibold text-on-surface">192.168.1.46</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>MAC Address:</span>
+<span class="font-mono text-on-surface">00:1A:2B:3C:99:1F</span>
+</div>
+<div class="flex justify-between text-on-surface-variant items-center pt-1">
+<span>Licença:</span>
+<span class="font-semibold text-primary">Ativa (31 Dez 2026)</span>
+</div>
+</div>
+</div>
+<!-- Terminal Escritório / Backoffice -->
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between space-y-4">
+<div class="flex items-center justify-between">
+<span class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-bold">
+              BACKOFFICE
+            </span>
+<span class="material-symbols-outlined text-primary text-[18px]">lan</span>
+</div>
+<div>
+<p class="font-title-lg text-title-lg font-bold text-on-surface">Servidor Retaguarda</p>
+<p class="text-[12px] font-mono text-on-surface-variant">SRV-LUANDA-DB</p>
+</div>
+<div class="pt-3 border-t border-outline-variant/20 space-y-1.5 text-[12px]">
+<div class="flex justify-between text-on-surface-variant">
+<span>IP Local:</span>
+<span class="font-mono font-semibold text-on-surface">192.168.1.10</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>MAC Address:</span>
+<span class="font-mono text-on-surface">12:34:56:AA:BB:CC</span>
+</div>
+<div class="flex justify-between text-on-surface-variant items-center pt-1">
+<span>Licença:</span>
+<span class="font-semibold text-primary">Ilimitada (Multi-Posto)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></main>
+</body></html>

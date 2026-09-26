@@ -1,0 +1,684 @@
+<!DOCTYPE html><html lang="pt"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KiVenda - ERP e Ponto de Venda</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e5eeff",
+                    "on-surface-variant": "#3e4a3d",
+                    "surface": "#f8f9ff",
+                    "tertiary-fixed": "#c9e6ff",
+                    "error-container": "#ffdad6",
+                    "secondary": "#4059aa",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#dce1ff",
+                    "background": "#f8f9ff",
+                    "on-primary-fixed": "#002109",
+                    "on-secondary-fixed": "#00164e",
+                    "tertiary": "#00628d",
+                    "surface-container-high": "#dce9ff",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-primary-container": "#f7fff2",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-fixed-variant": "#004c6e",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#d3e4fe",
+                    "tertiary-fixed-dim": "#89ceff",
+                    "outline-variant": "#bdcaba",
+                    "primary": "#006b2c",
+                    "on-background": "#0b1c30",
+                    "primary-fixed-dim": "#62df7d",
+                    "surface-container-highest": "#d3e4fe",
+                    "inverse-surface": "#213145",
+                    "outline": "#6e7b6c",
+                    "error": "#ba1a1a",
+                    "primary-container": "#00873a",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-fixed-variant": "#005320",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f8f9ff",
+                    "tertiary-container": "#007cb1",
+                    "inverse-primary": "#62df7d",
+                    "on-tertiary-container": "#fcfcff",
+                    "secondary-container": "#8fa7fe",
+                    "secondary-fixed-dim": "#b6c4ff",
+                    "surface-dim": "#cbdbf5",
+                    "on-surface": "#0b1c30",
+                    "on-tertiary-fixed": "#001e2f",
+                    "on-secondary-container": "#1d3989",
+                    "surface-tint": "#006e2d",
+                    "on-secondary-fixed-variant": "#264191",
+                    "primary-fixed": "#7ffc97"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "card-gap": "20px",
+                    "sidebar-width": "260px",
+                    "gutter": "16px",
+                    "unit": "4px",
+                    "container-padding": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "title-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        @layer base {
+            html, body {
+                overscroll-behavior: none;
+            }
+        }
+    </style>
+<meta content="web_dashboard" name="shell-type"></head>
+<body class="bg-background text-on-surface antialiased">
+<!-- SIDEBAR -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-surface-container-lowest/90 dark:bg-inverse-surface/90 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50 overflow-y-auto">
+<div class="px-6 mb-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">storefront</span>
+</div>
+<div class="overflow-hidden">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim leading-none">KiVenda</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70 mt-1 truncate">ERP &amp; PDV Angola</p>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1" data-active-classes="text-primary font-bold bg-primary-fixed/30 dark:bg-primary-container/30 relative before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-6 before:bg-primary before:rounded-r-full">
+<a class="flex items-center px-4 py-2.5 rounded-lg text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="dashboard---kivenda" href="#">
+Dashboard
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-lg text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="vendas-(pdv)---kivenda" href="#">
+Vendas (PDV)
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-lg text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="caixa---kivenda" href="#">
+Caixa &amp; Turnos
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-lg text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="produtos---kivenda" href="#">
+Produtos &amp; Estoque
+</a>
+<a aria-current="page" class="flex items-center px-4 py-2.5 rounded-lg transition-all text-primary font-bold bg-primary-fixed/30 dark:bg-primary-container/30 relative before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-6 before:bg-primary before:rounded-r-full" data-path="cadastros---kivenda" href="#">
+Cadastros Gerais
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-lg text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="relatorios---kivenda" href="#">
+Relatórios &amp; Faturação
+</a>
+</nav>
+<div class="mt-auto px-3 pt-4 border-t border-outline-variant/30 space-y-1">
+<a class="flex items-center px-4 py-2 rounded-lg text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant/40 hover:text-on-surface transition-all" data-path="configuracoes---kivenda" href="#">
+Configurações
+</a>
+<div class="px-4 py-3 mt-2 rounded-xl bg-surface-container-low border border-outline-variant/30 flex items-center justify-between">
+<div>
+<p class="font-label-sm text-label-sm text-primary font-bold">AGT Certificado</p>
+<p class="text-[10px] text-on-surface-variant opacity-75">Regime Geral IVA</p>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+</div>
+</div>
+</aside>
+<!-- TOP BAR -->
+<header class="fixed top-0 right-0 left-[260px] h-16 bg-surface-container-lowest/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-96 max-w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60 text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low border border-outline-variant/40 rounded-full font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Pesquisar clientes, NIF, produtos ou faturas..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-5">
+<button class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-all text-on-surface-variant" title="Notificações">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-label-md font-bold text-on-surface leading-tight">João Manuel</p>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-semibold opacity-70">Operador de Caixa</p>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 p-0.5 shadow-sm overflow-hidden">
+<img alt="Foto de perfil do operador João Manuel" class="w-full h-full rounded-full object-cover" data-alt="Foto profissional em close do operador angolano sorrindo com uniforme corporativo limpo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_oYVyZ9_HneETTDVlaoCfi6PbmKmvUtI_IUogk7z4JEj7fzjg40s3NyTRpMv6qneA95RX1IWRewp04Lbdz-yW5f4f_YVKFnixNu-Bf2LcLedzGsk2_mb676f9yy4uoMHUlu8sPxxJCDFS7cxyYQ31aO02ILnpIc4zyaIMR43GWX4Shw5Sdmz0l0N2huypztwxyrC1RY9naO1Ud1IBSXD5XDRB7syR6g-ukYj0xfE-sX-V7msYr2C0">
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="pl-[260px] pt-16 min-h-screen bg-background"><div class="flex flex-col w-full">
+<div class="p-8 space-y-6 max-w-[1600px] mx-auto w-full">
+<!-- PAGE HEADER -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Central de Cadastros</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-primary/10 text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+            Base Integrada
+          </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+          Base unificada de clientes com NIF certificado, fornecedores locais e operadores do PDV.
+        </p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface font-label-md text-label-md shadow-sm hover:bg-surface-container transition-all" type="button">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">file_download</span>
+          Exportar Lista
+        </button>
+<button class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-md hover:bg-primary-container transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+          + Novo Fornecedor
+        </button>
+</div>
+</div>
+<!-- NAVIGATION TABS & SYSTEM STATUS -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface-container-lowest p-2 rounded-xl shadow-sm">
+<div class="flex items-center gap-2 overflow-x-auto">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-all whitespace-nowrap" type="button">
+<span class="material-symbols-outlined text-[18px]">group</span>
+          Clientes
+          <span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high text-on-surface-variant font-semibold">1.240</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-bold shadow-sm whitespace-nowrap" type="button">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+          Fornecedores
+          <span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-on-primary text-primary font-bold">48</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-all whitespace-nowrap" type="button">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+          Funcionários
+          <span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-high text-on-surface-variant font-semibold">12</span>
+</button>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant text-label-sm font-label-sm self-start lg:self-auto">
+<span class="material-symbols-outlined text-[16px] text-primary">cloud_done</span>
+<span>Sincronizado com AGT Online • Fuso: WAT (UTC+1) Luanda</span>
+</div>
+</div>
+<!-- KPI METRIC CARDS -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-card-gap">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md font-label-md text-on-surface-variant font-medium">Fornecedores Ativos</span>
+<div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">domain</span>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg font-bold text-on-surface">48</span>
+<span class="inline-flex items-center text-label-sm font-label-sm text-primary font-semibold">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> +3 este mês
+            </span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant opacity-80">94% compras regulares no trimestre</p>
+</div>
+<div class="w-full bg-surface-container h-1 rounded-full mt-4 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 94%"></div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md font-label-md text-on-surface-variant font-medium">Total em Compras (Mês)</span>
+<div class="w-9 h-9 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">18.620.000 <span class="font-label-md text-label-md font-normal text-on-surface-variant">Kz</span></span>
+</div>
+<p class="text-label-sm font-label-sm text-primary font-semibold inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +8.4% vs mês anterior
+          </p>
+</div>
+<div class="w-full bg-surface-container h-1 rounded-full mt-4 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 72%"></div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md font-label-md text-on-surface-variant font-medium">Prazo Médio Pagamento</span>
+<div class="w-9 h-9 rounded-lg bg-tertiary/10 text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg font-bold text-on-surface">15 <span class="font-title-lg text-title-lg font-normal text-on-surface-variant">Dias</span></span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant opacity-80">Contas a pagar sob controlo cambial</p>
+</div>
+<div class="w-full bg-surface-container h-1 rounded-full mt-4 overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 50%"></div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="text-label-md font-label-md text-on-surface-variant font-medium">Principais Categorias</span>
+<div class="w-9 h-9 rounded-lg bg-primary-fixed/50 text-on-primary-fixed-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">category</span>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex items-baseline gap-2">
+<span class="font-title-lg text-title-lg font-bold text-on-surface truncate">Bebidas &amp; Mercearia</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant opacity-80">Concentram 42% dos fornecedores</p>
+</div>
+<div class="w-full bg-surface-container h-1 rounded-full mt-4 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 42%"></div>
+</div>
+</div>
+</div>
+<!-- SEARCH & FILTER TOOLBAR -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm space-y-3">
+<div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+<!-- Search Field -->
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60 text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Pesquisar por fornecedor, NIF, contacto..." type="text">
+</div>
+<div class="flex items-center gap-3 flex-wrap">
+<!-- Category Select -->
+<div class="relative min-w-[200px]">
+<select class="w-full h-10 pl-3.5 pr-8 bg-surface-container-low rounded-lg font-label-md text-label-md text-on-surface appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer">
+<option value="">Todas as Categorias</option>
+<option value="bebidas">Bebidas &amp; Refrigerantes</option>
+<option value="laticinios">Laticínios &amp; Derivados</option>
+<option value="graos">Grãos &amp; Mercearia</option>
+<option value="horticolas">Hortícolas &amp; Frescos</option>
+<option value="limpeza">Higiene &amp; Limpeza</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">expand_more</span>
+</div>
+<!-- Advanced Filters Button -->
+<button class="h-10 px-4 inline-flex items-center gap-2 rounded-lg bg-surface-container-low text-on-surface font-label-md text-label-md hover:bg-surface-container transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+            Filtros Avançados
+          </button>
+</div>
+</div>
+<!-- Quick Filter Pills -->
+<div class="flex items-center gap-2 overflow-x-auto pt-1">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mr-1">Rápidos:</span>
+<button class="px-3 py-1 rounded-full bg-primary text-on-primary font-label-sm text-label-sm font-semibold shadow-xs" type="button">
+          Todos (48)
+        </button>
+<button class="px-3 py-1 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium transition-all" type="button">
+          Nacionais (AO) (39)
+        </button>
+<button class="px-3 py-1 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium transition-all" type="button">
+          Importadores (9)
+        </button>
+<button class="px-3 py-1 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium transition-all" type="button">
+          Pagamento Pendente (4)
+        </button>
+</div>
+</div>
+<!-- SUPPLIERS MODERN DATA TABLE -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low/70 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3.5 px-6 font-semibold">Código</th>
+<th class="py-3.5 px-6 font-semibold">Fornecedor / Razão Social</th>
+<th class="py-3.5 px-6 font-semibold">Contacto &amp; Email</th>
+<th class="py-3.5 px-6 font-semibold">NIF Angola</th>
+<th class="py-3.5 px-6 font-semibold">Categoria Principal</th>
+<th class="py-3.5 px-6 font-semibold text-right">Total Compras</th>
+<th class="py-3.5 px-6 font-semibold text-center">Prazo / Estado</th>
+<th class="py-3.5 px-6 font-semibold text-center">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y-0">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="py-4 px-6 font-label-md text-label-md font-semibold text-primary">
+                FOR-001
+              </td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold text-label-md">
+                    BF
+                  </div>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface leading-snug">BFA Distribuição de Bebidas Lda</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span> Luanda, Viana
+                    </p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<p class="font-body-md text-body-md text-on-surface">+244 923 110 220</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[180px]">pedidos@bfabebidas.co.ao</p>
+</td>
+<td class="py-4 px-6">
+<span class="font-label-md text-label-md font-mono bg-surface-container px-2 py-0.5 rounded text-on-surface">54039201LA012</span>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant font-medium">
+                  Cervejas &amp; Refrigerantes
+                </span>
+</td>
+<td class="py-4 px-6 text-right font-title-lg text-title-lg font-bold text-on-surface">
+                6.450.000 <span class="font-label-sm text-label-sm font-normal text-on-surface-variant">Kz</span>
+</td>
+<td class="py-4 px-6 text-center">
+<div class="inline-flex flex-col items-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-primary/10 text-primary font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                    Em dia
+                  </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">A 15 Dias</span>
+</div>
+</td>
+<td class="py-4 px-6 text-center">
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface-variant inline-flex items-center justify-center transition-colors" title="Opções" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="py-4 px-6 font-label-md text-label-md font-semibold text-primary">
+                FOR-008
+              </td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-secondary font-bold text-label-md">
+                    AA
+                  </div>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface leading-snug">AngoAlissar Import &amp; Export</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span> Luanda, Porto Pesqueiro
+                    </p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<p class="font-body-md text-body-md text-on-surface">+244 912 334 556</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[180px]">comercial@angoalissar.ao</p>
+</td>
+<td class="py-4 px-6">
+<span class="font-label-md text-label-md font-mono bg-surface-container px-2 py-0.5 rounded text-on-surface">001928372BE032</span>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant font-medium">
+                  Grãos &amp; Farinhas (Arroz, Fuba)
+                </span>
+</td>
+<td class="py-4 px-6 text-right font-title-lg text-title-lg font-bold text-on-surface">
+                5.120.000 <span class="font-label-sm text-label-sm font-normal text-on-surface-variant">Kz</span>
+</td>
+<td class="py-4 px-6 text-center">
+<div class="inline-flex flex-col items-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary/10 text-secondary font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    Pronto Pagamento
+                  </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Liquidação Imediata</span>
+</div>
+</td>
+<td class="py-4 px-6 text-center">
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface-variant inline-flex items-center justify-center transition-colors" title="Opções" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="py-4 px-6 font-label-md text-label-md font-semibold text-primary">
+                FOR-015
+              </td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold text-label-md">
+                    FG
+                  </div>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface leading-snug">Fazenda Girassol Agro</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span> Cuanza Sul / Luanda
+                    </p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<p class="font-body-md text-body-md text-on-surface">+244 931 445 667</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[180px]">vendas@fazendagirassol.ao</p>
+</td>
+<td class="py-4 px-6">
+<span class="font-label-md text-label-md font-mono bg-surface-container px-2 py-0.5 rounded text-on-surface">5001248901LA019</span>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant font-medium">
+                  Hortícolas &amp; Frescos
+                </span>
+</td>
+<td class="py-4 px-6 text-right font-title-lg text-title-lg font-bold text-on-surface">
+                2.890.000 <span class="font-label-sm text-label-sm font-normal text-on-surface-variant">Kz</span>
+</td>
+<td class="py-4 px-6 text-center">
+<div class="inline-flex flex-col items-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-error-container text-on-error-container font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                    Pendente
+                  </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">A 7 Dias</span>
+</div>
+</td>
+<td class="py-4 px-6 text-center">
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface-variant inline-flex items-center justify-center transition-colors" title="Opções" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="py-4 px-6 font-label-md text-label-md font-semibold text-primary">
+                FOR-022
+              </td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold text-label-md">
+                    RI
+                  </div>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface leading-snug">Refriango Indústria</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span> Luanda, Kikuxi
+                    </p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<p class="font-body-md text-body-md text-on-surface">+244 924 556 778</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[180px]">sac@refriango.ao</p>
+</td>
+<td class="py-4 px-6">
+<span class="font-label-md text-label-md font-mono bg-surface-container px-2 py-0.5 rounded text-on-surface">5417089201LA042</span>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant font-medium">
+                  Bebidas &amp; Sumos (Blue, Speed)
+                </span>
+</td>
+<td class="py-4 px-6 text-right font-title-lg text-title-lg font-bold text-on-surface">
+                3.100.000 <span class="font-label-sm text-label-sm font-normal text-on-surface-variant">Kz</span>
+</td>
+<td class="py-4 px-6 text-center">
+<div class="inline-flex flex-col items-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-primary/10 text-primary font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                    Em dia
+                  </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">A 30 Dias</span>
+</div>
+</td>
+<td class="py-4 px-6 text-center">
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface-variant inline-flex items-center justify-center transition-colors" title="Opções" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="py-4 px-6 font-label-md text-label-md font-semibold text-primary">
+                FOR-034
+              </td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-tertiary font-bold text-label-md">
+                    LA
+                  </div>
+<div>
+<p class="font-body-md text-body-md font-bold text-on-surface leading-snug">Lactiangol Lda</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">location_on</span> Luanda, Cazenga
+                    </p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<p class="font-body-md text-body-md text-on-surface">+244 945 667 889</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate max-w-[180px]">logistica@lactiangol.ao</p>
+</td>
+<td class="py-4 px-6">
+<span class="font-label-md text-label-md font-mono bg-surface-container px-2 py-0.5 rounded text-on-surface">5400291882LA099</span>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant font-medium">
+                  Laticínios &amp; Derivados
+                </span>
+</td>
+<td class="py-4 px-6 text-right font-title-lg text-title-lg font-bold text-on-surface">
+                1.060.000 <span class="font-label-sm text-label-sm font-normal text-on-surface-variant">Kz</span>
+</td>
+<td class="py-4 px-6 text-center">
+<div class="inline-flex flex-col items-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary/10 text-secondary font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    Pronto Pagamento
+                  </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Liquidação Imediata</span>
+</div>
+</td>
+<td class="py-4 px-6 text-center">
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container text-on-surface-variant inline-flex items-center justify-center transition-colors" title="Opções" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- PAGINATION BAR -->
+<div class="p-4 bg-surface-container-lowest flex flex-col sm:flex-row items-center justify-between gap-4">
+<p class="font-label-sm text-label-sm text-on-surface-variant">
+          A mostrar <span class="font-bold text-on-surface">1 - 5</span> de <span class="font-bold text-on-surface">48</span> fornecedores registados
+        </p>
+<div class="flex items-center gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-all disabled:opacity-50" disabled="" type="button">
+            Anterior
+          </button>
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-bold shadow-xs" type="button">
+            1
+          </button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md font-medium transition-all" type="button">
+            2
+          </button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md font-medium transition-all" type="button">
+            3
+          </button>
+<span class="px-1 text-on-surface-variant font-label-sm text-label-sm">...</span>
+<button class="w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md font-medium transition-all" type="button">
+            10
+          </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface font-label-md text-label-md hover:bg-surface-container transition-all" type="button">
+            Próximo
+          </button>
+</div>
+</div>
+</div>
+<!-- AGT INTEGRATION FOOTER CARD -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative overflow-hidden">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[28px]">verified_user</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-title-lg text-title-lg font-bold text-on-surface">Validação AGT Angola</h4>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-primary text-on-primary uppercase tracking-wide">Conforme</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 max-w-2xl">
+            Certificação e retenção na fonte (6.5%) atualizadas. Valide instantaneamente a conformidade fiscal dos NIFs fornecidos e emita relatórios automáticos para submissão no portal da AGT.
+          </p>
+</div>
+</div>
+<div class="flex items-center gap-3 shrink-0 self-end lg:self-center">
+<button class="px-4 py-2.5 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-all flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+          Histórico de Faturas Fornecedor
+        </button>
+<button class="px-4 py-2.5 rounded-xl bg-secondary text-on-secondary font-label-md text-label-md hover:bg-secondary/90 transition-all flex items-center gap-2 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">search_check</span>
+          Validar NIF Fornecedor
+        </button>
+</div>
+</div>
+</div>
+</div></main>
+</body></html>

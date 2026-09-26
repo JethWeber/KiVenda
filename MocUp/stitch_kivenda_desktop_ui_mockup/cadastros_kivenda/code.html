@@ -1,0 +1,923 @@
+<!DOCTYPE html><html lang="pt"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KiVenda - ERP e Ponto de Venda</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e5eeff",
+                    "on-surface-variant": "#3e4a3d",
+                    "surface": "#f8f9ff",
+                    "tertiary-fixed": "#c9e6ff",
+                    "error-container": "#ffdad6",
+                    "secondary": "#4059aa",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#dce1ff",
+                    "background": "#f8f9ff",
+                    "on-primary-fixed": "#002109",
+                    "on-secondary-fixed": "#00164e",
+                    "tertiary": "#00628d",
+                    "surface-container-high": "#dce9ff",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-primary-container": "#f7fff2",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-fixed-variant": "#004c6e",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#d3e4fe",
+                    "tertiary-fixed-dim": "#89ceff",
+                    "outline-variant": "#bdcaba",
+                    "primary": "#006b2c",
+                    "on-background": "#0b1c30",
+                    "primary-fixed-dim": "#62df7d",
+                    "surface-container-highest": "#d3e4fe",
+                    "inverse-surface": "#213145",
+                    "outline": "#6e7b6c",
+                    "error": "#ba1a1a",
+                    "primary-container": "#00873a",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-fixed-variant": "#005320",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f8f9ff",
+                    "tertiary-container": "#007cb1",
+                    "inverse-primary": "#62df7d",
+                    "on-tertiary-container": "#fcfcff",
+                    "secondary-container": "#8fa7fe",
+                    "secondary-fixed-dim": "#b6c4ff",
+                    "surface-dim": "#cbdbf5",
+                    "on-surface": "#0b1c30",
+                    "on-tertiary-fixed": "#001e2f",
+                    "on-secondary-container": "#1d3989",
+                    "surface-tint": "#006e2d",
+                    "on-secondary-fixed-variant": "#264191",
+                    "primary-fixed": "#7ffc97"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "card-gap": "20px",
+                    "sidebar-width": "260px",
+                    "gutter": "16px",
+                    "unit": "4px",
+                    "container-padding": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "title-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        @layer base {
+            html, body {
+                overscroll-behavior: none;
+            }
+        }
+    </style>
+<meta content="web_dashboard" name="shell-type"></head>
+<body class="bg-background text-on-surface antialiased">
+<!-- SIDEBAR -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-surface-container-lowest/90 dark:bg-inverse-surface/90 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50 overflow-y-auto">
+<div class="px-6 mb-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">storefront</span>
+</div>
+<div class="overflow-hidden">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim leading-none">KiVenda</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70 mt-1 truncate">ERP &amp; PDV Angola</p>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1" data-active-classes="text-primary font-bold bg-primary-fixed/30 dark:bg-primary-container/30 relative before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-6 before:bg-primary before:rounded-r-full">
+<a class="flex items-center px-4 py-2.5 rounded-lg text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="dashboard---kivenda" href="#">
+Dashboard
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-lg text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="vendas-(pdv)---kivenda" href="#">
+Vendas (PDV)
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-lg text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="caixa---kivenda" href="#">
+Caixa &amp; Turnos
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-lg text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="produtos---kivenda" href="#">
+Produtos &amp; Estoque
+</a>
+<a aria-current="page" class="flex items-center px-4 py-2.5 rounded-lg transition-all text-primary font-bold bg-primary-fixed/30 dark:bg-primary-container/30 relative before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-6 before:bg-primary before:rounded-r-full" data-path="cadastros---kivenda" href="#">
+Cadastros Gerais
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-lg text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="relatorios---kivenda" href="#">
+Relatórios &amp; Faturação
+</a>
+</nav>
+<div class="mt-auto px-3 pt-4 border-t border-outline-variant/30 space-y-1">
+<a class="flex items-center px-4 py-2 rounded-lg text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant/40 hover:text-on-surface transition-all" data-path="configuracoes---kivenda" href="#">
+Configurações
+</a>
+<div class="px-4 py-3 mt-2 rounded-xl bg-surface-container-low border border-outline-variant/30 flex items-center justify-between">
+<div>
+<p class="font-label-sm text-label-sm text-primary font-bold">AGT Certificado</p>
+<p class="text-[10px] text-on-surface-variant opacity-75">Regime Geral IVA</p>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+</div>
+</div>
+</aside>
+<!-- TOP BAR -->
+<header class="fixed top-0 right-0 left-[260px] h-16 bg-surface-container-lowest/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-96 max-w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60 text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low border border-outline-variant/40 rounded-full font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Pesquisar clientes, NIF, produtos ou faturas..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-5">
+<button class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-all text-on-surface-variant" title="Notificações">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-label-md font-bold text-on-surface leading-tight">João Manuel</p>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-semibold opacity-70">Operador de Caixa</p>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 p-0.5 shadow-sm overflow-hidden">
+<img alt="Foto de perfil do operador João Manuel" class="w-full h-full rounded-full object-cover" data-alt="Foto profissional em close do operador angolano sorrindo com uniforme corporativo limpo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_oYVyZ9_HneETTDVlaoCfi6PbmKmvUtI_IUogk7z4JEj7fzjg40s3NyTRpMv6qneA95RX1IWRewp04Lbdz-yW5f4f_YVKFnixNu-Bf2LcLedzGsk2_mb676f9yy4uoMHUlu8sPxxJCDFS7cxyYQ31aO02ILnpIc4zyaIMR43GWX4Shw5Sdmz0l0N2huypztwxyrC1RY9naO1Ud1IBSXD5XDRB7syR6g-ukYj0xfE-sX-V7msYr2C0">
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="pl-[260px] pt-16 min-h-screen bg-background"><div class="flex flex-col w-full">
+<div class="p-8 max-w-[1600px] w-full mx-auto space-y-6">
+<!-- PAGE HEADER -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Cadastros</span>
+<span class="font-label-sm text-label-sm text-outline-variant">/</span>
+<span class="font-label-sm text-label-sm font-semibold text-secondary">Gestão de Pessoas &amp; Entidades</span>
+<span class="inline-flex items-center gap-1 ml-2 px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[13px] text-primary" style="font-variation-settings: 'FILL' 1;">verified</span>
+            Angola AGT Ready
+          </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Central de Cadastros</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Base unificada de clientes com NIF certificado, fornecedores locais e operadores do PDV.</p>
+</div>
+<div class="flex items-center gap-3">
+<!-- Export Button -->
+<button class="h-10 px-4 rounded-xl bg-surface-container-lowest text-secondary font-label-md text-label-md flex items-center gap-2 shadow-sm hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[18px]">download</span>
+          Exportar Lista
+        </button>
+<!-- New Register Button Group -->
+<div class="relative inline-flex">
+<button class="h-10 px-5 rounded-xl bg-primary text-on-primary font-label-md text-label-md flex items-center gap-2 shadow-md hover:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+            + Novo Cliente
+          </button>
+</div>
+</div>
+</div>
+<!-- TABS BAR (Fluent Design Indicator Style) -->
+<div class="bg-surface-container-lowest rounded-xl p-1.5 shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-1" id="tab-nav">
+<!-- Tab 1: Clientes (Active) -->
+<button class="flex items-center gap-2.5 px-5 py-2.5 rounded-lg bg-surface-container-high text-primary font-label-md text-label-md transition-all" id="tab-btn-clientes" onclick="switchTab('clientes')">
+<span class="material-symbols-outlined text-[19px]" style="font-variation-settings: 'FILL' 1;">group</span>
+<span>Clientes</span>
+<span class="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm">1.240</span>
+</button>
+<!-- Tab 2: Fornecedores -->
+<button class="flex items-center gap-2.5 px-5 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-label-md text-label-md transition-all" id="tab-btn-fornecedores" onclick="switchTab('fornecedores')">
+<span class="material-symbols-outlined text-[19px]">domain</span>
+<span>Fornecedores</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-variant text-on-surface font-label-sm text-label-sm">48</span>
+</button>
+<!-- Tab 3: Funcionários -->
+<button class="flex items-center gap-2.5 px-5 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-label-md text-label-md transition-all" id="tab-btn-funcionarios" onclick="switchTab('funcionarios')">
+<span class="material-symbols-outlined text-[19px]">badge</span>
+<span>Funcionários</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-variant text-on-surface font-label-sm text-label-sm">12</span>
+</button>
+</div>
+<div class="hidden lg:flex items-center gap-3 pr-3 text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm font-medium">Sincronizado com AGT Online</span>
+<span class="text-outline-variant font-label-sm text-label-sm">•</span>
+<span class="font-label-sm text-label-sm text-outline">Fuso: WAT (UTC+1) Luanda</span>
+</div>
+</div>
+<!-- METRIC CARDS (Bento Style with micro-charts) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">Clientes Ativos</span>
+<div class="font-headline-md text-headline-md font-bold text-on-surface">1.240</div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-primary-fixed/40 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">person_check</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between text-on-surface-variant">
+<div class="flex items-center gap-1.5 text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+            +18 este mês
+          </div>
+<span class="font-label-sm text-label-sm text-outline">98.4% taxa de retenção</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">Volume Faturado</span>
+<div class="font-headline-md text-headline-md font-bold text-on-surface">42.850.000 <span class="font-body-md text-body-md text-secondary font-medium">Kz</span></div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed/40 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[22px]">payments</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between text-on-surface-variant">
+<div class="flex items-center gap-1.5 text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">insights</span>
+            +14.2% vs. mês anterior
+          </div>
+<span class="font-label-sm text-label-sm text-outline">Ano 2024</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">Ticket Médio / Cliente</span>
+<div class="font-headline-md text-headline-md font-bold text-on-surface">34.500 <span class="font-body-md text-body-md text-secondary font-medium">Kz</span></div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed/50 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[22px]">shopping_bag</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between text-on-surface-variant">
+<div class="flex items-center gap-1.5 text-tertiary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">repeat</span>
+            3.2 compras / mês
+          </div>
+<span class="font-label-sm text-label-sm text-outline">Média nacional</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">Programa Fidelidade VIP</span>
+<div class="font-headline-md text-headline-md font-bold text-on-surface">85 <span class="font-body-md text-body-md text-outline font-normal">clientes</span></div>
+</div>
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm text-outline">Representam 41% das vendas</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-bold">Nível Ouro</span>
+</div>
+</div>
+</div>
+<!-- MAIN SECTION: CLIENTES TAB CONTENT -->
+<div class="space-y-4" id="content-clientes">
+<!-- FILTER & SEARCH BAR -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+<!-- Search Input -->
+<div class="relative flex-1 min-w-[280px]">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary shadow-sm" id="search-input" onkeyup="filterCustomers()" placeholder="Pesquisar por nome, telefone (+244), NIF ou código..." type="text">
+</div>
+<!-- Segment Filters -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0">
+<div class="flex items-center bg-surface-container-low p-1 rounded-xl text-on-surface">
+<button class="category-pill active-pill px-3 py-1.5 rounded-lg bg-surface-container-lowest text-primary font-semibold font-label-md text-label-md shadow-sm transition-all" onclick="setFilterCategory(this, 'all')">Todos</button>
+<button class="category-pill px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all" onclick="setFilterCategory(this, 'vip')">Frequentes (VIP)</button>
+<button class="category-pill px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all" onclick="setFilterCategory(this, 'novos')">Novos</button>
+<button class="category-pill px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all" onclick="setFilterCategory(this, 'recente')">Compras Recentes</button>
+</div>
+<!-- Location Dropdown -->
+<div class="relative">
+<select class="h-10 pl-3 pr-8 bg-surface-container-low text-on-surface rounded-xl font-label-md text-label-md appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary shadow-sm">
+<option value="">Todos os Municípios</option>
+<option value="luanda">Luanda (Sede)</option>
+<option value="viana">Viana</option>
+<option value="cazenga">Cazenga</option>
+<option value="belas">Belas / Talatona</option>
+<option value="kilamba">Kilamba Kiaxi</option>
+<option value="provincias">Outras Províncias (Benguela, Huíla...)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-outline text-[18px]">expand_more</span>
+</div>
+<!-- Quick Actions / Refresh -->
+<button class="h-10 w-10 shrink-0 bg-surface-container-low hover:bg-surface-container rounded-xl flex items-center justify-center text-on-surface-variant transition-colors" title="Limpar Filtros">
+<span class="material-symbols-outlined text-[20px]">filter_list_off</span>
+</button>
+</div>
+</div>
+<!-- TABLE CONTAINER -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="customers-table">
+<thead>
+<tr class="bg-surface-container-low text-outline font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3.5 px-6 font-semibold">CÓDIGO</th>
+<th class="py-3.5 px-6 font-semibold">CLIENTE / RAZÃO SOCIAL</th>
+<th class="py-3.5 px-6 font-semibold">CONTACTO</th>
+<th class="py-3.5 px-6 font-semibold">NIF CERTIFICADO</th>
+<th class="py-3.5 px-6 font-semibold">ÚLTIMA COMPRA</th>
+<th class="py-3.5 px-6 font-semibold text-right">TOTAL COMPRADO</th>
+<th class="py-3.5 px-6 font-semibold text-center">ESTADO</th>
+<th class="py-3.5 px-6 font-semibold text-right">AÇÕES</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md divide-y divide-surface-container-low text-on-surface">
+<!-- Row 1: VIP Retailer -->
+<tr class="hover:bg-surface-container-lowest/60 hover:bg-surface-container-low transition-colors customer-row" data-location="belas" data-type="vip">
+<td class="py-4 px-6 font-label-md text-label-md font-bold text-secondary">CLI-001</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-sm shrink-0">
+                      LE
+                    </div>
+<div class="min-w-0">
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+<span>Supermercado Luanda Express, Lda</span>
+<span class="material-symbols-outlined text-primary text-[15px]" title="Validado AGT">verified</span>
+</div>
+<div class="font-label-sm text-label-sm text-outline">Talatona, Luanda • B2B Atacado</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-1.5 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">call</span>
+                    +244 923 881 204
+                  </div>
+<div class="text-[12px] text-outline truncate">compras@luandaexpress.ao</div>
+</td>
+<td class="py-4 px-6 font-label-md text-label-md font-mono text-on-surface-variant">5417089201LA042</td>
+<td class="py-4 px-6">
+<div class="font-medium text-on-surface">Hoje, 11:24</div>
+<div class="font-label-sm text-label-sm text-outline">Fatura FR FT24/1829</div>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="font-bold text-on-surface">14.890.000 <span class="font-label-sm text-label-sm font-semibold text-secondary">Kz</span></div>
+<div class="font-label-sm text-label-sm text-primary font-semibold">142 faturas</div>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-fixed/40 text-primary font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                    VIP Ouro
+                  </span>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors" title="Ver Histórico de Faturas">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-secondary transition-colors" title="Editar Cadastro">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors" title="Mais Opções">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Individual Consumer -->
+<tr class="hover:bg-surface-container-low transition-colors customer-row" data-location="luanda" data-type="vip">
+<td class="py-4 px-6 font-label-md text-label-md font-bold text-secondary">CLI-018</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-sm shrink-0">
+                      DA
+                    </div>
+<div class="min-w-0">
+<div class="font-semibold text-on-surface">Domingos António da Silva</div>
+<div class="font-label-sm text-label-sm text-outline">Maianga, Luanda • Particular</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-1.5 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">call</span>
+                    +244 912 405 119
+                  </div>
+<div class="text-[12px] text-outline">domingos.antonio@gmail.com</div>
+</td>
+<td class="py-4 px-6 font-label-md text-label-md font-mono text-on-surface-variant">004928172LA041</td>
+<td class="py-4 px-6">
+<div class="font-medium text-on-surface">Ontem, 16:45</div>
+<div class="font-label-sm text-label-sm text-outline">Ticket PDV #8412</div>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="font-bold text-on-surface">620.400 <span class="font-label-sm text-label-sm font-semibold text-secondary">Kz</span></div>
+<div class="font-label-sm text-label-sm text-outline">18 compras</div>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-fixed/40 text-primary font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors" title="Ver Histórico de Faturas">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-secondary transition-colors" title="Editar Cadastro">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors" title="Mais Opções">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Boutique Fashion Store -->
+<tr class="hover:bg-surface-container-low transition-colors customer-row" data-location="kilamba" data-type="vip">
+<td class="py-4 px-6 font-label-md text-label-md font-bold text-secondary">CLI-042</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold text-sm shrink-0">
+                      BK
+                    </div>
+<div class="min-w-0">
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+<span>Boutique Kilamba Glamour</span>
+<span class="material-symbols-outlined text-primary text-[15px]" title="Validado AGT">verified</span>
+</div>
+<div class="font-label-sm text-label-sm text-outline">Centralidade do Kilamba, Bloco W</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-1.5 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">call</span>
+                    +244 945 992 018
+                  </div>
+<div class="text-[12px] text-outline">contato@boutiquekilamba.ao</div>
+</td>
+<td class="py-4 px-6 font-label-md text-label-md font-mono text-on-surface-variant">5001248901LA019</td>
+<td class="py-4 px-6">
+<div class="font-medium text-on-surface">14 Nov 2024</div>
+<div class="font-label-sm text-label-sm text-outline">Fatura FR FT24/1790</div>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="font-bold text-on-surface">3.820.000 <span class="font-label-sm text-label-sm font-semibold text-secondary">Kz</span></div>
+<div class="font-label-sm text-label-sm text-primary font-semibold">39 compras</div>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-fixed/40 text-primary font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                    VIP Prata
+                  </span>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors" title="Ver Histórico de Faturas">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-secondary transition-colors" title="Editar Cadastro">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors" title="Mais Opções">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Maria Pascoal -->
+<tr class="hover:bg-surface-container-low transition-colors customer-row" data-location="viana" data-type="novos">
+<td class="py-4 px-6 font-label-md text-label-md font-bold text-secondary">CLI-089</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center font-bold text-sm shrink-0">
+                      MP
+                    </div>
+<div class="min-w-0">
+<div class="font-semibold text-on-surface">Maria Pascoal de Sousa</div>
+<div class="font-label-sm text-label-sm text-outline">Viana (Ponte Amarela) • Revenda</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-1.5 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">call</span>
+                    +244 931 002 994
+                  </div>
+<div class="text-[12px] text-outline">mariapascoal.loja@sapo.ao</div>
+</td>
+<td class="py-4 px-6 font-label-md text-label-md font-mono text-on-surface-variant">001928372BE032</td>
+<td class="py-4 px-6">
+<div class="font-medium text-on-surface">11 Nov 2024</div>
+<div class="font-label-sm text-label-sm text-outline">Fatura Proforma FP24/091</div>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="font-bold text-on-surface">340.500 <span class="font-label-sm text-label-sm font-semibold text-secondary">Kz</span></div>
+<div class="font-label-sm text-label-sm text-outline">3 compras</div>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-fixed/50 text-secondary font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                    Novo
+                  </span>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors" title="Ver Histórico de Faturas">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-secondary transition-colors" title="Editar Cadastro">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors" title="Mais Opções">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Padaria & Cafetaria Miramar -->
+<tr class="hover:bg-surface-container-low transition-colors customer-row" data-location="luanda" data-type="recente">
+<td class="py-4 px-6 font-label-md text-label-md font-bold text-secondary">CLI-104</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container/40 text-on-secondary-container flex items-center justify-center font-bold text-sm shrink-0">
+                      PM
+                    </div>
+<div class="min-w-0">
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+<span>Padaria &amp; Pastelaria Miramar</span>
+<span class="material-symbols-outlined text-primary text-[15px]" title="Validado AGT">verified</span>
+</div>
+<div class="font-label-sm text-label-sm text-outline">Miramar, Luanda • B2B Suprimentos</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-1.5 font-label-md text-label-md text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">call</span>
+                    +244 924 118 732
+                  </div>
+<div class="text-[12px] text-outline">geral@miramarpan.com</div>
+</td>
+<td class="py-4 px-6 font-label-md text-label-md font-mono text-on-surface-variant">5400291882LA099</td>
+<td class="py-4 px-6">
+<div class="font-medium text-on-surface">09 Nov 2024</div>
+<div class="font-label-sm text-label-sm text-outline">Guia de Remessa GR24/110</div>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="font-bold text-on-surface">5.120.000 <span class="font-label-sm text-label-sm font-semibold text-secondary">Kz</span></div>
+<div class="font-label-sm text-label-sm text-primary font-semibold">54 compras</div>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-fixed/40 text-primary font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors" title="Ver Histórico de Faturas">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-secondary transition-colors" title="Editar Cadastro">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors" title="Mais Opções">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 6: Consumidor Final (Diversos) -->
+<tr class="hover:bg-surface-container-low transition-colors customer-row" data-location="luanda" data-type="all">
+<td class="py-4 px-6 font-label-md text-label-md font-bold text-outline">CLI-999</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-bold text-sm shrink-0">
+                      CF
+                    </div>
+<div class="min-w-0">
+<div class="font-semibold text-on-surface">Consumidor Final (Balcão)</div>
+<div class="font-label-sm text-label-sm text-outline">Vendas Rápidas Sem Identificação Nominal</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="font-label-md text-label-md text-outline">— Balcão Geral —</div>
+</td>
+<td class="py-4 px-6 font-label-md text-label-md font-mono text-on-surface-variant">999999999</td>
+<td class="py-4 px-6">
+<div class="font-medium text-on-surface">Hoje, 12:05</div>
+<div class="font-label-sm text-label-sm text-outline">Fatura Recibo VD #9021</div>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="font-bold text-on-surface">18.064.100 <span class="font-label-sm text-label-sm font-semibold text-secondary">Kz</span></div>
+<div class="font-label-sm text-label-sm text-outline">1.820 talões</div>
+</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium">
+                    Genérico
+                  </span>
+</td>
+<td class="py-4 px-6 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors" title="Ver Histórico de Faturas">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant text-outline" title="Conta de Sistema">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- TABLE FOOTER & PAGINATION -->
+<div class="px-6 py-4 bg-surface-container-lowest border-t-0 flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="font-label-md text-label-md text-on-surface-variant">
+            A mostrar <span class="font-bold text-on-surface">1 - 6</span> de <span class="font-bold text-on-surface">1.240</span> clientes registados
+          </div>
+<div class="flex items-center gap-2">
+<button class="h-9 px-3 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md flex items-center gap-1 transition-all disabled:opacity-50">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+              Anterior
+            </button>
+<div class="flex items-center gap-1">
+<button class="w-9 h-9 rounded-lg bg-primary text-on-primary font-bold font-label-md text-label-md shadow-sm">1</button>
+<button class="w-9 h-9 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md">2</button>
+<button class="w-9 h-9 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md">3</button>
+<span class="px-1 text-outline font-label-md text-label-md">...</span>
+<button class="w-9 h-9 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md">207</button>
+</div>
+<button class="h-9 px-3 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md flex items-center gap-1 transition-all">
+              Próximo
+              <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- PREVIEW MODULE FOR "FORNECEDORES" TAB (Initially Hidden) -->
+<div class="hidden space-y-4" id="content-fornecedores">
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+<div class="flex items-center justify-between pb-6 mb-6 bg-surface-container-low p-4 rounded-xl">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-secondary-fixed/50 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[28px]">local_shipping</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">Gestão de Fornecedores &amp; Importadores</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">48 empresas fornecedoras cadastradas para entrada de notas e guias de transporte.</p>
+</div>
+</div>
+<button class="h-10 px-5 rounded-xl bg-secondary text-on-secondary font-label-md text-label-md flex items-center gap-2 shadow-sm hover:opacity-90">
+<span class="material-symbols-outlined text-[20px]">add_business</span>
+            + Novo Fornecedor
+          </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-bold text-secondary">FOR-001</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">Ativo</span>
+</div>
+<h3 class="font-title-lg text-title-lg font-bold text-on-surface mt-2">Refriango Distribuição, S.A.</h3>
+<p class="font-label-sm text-label-sm text-outline mt-0.5">Bebidas e Alimentos • NIF: 5403019284LA011</p>
+<div class="mt-4 space-y-1 font-body-md text-body-md text-on-surface-variant">
+<div>Tel: +244 923 100 200</div>
+<div>Luanda, Complexo Industrial Kikuxi</div>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">Última Entrada: Há 3 dias</span>
+<button class="text-primary font-label-md text-label-md font-semibold hover:underline">Ver Conta Corrente →</button>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-bold text-secondary">FOR-002</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">Ativo</span>
+</div>
+<h3 class="font-title-lg text-title-lg font-bold text-on-surface mt-2">AngoAlissar Importação</h3>
+<p class="font-label-sm text-label-sm text-outline mt-0.5">Grãos, Farinhas e Secos • NIF: 5410982319LA088</p>
+<div class="mt-4 space-y-1 font-body-md text-body-md text-on-surface-variant">
+<div>Tel: +244 934 551 229</div>
+<div>Porto de Luanda, Armazém 4</div>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">Última Entrada: 10 Nov 2024</span>
+<button class="text-primary font-label-md text-label-md font-semibold hover:underline">Ver Conta Corrente →</button>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-bold text-secondary">FOR-003</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">Ativo</span>
+</div>
+<h3 class="font-title-lg text-title-lg font-bold text-on-surface mt-2">TecnoAngola Sistemas</h3>
+<p class="font-label-sm text-label-sm text-outline mt-0.5">Equipamentos e Rolos Térmicos • NIF: 5409281720LA045</p>
+<div class="mt-4 space-y-1 font-body-md text-body-md text-on-surface-variant">
+<div>Tel: +244 912 334 009</div>
+<div>Maculusso, Luanda</div>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">Última Entrada: 02 Nov 2024</span>
+<button class="text-primary font-label-md text-label-md font-semibold hover:underline">Ver Conta Corrente →</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- PREVIEW MODULE FOR "FUNCIONARIOS" TAB (Initially Hidden) -->
+<div class="hidden space-y-4" id="content-funcionarios">
+<div class="bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+<div class="flex items-center justify-between pb-6 mb-6 bg-surface-container-low p-4 rounded-xl">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed/50 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">badge</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">Colaboradores &amp; Operadores de Caixa</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">12 funcionários com perfis de acesso, permissões de descontos e turnos.</p>
+</div>
+</div>
+<button class="h-10 px-5 rounded-xl bg-primary text-on-primary font-label-md text-label-md flex items-center gap-2 shadow-sm hover:opacity-90">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+            + Novo Funcionário
+          </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="p-4 rounded-xl bg-surface-container-low flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-base shrink-0">
+              JM
+            </div>
+<div class="min-w-0 flex-1">
+<div class="font-semibold text-on-surface">João Manuel</div>
+<div class="font-label-sm text-label-sm text-primary font-bold">Operador de Caixa (Logado)</div>
+<div class="font-label-sm text-label-sm text-outline mt-0.5">Turno Manhã • Caixa 01</div>
+</div>
+<span class="w-2.5 h-2.5 rounded-full bg-primary" title="Online"></span>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-base shrink-0">
+              EC
+            </div>
+<div class="min-w-0 flex-1">
+<div class="font-semibold text-on-surface">Esperança Chipenda</div>
+<div class="font-label-sm text-label-sm text-secondary font-bold">Gerente de Loja</div>
+<div class="font-label-sm text-label-sm text-outline mt-0.5">Supervisão • Acesso Total</div>
+</div>
+<span class="w-2.5 h-2.5 rounded-full bg-primary" title="Online"></span>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-bold text-base shrink-0">
+              AM
+            </div>
+<div class="min-w-0 flex-1">
+<div class="font-semibold text-on-surface">António Mucanda</div>
+<div class="font-label-sm text-label-sm text-outline font-bold">Fiel de Armazém</div>
+<div class="font-label-sm text-label-sm text-outline mt-0.5">Entradas e Stock</div>
+</div>
+<span class="w-2.5 h-2.5 rounded-full bg-outline-variant" title="Offline"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- QUICK DRAWER / ACTION SUMMARY BAR (Fluent Design Utility) -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<div>
+<span class="font-label-md text-label-md font-bold text-on-surface">Validação AGT Angola</span>
+<span class="font-label-sm text-label-sm text-outline ml-2">NIFs validados automaticamente pela API do Portal do Contribuinte</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="h-8 px-3 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm font-semibold flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+          Validar Base NIF
+        </button>
+<button class="h-8 px-3 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm font-semibold flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[16px]">print</span>
+          Ficha Resumo
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Tab Switching Logic
+  function switchTab(tab) {
+    const tabs = ['clientes', 'fornecedores', 'funcionarios'];
+    tabs.forEach(t => {
+      const content = document.getElementById(`content-${t}`);
+      const btn = document.getElementById(`tab-btn-${t}`);
+      if (t === tab) {
+        content.classList.remove('hidden');
+        btn.classList.add('bg-surface-container-high', 'text-primary');
+        btn.classList.remove('text-on-surface-variant');
+      } else {
+        content.classList.add('hidden');
+        btn.classList.remove('bg-surface-container-high', 'text-primary');
+        btn.classList.add('text-on-surface-variant');
+      }
+    });
+  }
+
+  // Filter Categories
+  function setFilterCategory(button, category) {
+    const buttons = document.querySelectorAll('.category-pill');
+    buttons.forEach(btn => {
+      btn.classList.remove('bg-surface-container-lowest', 'text-primary', 'font-semibold', 'shadow-sm');
+      btn.classList.add('text-on-surface-variant');
+    });
+
+    button.classList.add('bg-surface-container-lowest', 'text-primary', 'font-semibold', 'shadow-sm');
+    button.classList.remove('text-on-surface-variant');
+
+    const rows = document.querySelectorAll('.customer-row');
+    rows.forEach(row => {
+      if (category === 'all') {
+        row.style.display = '';
+      } else {
+        const type = row.getAttribute('data-type');
+        if (type === category || (category === 'vip' && type === 'vip')) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      }
+    });
+  }
+
+  // Instant Search
+  function filterCustomers() {
+    const input = document.getElementById('search-input').value.toLowerCase();
+    const rows = document.querySelectorAll('.customer-row');
+    rows.forEach(row => {
+      const text = row.innerText.toLowerCase();
+      if (text.includes(input)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+</script></main>
+</body></html>

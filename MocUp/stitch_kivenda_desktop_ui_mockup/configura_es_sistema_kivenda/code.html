@@ -1,0 +1,582 @@
+<!DOCTYPE html><html lang="pt"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KiVenda - ERP e Ponto de Venda</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e5eeff",
+                    "on-surface-variant": "#3e4a3d",
+                    "surface": "#f8f9ff",
+                    "tertiary-fixed": "#c9e6ff",
+                    "error-container": "#ffdad6",
+                    "secondary": "#4059aa",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#dce1ff",
+                    "background": "#f8f9ff",
+                    "on-primary-fixed": "#002109",
+                    "on-secondary-fixed": "#00164e",
+                    "tertiary": "#00628d",
+                    "surface-container-high": "#dce9ff",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-primary-container": "#f7fff2",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-fixed-variant": "#004c6e",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#d3e4fe",
+                    "tertiary-fixed-dim": "#89ceff",
+                    "outline-variant": "#bdcaba",
+                    "primary": "#006b2c",
+                    "on-background": "#0b1c30",
+                    "primary-fixed-dim": "#62df7d",
+                    "surface-container-highest": "#d3e4fe",
+                    "inverse-surface": "#213145",
+                    "outline": "#6e7b6c",
+                    "error": "#ba1a1a",
+                    "primary-container": "#00873a",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-fixed-variant": "#005320",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f8f9ff",
+                    "tertiary-container": "#007cb1",
+                    "inverse-primary": "#62df7d",
+                    "on-tertiary-container": "#fcfcff",
+                    "secondary-container": "#8fa7fe",
+                    "secondary-fixed-dim": "#b6c4ff",
+                    "surface-dim": "#cbdbf5",
+                    "on-surface": "#0b1c30",
+                    "on-tertiary-fixed": "#001e2f",
+                    "on-secondary-container": "#1d3989",
+                    "surface-tint": "#006e2d",
+                    "on-secondary-fixed-variant": "#264191",
+                    "primary-fixed": "#7ffc97"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "card-gap": "20px",
+                    "sidebar-width": "260px",
+                    "gutter": "16px",
+                    "unit": "4px",
+                    "container-padding": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "title-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        @layer base {
+            html, body {
+                overscroll-behavior: none;
+            }
+        }
+    </style>
+<meta content="web_dashboard" name="shell-type"></head>
+<body class="bg-background text-on-surface antialiased">
+<!-- SIDEBAR -->
+<aside class="fixed left-0 top-0 h-screen w-[260px] bg-surface-container-lowest/90 dark:bg-inverse-surface/90 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50 overflow-y-auto">
+<div class="px-6 mb-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">storefront</span>
+</div>
+<div class="overflow-hidden">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim leading-none">KiVenda</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70 mt-1 truncate">ERP &amp; PDV Angola</p>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1" data-active-classes="text-primary font-bold bg-primary-fixed/30 dark:bg-primary-container/30 relative before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-6 before:bg-primary before:rounded-r-full">
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="dashboard---kivenda" href="#">
+Dashboard
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="vendas-(pdv)---kivenda" href="#">
+Vendas (PDV)
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="caixa---kivenda" href="#">
+Caixa &amp; Turnos
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="produtos---kivenda" href="#">
+Produtos &amp; Estoque
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="cadastros---kivenda" href="#">
+Cadastros Gerais
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="relatorios---kivenda" href="#">
+Relatórios &amp; Faturação
+</a>
+<a class="flex items-center px-4 py-2.5 rounded-xl text-on-surface-variant font-label-md text-label-md transition-all hover:bg-surface-variant/40 hover:text-on-surface" data-path="configuracoes---kivenda" href="#">
+Configurações
+</a>
+</nav>
+<div class="mt-auto px-3 pt-4 border-t border-outline-variant/30 space-y-1">
+<div class="px-4 py-3 mt-2 rounded-xl bg-surface-container-low border border-outline-variant/30 flex items-center justify-between">
+<div>
+<p class="font-label-sm text-label-sm text-primary font-bold">AGT Certificado</p>
+<p class="text-[10px] text-on-surface-variant opacity-75">Regime Geral IVA</p>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+</div>
+</div>
+</aside>
+<!-- TOP BAR -->
+<header class="fixed top-0 right-0 left-[260px] h-16 bg-surface-container-lowest/80 dark:bg-inverse-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-96 max-w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60 text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container-low border border-outline-variant/40 rounded-full font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Pesquisar clientes, NIF, produtos ou faturas..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-5">
+<button class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-all text-on-surface-variant" title="Notificações">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-label-md font-bold text-on-surface leading-tight">João Manuel</p>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-semibold opacity-70">Operador de Caixa</p>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 p-0.5 shadow-sm overflow-hidden">
+<img alt="Foto de perfil do operador João Manuel" class="w-full h-full rounded-full object-cover" data-alt="Foto profissional em close do operador angolano sorrindo com uniforme corporativo limpo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_oYVyZ9_HneETTDVlaoCfi6PbmKmvUtI_IUogk7z4JEj7fzjg40s3NyTRpMv6qneA95RX1IWRewp04Lbdz-yW5f4f_YVKFnixNu-Bf2LcLedzGsk2_mb676f9yy4uoMHUlu8sPxxJCDFS7cxyYQ31aO02ILnpIc4zyaIMR43GWX4Shw5Sdmz0l0N2huypztwxyrC1RY9naO1Ud1IBSXD5XDRB7syR6g-ukYj0xfE-sX-V7msYr2C0">
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="pl-[260px] pt-16 min-h-screen bg-background"><div class="flex flex-col w-full px-8 py-8 space-y-8 max-w-[1600px] mx-auto">
+<!-- HEADER & TOP ACTIONS -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
+<div>
+<div class="flex items-center gap-3">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold px-2.5 py-1 bg-primary-fixed/40 rounded-full">Weber OS Shell v2.4</span>
+<span class="text-outline-variant font-label-sm text-label-sm">•</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">Terminal POS #01 (Luanda)</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight mt-1">Configurações do Sistema</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Gerencie as preferências fiscais, periféricos de ponto de venda e parâmetros operacionais do KiVenda.</p>
+</div>
+<!-- ACTION BUTTONS -->
+<div class="flex items-center gap-3 self-start lg:self-auto">
+<button class="inline-flex items-center gap-2 px-5 h-11 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+        Restaurar Padrões
+      </button>
+<button class="inline-flex items-center gap-2 px-6 h-11 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-bold transition-all shadow-md hover:shadow-lg active:scale-[0.99]" type="button">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">save</span>
+        Guardar Alterações
+      </button>
+</div>
+</div>
+<!-- NAVIGATION TABS -->
+<div class="flex items-center gap-2 p-1.5 bg-surface-container-low rounded-xl w-fit shadow-sm">
+<button class="flex items-center gap-2.5 px-5 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 font-label-md text-label-md transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">storefront</span>
+      Empresa
+    </button>
+<button class="flex items-center gap-2.5 px-5 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 font-label-md text-label-md transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">barcode_scanner</span>
+      Scanner
+    </button>
+<button class="flex items-center gap-2.5 px-5 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 font-label-md text-label-md transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">print</span>
+      Impressão
+    </button>
+<button class="flex items-center gap-2.5 px-5 py-2.5 rounded-lg bg-surface-container-lowest text-primary font-bold shadow-sm font-label-md text-label-md transition-all relative" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">public</span>
+      Sistema
+      <span class="w-1.5 h-1.5 rounded-full bg-primary absolute -top-0.5 -right-0.5"></span>
+</button>
+</div>
+<!-- TWO-COLUMN CONTENT GRID -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN (COL-7): Regionalização, Formatação & Tema -->
+<div class="xl:col-span-7 space-y-6">
+<!-- CARD: REGIONALIZAÇÃO E MOEDA -->
+<div class="bg-surface-container-lowest rounded-xl p-7 shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between pb-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed/50 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">payments</span>
+</div>
+<div>
+<h2 class="font-title-lg text-title-lg text-on-surface">Regionalização e Moeda</h2>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-80">Parâmetros de cálculo monetário validados pela autoridade tributária de Angola</p>
+</div>
+</div>
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-bold rounded-full">AGT Norm. ISO 4217</span>
+</div>
+<div class="space-y-5">
+<!-- Moeda Principal (Bloqueada / Destaque) -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-2">
+<span>Moeda Oficial Padrão</span>
+<span class="material-symbols-outlined text-[16px] text-primary" title="Homologado AGT">lock</span>
+</label>
+<p class="font-body-md text-body-md text-on-surface-variant">Unidade de conta para livros fiscais e faturas de venda</p>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-lowest px-4 py-2.5 rounded-xl shadow-sm self-start md:self-auto">
+<div class="w-7 h-5 rounded overflow-hidden flex flex-col shadow-sm shrink-0">
+<div class="h-1/2 bg-error"></div>
+<div class="h-1/2 bg-inverse-surface"></div>
+</div>
+<div class="text-right">
+<p class="font-label-md text-label-md text-on-surface font-bold">Kz - Kwanza (AOA)</p>
+<p class="font-label-sm text-label-sm text-primary font-bold">Ex: 1.250.000,00 Kz</p>
+</div>
+</div>
+</div>
+<!-- Dropdowns Formatação de Data e Hora -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Formato de Data</label>
+<div class="relative">
+<select class="w-full h-11 px-4 pr-10 rounded-xl bg-surface-container-low font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container-lowest focus:shadow-sm appearance-none cursor-pointer">
+<option selected="">DD/MM/AAAA (ex: 24/05/2026)</option>
+<option>AAAA-MM-DD (Padrão SAF-T AO)</option>
+<option>DD de Mês de AAAA</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">calendar_today</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Formato de Hora e Fuso</label>
+<div class="relative">
+<select class="w-full h-11 px-4 pr-10 rounded-xl bg-surface-container-low font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container-lowest focus:shadow-sm appearance-none cursor-pointer">
+<option selected="">24 Horas (WAT UTC+1 Luanda)</option>
+<option>12 Horas (AM/PM - Luanda)</option>
+<option>Hora Universal Coordenada (UTC)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">schedule</span>
+</div>
+</div>
+</div>
+<!-- Idioma e Separadores Numéricos -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="space-y-2 md:col-span-1">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Idioma do Sistema</label>
+<div class="relative">
+<select class="w-full h-11 px-3 pr-8 rounded-xl bg-surface-container-low font-body-md text-body-md text-on-surface focus:outline-none focus:bg-surface-container-lowest appearance-none cursor-pointer">
+<option selected="">Português (AO)</option>
+<option>English (International)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">translate</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Separador Decimal</label>
+<div class="h-11 px-4 rounded-xl bg-surface-container-low flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface font-bold">Vírgula (,)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Ex: 0,75</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Separador Milhares</label>
+<div class="h-11 px-4 rounded-xl bg-surface-container-low flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface font-bold">Ponto (.)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Ex: 100.000</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD: APARÊNCIA & TEMA -->
+<div class="bg-surface-container-lowest rounded-xl p-7 shadow-sm space-y-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed/50 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">palette</span>
+</div>
+<div>
+<h2 class="font-title-lg text-title-lg text-on-surface">Aparência &amp; Interface Fluent</h2>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-80">Personalização ergonómica da interface para redução de fadiga visual no POS</p>
+</div>
+</div>
+<!-- 3 Cards de Seleção de Tema Visual -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface font-semibold block">Tema da Aplicação</label>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="theme-selector">
+<!-- Modo Claro (Ativo) -->
+<div class="p-3.5 rounded-xl bg-surface-container-low cursor-pointer shadow-md transition-all relative flex flex-col justify-between group" style="box-shadow: 0 0 0 2px #006b2c;">
+<div class="h-20 w-full rounded-lg bg-surface p-2 shadow-inner flex flex-col justify-between overflow-hidden">
+<div class="h-3 w-1/3 bg-primary rounded-full"></div>
+<div class="space-y-1">
+<div class="h-2 w-full bg-surface-variant rounded"></div>
+<div class="h-2 w-2/3 bg-surface-variant rounded"></div>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface font-bold">Modo Claro</p>
+<p class="text-[10px] text-on-surface-variant">Padrão KiVenda</p>
+</div>
+<span class="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</span>
+</div>
+</div>
+<!-- Modo Escuro -->
+<div class="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container cursor-pointer transition-all flex flex-col justify-between group">
+<div class="h-20 w-full rounded-lg bg-inverse-surface p-2 shadow-inner flex flex-col justify-between overflow-hidden">
+<div class="h-3 w-1/3 bg-primary-fixed-dim rounded-full"></div>
+<div class="space-y-1">
+<div class="h-2 w-full bg-slate-700 rounded"></div>
+<div class="h-2 w-2/3 bg-slate-700 rounded"></div>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface font-bold">Modo Escuro</p>
+<p class="text-[10px] text-on-surface-variant">Alto contraste noturno</p>
+</div>
+<span class="w-5 h-5 rounded-full bg-surface-container flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant">check</span>
+</span>
+</div>
+</div>
+<!-- Sincronizar com Windows -->
+<div class="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container cursor-pointer transition-all flex flex-col justify-between group">
+<div class="h-20 w-full rounded-lg overflow-hidden flex shadow-inner">
+<div class="w-1/2 bg-surface p-2 flex flex-col justify-between">
+<div class="h-3 w-3/4 bg-primary rounded-full"></div>
+<div class="h-2 w-full bg-surface-variant rounded"></div>
+</div>
+<div class="w-1/2 bg-inverse-surface p-2 flex flex-col justify-between">
+<div class="h-3 w-3/4 bg-primary-fixed-dim rounded-full"></div>
+<div class="h-2 w-full bg-slate-700 rounded"></div>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface font-bold">Auto (Windows)</p>
+<p class="text-[10px] text-on-surface-variant">Segue tema do SO</p>
+</div>
+<span class="w-5 h-5 rounded-full bg-surface-container flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant">check</span>
+</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Escala da Interface & Fluent Animations -->
+<div class="pt-2 border-none space-y-4">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-surface-container-low">
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Densidade da Tela</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Otimização para telas táteis ou monitores padrão de balcão</p>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-lowest p-1 rounded-xl shadow-sm">
+<button class="px-3.5 py-1.5 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-bold shadow-sm" type="button">Confortável (100%)</button>
+<button class="px-3.5 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm" type="button">Compacto (1366x768)</button>
+</div>
+</div>
+<!-- Switch Fluent Animations -->
+<div class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low">
+<div class="space-y-0.5">
+<p class="font-label-md text-label-md text-on-surface font-semibold">Efeitos Fluent e Transições Suaves</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Habilita aceleração gráfica de hardware, sombras suaves e efeito mica/acrílico</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer shrink-0">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-12 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-primary after:border-gray-300 after:border-none after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN (COL-5): Atualizações, Segurança & Informações da Licença -->
+<div class="xl:col-span-5 space-y-6">
+<!-- CARD: ATUALIZAÇÕES DO SOFTWARE -->
+<div class="bg-surface-container-lowest rounded-xl p-7 shadow-sm space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed/60 text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">system_update</span>
+</div>
+<div>
+<h2 class="font-title-lg text-title-lg text-on-surface">Atualizações de Software</h2>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-80">Distribuição automatizada de patches fiscais</p>
+</div>
+</div>
+<span class="w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-primary-fixed/50 animate-pulse"></span>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low space-y-3">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Versão Instalada</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">KiVenda v2.4.1 (Build 2026.07)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Canal de Atualização</span>
+<span class="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-container font-bold">Canal Estável (Produção)</span>
+</div>
+</div>
+<!-- AGT Compliance Status Pill -->
+<div class="p-4 rounded-xl bg-primary-fixed/30 flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div class="space-y-0.5">
+<p class="font-label-md text-label-md text-on-primary-fixed font-bold">Sistema Atualizado &amp; Conforme</p>
+<p class="font-body-md text-body-md text-on-primary-fixed-variant leading-tight">O seu motor de faturas e chaves criptográficas RSA cumprem integralmente as diretivas de 2026 da AGT Angola.</p>
+</div>
+</div>
+<!-- Update Action Button -->
+<button class="w-full h-11 rounded-xl bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-md text-label-md font-bold flex items-center justify-center gap-2 transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+          Verificar Atualizações Agora
+        </button>
+<!-- Switch de Atualizações Automáticas -->
+<div class="flex items-center justify-between pt-2">
+<div class="pr-4 space-y-0.5">
+<p class="font-label-md text-label-md text-on-surface font-semibold">Correções em Segundo Plano</p>
+<p class="text-[11px] text-on-surface-variant">Baixar patches críticos sem interromper a operação de caixa</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer shrink-0">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-12 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-primary after:border-gray-300 after:border-none after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- CARD: SOBRE O KIVENDA & LICENÇA EMPRESARIAL -->
+<div class="bg-surface-container-lowest rounded-xl p-7 shadow-sm space-y-6 relative overflow-hidden">
+<!-- Header com Logo Weber Tech Solution -->
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-md shrink-0">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-title-lg text-title-lg font-bold text-on-surface">KiVenda ERP &amp; PDV</h3>
+<span class="text-[10px] bg-primary text-on-primary font-bold px-2 py-0.5 rounded-full">PRO</span>
+</div>
+<p class="text-[12px] text-on-surface-variant font-medium">Desenvolvido por <strong class="text-on-surface">Weber Tech Solution</strong></p>
+</div>
+</div>
+<!-- License Metadata Rows -->
+<div class="space-y-2.5">
+<div class="flex justify-between items-center py-2 px-3 rounded-lg bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Modalidade de Licença</span>
+<span class="font-label-sm text-label-sm text-primary font-bold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+              Perpétua Empresarial (Ativa)
+            </span>
+</div>
+<div class="flex justify-between items-center py-2 px-3 rounded-lg bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-on-surface-variant">ID de Ativação / Hardware ID</span>
+<span class="font-label-sm text-label-sm font-mono text-on-surface font-semibold">KV-AO-2026-9942-8812</span>
+</div>
+<div class="flex justify-between items-center py-2 px-3 rounded-lg bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Homologação Fiscal</span>
+<span class="font-label-sm text-label-sm text-on-surface font-bold">Certificado nº 284/AGT/2024</span>
+</div>
+</div>
+<!-- System Architecture Banner with subtle SVG -->
+<div class="p-4 rounded-xl bg-secondary-fixed/30 flex items-center justify-between">
+<div class="space-y-0.5">
+<p class="font-label-sm text-label-sm text-on-secondary-fixed font-bold">Arquitetura de Dados</p>
+<p class="text-[11px] text-on-secondary-fixed-variant">Base SQLite Local com Replicação em Nuvem Luanda-Edge</p>
+</div>
+<!-- Micro Visual Inline SVG -->
+<svg class="w-8 h-8 text-secondary shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Quick Help & Support Links -->
+<div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[12px] font-medium text-secondary">
+<a class="inline-flex items-center gap-1 hover:underline" href="#">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+            Manual do Utilizador
+          </a>
+<a class="inline-flex items-center gap-1 hover:underline" href="#">
+<span class="material-symbols-outlined text-[16px]">support_agent</span>
+            Suporte (+244 923 000 000)
+          </a>
+<a class="inline-flex items-center gap-1 hover:underline" href="#">
+<span class="material-symbols-outlined text-[16px]">policy</span>
+            Termos &amp; Privacidade
+          </a>
+</div>
+</div>
+</div>
+</div>
+<!-- BOTTOM STATUS TOAST / AUDIT BANNER -->
+<div class="w-full bg-surface-container-low rounded-xl px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+<div class="flex items-center gap-3">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<p class="font-body-md text-body-md text-on-surface">
+<strong class="font-semibold">Última Auditoria Local:</strong> 24 de Maio de 2026 às 14:15 | Todos os parâmetros do ficheiro SAF-T de Angola estão sincronizados.
+      </p>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant font-label-sm text-label-sm">
+<span>Hash de Integridade: <code class="font-mono bg-surface-container px-2 py-0.5 rounded">9a8f..4b12</code></span>
+<span class="text-primary font-bold">Tudo Operacional</span>
+</div>
+</div>
+</div>
+<script>
+  // Simple interactive micro-behavior for theme card selection
+  document.addEventListener('DOMContentLoaded', () => {
+    const themeCards = document.querySelectorAll('#theme-selector > div');
+    themeCards.forEach(card => {
+      card.addEventListener('click', () => {
+        themeCards.forEach(c => {
+          c.style.boxShadow = '';
+          const check = c.querySelector('span.w-5');
+          if (check) {
+            check.classList.add('opacity-0');
+            check.classList.remove('bg-primary', 'text-on-primary');
+            check.classList.add('bg-surface-container');
+          }
+        });
+        card.style.boxShadow = '0 0 0 2px #006b2c';
+        const cardCheck = card.querySelector('span.w-5');
+        if (cardCheck) {
+          cardCheck.classList.remove('opacity-0', 'bg-surface-container');
+          cardCheck.classList.add('bg-primary', 'text-on-primary');
+        }
+      });
+    });
+  });
+</script></main>
+</body></html>
