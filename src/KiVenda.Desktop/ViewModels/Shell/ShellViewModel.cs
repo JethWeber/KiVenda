@@ -92,10 +92,6 @@ public partial class ShellViewModel : ViewModelBase
 
         ItensMenu.Add(Item("Dashboard", "🏠", () => new DashboardViewModel(_scopeFactory, _sessao)));
         ItensMenu.Add(Item("Vendas", "🛒", () => new VendasViewModel(_scopeFactory)));
-        ItensMenu.Add(Item("Produtos", "📦", () => new ProdutosViewModel(_scopeFactory, _sessao)));
-
-        if (Permissoes.Permite(_sessao.Perfil, Acao.RegistarCompras))
-            ItensMenu.Add(Item("Compras", "🧾", () => new ComprasViewModel(_scopeFactory)));
 
         ItensMenu.Add(Item("Cadastros", "👥", () => new CadastrosViewModel(_scopeFactory)));
 
@@ -131,6 +127,12 @@ public partial class ShellViewModel : ViewModelBase
         OnPropertyChanged(nameof(Notificacoes));
         OnPropertyChanged(nameof(QuantidadeNotificacoes));
     }
+
+    [RelayCommand]
+    private void SelecionarProdutos() => ItemSelecionado = Item("Produtos", "📦", () => new ProdutosViewModel(_scopeFactory, _sessao));
+
+    [RelayCommand]
+    private void SelecionarAbastecer() => ItemSelecionado = Item("Abastecer", "🧾", () => new ComprasViewModel(_scopeFactory));
 
     [RelayCommand]
     private void AlternarTema()
