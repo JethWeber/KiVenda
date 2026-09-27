@@ -92,6 +92,7 @@ public partial class ShellViewModel : ViewModelBase
 
         ItensMenu.Add(Item("Dashboard", "🏠", () => new DashboardViewModel(_scopeFactory, _sessao)));
         ItensMenu.Add(Item("Vendas", "🛒", () => new VendasViewModel(_scopeFactory)));
+        ItensMenu.Add(Item("Stock", "📦", () => new StockViewModel(_scopeFactory, _sessao)));
 
         ItensMenu.Add(Item("Cadastros", "👥", () => new CadastrosViewModel(_scopeFactory)));
 
