@@ -5,6 +5,20 @@
              x:Class="KiVenda.Desktop.Views.Modulos.CaixaView"
              x:DataType="vmm:CaixaViewModel">
 
+    <UserControl.Styles>
+        <Style Selector="Button.cartao-acao">
+            <Setter Property="Background" Value="{StaticResource SuperficieBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BordaBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Padding" Value="18,14" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+        <Style Selector="Button.cartao-acao:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource NeutroSuaveBrush}" />
+        </Style>
+    </UserControl.Styles>
+
     <StackPanel Spacing="20">
 
         <TextBlock Classes="titulo-pagina" Text="Caixa" />
@@ -36,36 +50,120 @@
         <StackPanel IsVisible="{Binding CaixaAberto}" Spacing="20">
 
             <Grid ColumnDefinitions="2*,1*">
-                <Border Grid.Column="0" Classes="cartao-verde" Margin="0,0,20,0">
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="STATUS DO SISTEMA" Foreground="White" Opacity="0.8" FontSize="12" FontWeight="Bold" />
-                        <TextBlock Text="CAIXA ABERTO" Foreground="White" FontSize="26" FontWeight="Bold" />
-                        <TextBlock Text="{Binding SaldoAtualTexto}" Foreground="White" FontSize="22" FontWeight="SemiBold" Margin="0,10,0,0" />
-                    </StackPanel>
+                <Border Grid.Column="0" CornerRadius="16" Padding="28,24" Margin="0,0,20,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                            <GradientStop Color="#1B7A43" Offset="0" />
+                            <GradientStop Color="#0E4D28" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0" Spacing="4">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Ellipse Width="8" Height="8" Fill="#7CE3A6" VerticalAlignment="Center" />
+                                <TextBlock Text="STATUS DO SISTEMA" Foreground="White" Opacity="0.85" FontSize="11" FontWeight="Bold" LetterSpacing="1" />
+                            </StackPanel>
+                            <TextBlock Text="CAIXA ABERTO" Foreground="White" FontSize="30" FontWeight="Bold" Margin="0,4,0,0" />
+                            <TextBlock Text="{Binding SessaoInfoTexto}" Foreground="White" Opacity="0.85" FontSize="13" Margin="0,10,0,0" TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="4" HorizontalAlignment="Right">
+                            <TextBlock Text="SALDO ATUAL EM CAIXA" Foreground="White" Opacity="0.8" FontSize="11" FontWeight="Bold" LetterSpacing="1" HorizontalAlignment="Right" />
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                <TextBlock Text="Kz" Foreground="White" Opacity="0.85" FontSize="16" VerticalAlignment="Bottom" Margin="0,0,0,6" />
+                                <TextBlock Text="{Binding SaldoAtualTexto}" Foreground="White" FontSize="34" FontWeight="Bold" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
                 </Border>
 
                 <Border Grid.Column="1" Classes="cartao">
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Resumo Rápido" FontWeight="Bold" />
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Grid.Column="0" Text="Entradas" Classes="subtitulo" />
-                            <TextBlock Grid.Column="1" Text="{Binding TotalEntradasTexto}" Foreground="{StaticResource SucessoBrush}" FontWeight="Medium" />
+                    <StackPanel Spacing="12">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="📊" FontSize="15" />
+                            <TextBlock Text="Resumo Rápido" FontWeight="Bold" FontSize="15" />
+                        </StackPanel>
+
+                        <Border Background="#E9F7EF" CornerRadius="10" Padding="12,10">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Border Grid.Column="0" Background="White" CornerRadius="8" Width="30" Height="30" Margin="0,0,10,0">
+                                    <TextBlock Text="↑" FontSize="15" FontWeight="Bold" Foreground="{StaticResource SucessoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <TextBlock Grid.Column="1" Text="Total Entradas" FontSize="13" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                <TextBlock Grid.Column="2" Text="{Binding TotalEntradasTexto}" Foreground="{StaticResource SucessoBrush}" FontWeight="Bold" VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <Border Grid.Column="0" Background="#FCEBEB" CornerRadius="8" Width="30" Height="30" Margin="0,0,10,0">
+                                <TextBlock Text="↓" FontSize="15" FontWeight="Bold" Foreground="{StaticResource PerigoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Grid.Column="1" Text="Total Saídas" FontSize="13" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="{Binding TotalSaidasTexto}" Foreground="{StaticResource PerigoBrush}" FontWeight="Bold" VerticalAlignment="Center" />
                         </Grid>
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Grid.Column="0" Text="Saídas" Classes="subtitulo" />
-                            <TextBlock Grid.Column="1" Text="{Binding TotalSaidasTexto}" Foreground="{StaticResource PerigoBrush}" FontWeight="Medium" />
-                        </Grid>
+
+                        <Border Height="1" Background="{StaticResource BordaBrush}" Margin="0,4" />
+
+                        <TextBlock Text="POR MÉTODO" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" LetterSpacing="1" />
+
+                        <ItemsControl ItemsSource="{Binding ResumoPorMetodo}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="3" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource NeutroSuaveBrush}" CornerRadius="8" Padding="4,10" Margin="3,0">
+                                        <StackPanel Spacing="2" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding Nome}" Classes="subtitulo" FontSize="11" HorizontalAlignment="Center" />
+                                            <TextBlock Text="{Binding ValorTexto}" FontWeight="Bold" FontSize="13" HorizontalAlignment="Center" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </Border>
             </Grid>
 
             <Grid ColumnDefinitions="*,*,*">
-                <Button Grid.Column="0" Content="+ Suprimento" Classes="secundario" Command="{Binding AbrirFormularioSuprimentoCommand}"
-                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,0,8,0" />
-                <Button Grid.Column="1" Content="− Sangria" Classes="secundario" Command="{Binding AbrirFormularioSangriaCommand}"
-                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="8,0" />
-                <Button Grid.Column="2" Content="Fechar Caixa" Classes="escuro" Command="{Binding AbrirFormularioFecharCommand}"
-                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="8,0,0,0" />
+                <Button Grid.Column="0" Classes="cartao-acao" Command="{Binding AbrirFormularioSuprimentoCommand}" Margin="0,0,8,0" HorizontalAlignment="Stretch">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Border Grid.Column="0" Background="#E9F7EF" CornerRadius="10" Width="42" Height="42">
+                            <TextBlock Text="➕" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="Suprimento" FontWeight="Bold" FontSize="14" />
+                            <TextBlock Text="Entrada de Valor" Classes="subtitulo" FontSize="12" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="2" Text="›" FontSize="18" Foreground="{StaticResource TextoSecundarioBrush}" VerticalAlignment="Center" />
+                    </Grid>
+                </Button>
+                <Button Grid.Column="1" Classes="cartao-acao" Command="{Binding AbrirFormularioSangriaCommand}" Margin="8,0" HorizontalAlignment="Stretch">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Border Grid.Column="0" Background="#FCEBEB" CornerRadius="10" Width="42" Height="42">
+                            <TextBlock Text="➖" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="Sangria" FontWeight="Bold" FontSize="14" />
+                            <TextBlock Text="Saída de Valor" Classes="subtitulo" FontSize="12" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="2" Text="›" FontSize="18" Foreground="{StaticResource TextoSecundarioBrush}" VerticalAlignment="Center" />
+                    </Grid>
+                </Button>
+                <Button Grid.Column="2" Command="{Binding AbrirFormularioFecharCommand}" Margin="8,0,0,0" HorizontalAlignment="Stretch"
+                        Background="#1F2A3D" BorderThickness="0" CornerRadius="14" Padding="18,14">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Border Grid.Column="0" Background="#33FFFFFF" CornerRadius="10" Width="42" Height="42">
+                            <TextBlock Text="🔒" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="Fechar Caixa" FontWeight="Bold" FontSize="14" Foreground="White" />
+                            <TextBlock Text="Encerrar Turno" FontSize="12" Foreground="#B8C0CC" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="2" Text="⏻" FontSize="16" Foreground="White" VerticalAlignment="Center" />
+                    </Grid>
+                </Button>
             </Grid>
 
             <Border Classes="cartao" IsVisible="{Binding FormularioSuprimentoAberto}">
@@ -96,28 +194,99 @@
             <TextBlock Text="{Binding ResultadoFecho}" FontWeight="Medium" TextWrapping="Wrap"
                        IsVisible="{Binding ResultadoFecho, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
+            <!-- Busca instantânea sobre as movimentações -->
+            <Border Background="{StaticResource SuperficieBrush}" BorderBrush="{StaticResource BordaBrush}" BorderThickness="1" CornerRadius="10" Padding="14,4">
+                <Grid ColumnDefinitions="Auto,*">
+                    <TextBlock Grid.Column="0" Text="🔍" FontSize="14" VerticalAlignment="Center" Margin="0,0,10,0" Opacity="0.6" />
+                    <TextBox Grid.Column="1" Text="{Binding TextoBusca, Mode=TwoWay}"
+                             Watermark="Pesquisar por horário, descrição, tipo, operador ou valor..."
+                             Background="Transparent" BorderThickness="0" Padding="0,10" />
+                </Grid>
+            </Border>
+
             <Border Classes="cartao" Padding="0">
                 <StackPanel>
-                    <TextBlock Text="Últimas Movimentações" FontWeight="Bold" FontSize="16" Margin="20,16,20,4" />
-                    <Grid ColumnDefinitions="1*,2*,1*" Margin="20,8,20,12">
-                        <TextBlock Grid.Column="0" Text="TIPO" Classes="subtitulo" FontWeight="SemiBold" />
-                        <TextBlock Grid.Column="1" Text="DESCRIÇÃO" Classes="subtitulo" FontWeight="SemiBold" />
-                        <TextBlock Grid.Column="2" Text="VALOR" Classes="subtitulo" FontWeight="SemiBold" />
+
+                    <Grid Margin="20,16,20,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Text="Últimas Movimentações" FontWeight="Bold" FontSize="16" />
+                            <TextBlock Text="Histórico de transações do turno atual" Classes="subtitulo" FontSize="12" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                            <Button Content="📄 PDF" Classes="secundario" Command="{Binding ExportarPdfCommand}" Padding="12,7" FontSize="12" />
+                            <Button Content="📊 Excel" Classes="secundario" Command="{Binding ExportarExcelCommand}" Padding="12,7" FontSize="12" />
+                            <Button Content="🔽 Filtrar" Classes="secundario" Padding="12,7" FontSize="12" />
+                        </StackPanel>
                     </Grid>
-                    <ItemsControl ItemsSource="{Binding Movimentos}">
+
+                    <Grid ColumnDefinitions="100,2*,110,1*,1*,60" Background="{StaticResource NeutroSuaveBrush}" Margin="0,0,0,0" Height="40">
+                        <TextBlock Grid.Column="0" Text="HORÁRIO" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" Margin="20,0,0,0" />
+                        <TextBlock Grid.Column="1" Text="DESCRIÇÃO" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="2" Text="TIPO" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="3" Text="OPERADOR" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="4" Text="VALOR (KZ)" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,16,0" />
+                        <TextBlock Grid.Column="5" Text="AÇÕES" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,20,0" />
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding MovimentosPaginados}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="caixa:MovimentoCaixaDto">
                                 <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,14">
-                                    <Grid ColumnDefinitions="1*,2*,1*">
-                                        <TextBlock Grid.Column="0" Text="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaTextoConverter}}" />
-                                        <TextBlock Grid.Column="1" Text="{Binding Descricao}" Foreground="{StaticResource TextoSecundarioBrush}" />
-                                        <TextBlock Grid.Column="2" Text="{Binding Valor, Converter={StaticResource ValorKzConverter}}"
-                                                   Foreground="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaCorConverter}}" FontWeight="Medium" />
+                                    <Grid ColumnDefinitions="80,2*,110,1*,1*,60">
+                                        <TextBlock Grid.Column="0" Text="{Binding HorarioTexto}" VerticalAlignment="Center" />
+
+                                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Descricao}" FontWeight="Medium" />
+                                            <TextBlock Text="{Binding DescricaoSecundaria}"
+                                                       IsVisible="{Binding DescricaoSecundaria, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                                       Foreground="{StaticResource TextoSecundarioBrush}" FontSize="12" />
+                                        </StackPanel>
+
+                                        <Border Grid.Column="2" Background="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaCorFundoConverter}}"
+                                                CornerRadius="999" Padding="10,4" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaTextoConverter}}"
+                                                       Foreground="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaCorConverter}}"
+                                                       FontSize="11" FontWeight="Bold" />
+                                        </Border>
+
+                                        <TextBlock Grid.Column="3" Text="{Binding Operador}" VerticalAlignment="Center" />
+
+                                        <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,16,0">
+                                            <TextBlock Text="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaSinalConverter}}"
+                                                       Foreground="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaCorConverter}}" FontWeight="Bold" />
+                                            <TextBlock Text="{Binding Valor, Converter={StaticResource ValorKzConverter}}"
+                                                       Foreground="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaCorConverter}}" FontWeight="Bold" />
+                                        </StackPanel>
+
+                                        <Button Grid.Column="5" Content="⋮" Background="Transparent" BorderThickness="0"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center" Padding="8,4">
+                                            <Button.Flyout>
+                                                <Flyout Placement="BottomEdgeAlignedRight">
+                                                    <Button Content="✏  Editar"
+                                                            Command="{Binding $parent[UserControl].DataContext.EditarMovimentoCommand}"
+                                                            CommandParameter="{Binding}"
+                                                            Background="Transparent" BorderThickness="0"
+                                                            HorizontalContentAlignment="Left" Padding="10,8" />
+                                                </Flyout>
+                                            </Button.Flyout>
+                                        </Button>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+
+                    <Grid ColumnDefinitions="*,Auto" Margin="20,14">
+                        <TextBlock Grid.Column="0" Text="{Binding IntervaloRegistosTexto}" Classes="subtitulo" FontSize="13" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                            <Button Content="Anterior" Classes="secundario" Command="{Binding PaginaAnteriorCommand}" IsEnabled="{Binding PodeIrParaAnterior}" Padding="14,8" />
+                            <Button Content="Seguinte" Classes="primario" Command="{Binding ProximaPaginaCommand}" IsEnabled="{Binding PodeIrParaProxima}" Padding="14,8" />
+                        </StackPanel>
+                    </Grid>
                 </StackPanel>
             </Border>
 

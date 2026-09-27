@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KiVenda.Application.Caixa;
@@ -36,6 +38,107 @@ public partial class CaixaViewModel : ViewModelBase
     private string _totalSaidasTexto = "0 Kz";
 
     public ObservableCollection<MovimentoCaixaDto> Movimentos { get; } = new();
+
+    // ---- Últimas Movimentações: busca instantânea + paginação (30/página) ----
+    private const int TamanhoPagina = 30;
+
+    [ObservableProperty]
+    private string? _textoBusca;
+
+    [ObservableProperty]
+    private int _paginaAtual = 1;
+
+    public ObservableCollection<MovimentoCaixaDto> MovimentosPaginados { get; } = new();
+
+    public string IntervaloRegistosTexto
+    {
+        get
+        {
+            var total = MovimentosFiltrados().Count;
+            if (total == 0) return "Nenhuma transação encontrada";
+            var inicio = (PaginaAtual - 1) * TamanhoPagina + 1;
+            var fim = Math.Min(PaginaAtual * TamanhoPagina, total);
+            return $"Exibindo {inicio}–{fim} de {total} transações";
+        }
+    }
+
+    public bool PodeIrParaAnterior => PaginaAtual > 1;
+
+    public bool PodeIrParaProxima => PaginaAtual * TamanhoPagina < MovimentosFiltrados().Count;
+
+    public string SessaoInfoTexto => "Sessão em curso"; // TODO: substituir por dados reais de abertura (ver nota no chat)
+
+    public ObservableCollection<ResumoMetodoDto> ResumoPorMetodo { get; } = new();
+
+    partial void OnTextoBuscaChanged(string? value)
+    {
+        PaginaAtual = 1;
+        AtualizarMovimentosPaginados();
+    }
+
+    private List<MovimentoCaixaDto> MovimentosFiltrados()
+    {
+        if (string.IsNullOrWhiteSpace(TextoBusca))
+            return Movimentos.ToList();
+
+        var termo = TextoBusca.Trim();
+        return Movimentos.Where(m =>
+                (m.Descricao?.Contains(termo, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                m.Tipo.ToString().Contains(termo, StringComparison.OrdinalIgnoreCase) ||
+                m.Valor.ToString(System.Globalization.CultureInfo.InvariantCulture).Contains(termo, StringComparison.OrdinalIgnoreCase)
+                // TODO: incluir Horário e Operador aqui assim que estes campos existirem em MovimentoCaixaDto
+            )
+            .ToList();
+    }
+
+    private void AtualizarMovimentosPaginados()
+    {
+        MovimentosPaginados.Clear();
+        foreach (var movimento in MovimentosFiltrados()
+                     .Skip((PaginaAtual - 1) * TamanhoPagina)
+                     .Take(TamanhoPagina))
+        {
+            MovimentosPaginados.Add(movimento);
+        }
+
+        OnPropertyChanged(nameof(IntervaloRegistosTexto));
+        OnPropertyChanged(nameof(PodeIrParaAnterior));
+        OnPropertyChanged(nameof(PodeIrParaProxima));
+    }
+
+    [RelayCommand]
+    private void PaginaAnterior()
+    {
+        if (!PodeIrParaAnterior) return;
+        PaginaAtual--;
+        AtualizarMovimentosPaginados();
+    }
+
+    [RelayCommand]
+    private void ProximaPagina()
+    {
+        if (!PodeIrParaProxima) return;
+        PaginaAtual++;
+        AtualizarMovimentosPaginados();
+    }
+
+    [RelayCommand]
+    private void EditarMovimento(MovimentoCaixaDto movimento)
+    {
+        // TODO: abrir o formulário/diálogo de edição do movimento selecionado.
+    }
+
+    [RelayCommand]
+    private void ExportarPdf()
+    {
+        // Sem ação por agora, conforme pedido.
+    }
+
+    [RelayCommand]
+    private void ExportarExcel()
+    {
+        // Sem ação por agora, conforme pedido.
+    }
 
     // Abrir caixa
     [ObservableProperty]
@@ -98,6 +201,9 @@ public partial class CaixaViewModel : ViewModelBase
             {
                 Movimentos.Add(movimento);
             }
+
+            PaginaAtual = 1;
+            AtualizarMovimentosPaginados();
         }
         catch (DomainException)
         {
@@ -252,3 +358,10 @@ public partial class CaixaViewModel : ViewModelBase
         }
     }
 }
+
+/// <summary>
+/// Linha de resumo do cartão "Por Método" (ex.: Dinheiro · 85k).
+/// Preenchido a partir do agrupamento de movimentos por método de pagamento
+/// assim que MovimentoCaixaDto expuser esse campo — ver nota no chat.
+/// </summary>
+public record ResumoMetodoDto(string Nome, string ValorTexto);

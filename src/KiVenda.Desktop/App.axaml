@@ -18,6 +18,7 @@
             <conv:MetodoPagamentoParaTextoConverter x:Key="MetodoPagamentoParaTextoConverter" />
             <conv:TipoMovimentoCaixaParaTextoConverter x:Key="TipoMovimentoCaixaParaTextoConverter" />
             <conv:TipoMovimentoCaixaParaCorConverter x:Key="TipoMovimentoCaixaParaCorConverter" />
+            <conv:TipoMovimentoCaixaParaCorFundoConverter x:Key="TipoMovimentoCaixaParaCorFundoConverter" />
             <conv:TipoMovimentoCaixaParaSinalConverter x:Key="TipoMovimentoCaixaParaSinalConverter" />
         </ResourceDictionary>
     </Application.Resources>
