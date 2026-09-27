@@ -5,7 +5,9 @@
              x:Class="KiVenda.Desktop.Views.Modulos.UtilizadoresView"
              x:DataType="vmm:UtilizadoresViewModel">
 
-    <StackPanel Spacing="20">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="20">
+
 
         <Grid ColumnDefinitions="*,Auto">
             <StackPanel Grid.Column="0" Spacing="2">
@@ -78,6 +80,7 @@
             </StackPanel>
         </Border>
 
-    </StackPanel>
-
+    
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
