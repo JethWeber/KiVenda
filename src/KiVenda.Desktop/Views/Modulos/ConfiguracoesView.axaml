@@ -4,7 +4,9 @@
              xmlns:views="using:KiVenda.Desktop.Views.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracoesView"
              x:DataType="vm:ConfiguracoesViewModel">
-    <StackPanel Spacing="18" MaxWidth="980">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="18" MaxWidth="980">
+
         <StackPanel Spacing="4">
             <TextBlock Classes="titulo-pagina" Text="Configurações" />
             <TextBlock Classes="subtitulo" Text="Preferências do sistema, scanner, assinatura e proteção dos dados." />
@@ -14,12 +16,10 @@
                 <views:ConfiguracaoEmpresaView DataContext="{Binding Empresa}" />
             </TabItem>
             <TabItem Header="Dispositivos">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Spacing="24">
+                <StackPanel Spacing="24">
                         <views:ConfiguracaoScannerView DataContext="{Binding Scanner}" />
                         <views:ConfiguracaoImpressoraView DataContext="{Binding Impressora}" />
                     </StackPanel>
-                </ScrollViewer>
             </TabItem>
             <TabItem Header="Licença">
                 <views:ConfiguracaoLicencaView DataContext="{Binding Licenca}" />
@@ -31,5 +31,7 @@
                 <views:ConfiguracaoTemaView DataContext="{Binding Tema}" />
             </TabItem>
         </TabControl>
-    </StackPanel>
+    
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
