@@ -3,7 +3,7 @@
              xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoBackupView"
              x:DataType="vm:ConfiguracaoBackupViewModel">
-    <ScrollViewer>
+    
         <StackPanel Spacing="18" MaxWidth="980" Margin="0,8,0,24">
             <StackPanel Spacing="4">
                 <TextBlock Classes="titulo-pagina" Text="Backup" />
@@ -37,5 +37,5 @@
             </Border>
             <TextBlock Text="Mantenha os backups em outro disco ou dispositivo. Um backup guardado apenas no mesmo computador não protege contra falha do armazenamento." TextWrapping="Wrap" Opacity="0.75" />
         </StackPanel>
-    </ScrollViewer>
+    
 </UserControl>
