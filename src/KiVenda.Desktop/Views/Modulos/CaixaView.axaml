@@ -19,7 +19,9 @@
         </Style>
     </UserControl.Styles>
 
-    <StackPanel Spacing="20">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="20">
+
 
         <TextBlock Classes="titulo-pagina" Text="Caixa" />
 
@@ -292,6 +294,7 @@
 
         </StackPanel>
 
-    </StackPanel>
-
+    
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
