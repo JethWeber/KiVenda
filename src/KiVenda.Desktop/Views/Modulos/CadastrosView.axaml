@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
              xmlns:cad="using:KiVenda.Application.Cadastros"
+             xmlns:ic="using:FluentIcons.Avalonia"
              x:Class="KiVenda.Desktop.Views.Modulos.CadastrosView"
              x:DataType="vm:CadastrosViewModel">
 
@@ -70,9 +71,9 @@
             <Setter Property="CornerRadius" Value="10" />
             <Setter Property="Background" Value="{DynamicResource VerdeSuaveBrush}" />
         </Style>
-        <Style Selector="TextBlock.kpi-icone-texto">
-            <Setter Property="FontSize" Value="17" />
-            <Setter Property="FontWeight" Value="Bold" />
+        <Style Selector="ic|FluentIcon.kpi-icone-symbol">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
             <Setter Property="Foreground" Value="{DynamicResource VerdePrimarioBrush}" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -99,7 +100,6 @@
             <Setter Property="BorderBrush" Value="{DynamicResource BordaBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="10" />
-            <Setter Property="MaxWidth" Value="480" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
         <Style Selector="Border.campo-busca TextBox">
@@ -157,6 +157,7 @@
 
     </UserControl.Styles>
 
+    <Grid>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Spacing="18">
 
@@ -171,31 +172,6 @@
             <TextBlock Classes="erro" Text="{Binding MensagemErro}"
                        IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
-            <!-- ===================== Resumo rápido ===================== -->
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <Border Classes="pilula-resumo">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock Text="◈" Foreground="{DynamicResource TextoSecundarioBrush}" />
-                        <TextBlock Text="Clientes" Classes="subtitulo" />
-                        <TextBlock Text="{Binding TotalClientesTexto}" FontWeight="Bold" />
-                    </StackPanel>
-                </Border>
-                <Border Classes="pilula-resumo">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock Text="▤" Foreground="{DynamicResource TextoSecundarioBrush}" />
-                        <TextBlock Text="Fornecedores" Classes="subtitulo" />
-                        <TextBlock Text="{Binding TotalFornecedoresTexto}" FontWeight="Bold" />
-                    </StackPanel>
-                </Border>
-                <Border Classes="pilula-resumo">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock Text="◉" Foreground="{DynamicResource TextoSecundarioBrush}" />
-                        <TextBlock Text="Funcionários" Classes="subtitulo" />
-                        <TextBlock Text="{Binding TotalFuncionariosTexto}" FontWeight="Bold" />
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-
             <!-- ===================== Abas ===================== -->
             <TabControl SelectedIndex="{Binding AbaSelecionada}">
 
@@ -207,9 +183,7 @@
                         <Border Classes="aba-pilula">
                             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                 <TextBlock Classes="aba-rotulo" Text="Clientes" />
-                                <Border Classes="aba-contador">
-                                    <TextBlock Classes="aba-contador-texto" Text="{Binding Clientes.Count}" />
-                                </Border>
+                                
                             </StackPanel>
                         </Border>
                     </TabItem.Header>
@@ -219,7 +193,7 @@
                         <UniformGrid Columns="3" Rows="1">
                             <Border Classes="kpi" Margin="0,0,7,0">
                                 <StackPanel>
-                                    <Border Classes="kpi-icone"><TextBlock Classes="kpi-icone-texto" Text="◈" /></Border>
+                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="People" IconVariant="Regular" IconSize="Size20" /></Border>
                                     <TextBlock Classes="kpi-rotulo" Text="Total de Clientes" />
                                     <TextBlock Classes="kpi-valor" Text="{Binding TotalClientesTexto}" />
                                     <TextBlock Classes="kpi-sub" Text="Registados no sistema" />
@@ -227,7 +201,7 @@
                             </Border>
                             <Border Classes="kpi" Margin="7,0">
                                 <StackPanel>
-                                    <Border Classes="kpi-icone"><TextBlock Classes="kpi-icone-texto" Text="✓" /></Border>
+                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="CheckmarkCircle" IconVariant="Regular" IconSize="Size20" /></Border>
                                     <TextBlock Classes="kpi-rotulo" Text="Com NIF registado" />
                                     <TextBlock Classes="kpi-valor" Text="{Binding ClientesComNifTexto}" />
                                     <TextBlock Classes="kpi-sub"
@@ -236,7 +210,7 @@
                             </Border>
                             <Border Classes="kpi" Margin="7,0,0,0">
                                 <StackPanel>
-                                    <Border Classes="kpi-icone"><TextBlock Classes="kpi-icone-texto" Text="◔" /></Border>
+                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="Phone" IconVariant="Regular" IconSize="Size20" /></Border>
                                     <TextBlock Classes="kpi-rotulo" Text="Com contacto" />
                                     <TextBlock Classes="kpi-valor" Text="{Binding ClientesComContactoTexto}" />
                                     <TextBlock Classes="kpi-sub" Text="Telefone ou email preenchido" />
@@ -318,9 +292,7 @@
                         <Border Classes="aba-pilula">
                             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                 <TextBlock Classes="aba-rotulo" Text="Fornecedores" />
-                                <Border Classes="aba-contador">
-                                    <TextBlock Classes="aba-contador-texto" Text="{Binding Fornecedores.Count}" />
-                                </Border>
+                                
                             </StackPanel>
                         </Border>
                     </TabItem.Header>
@@ -330,7 +302,7 @@
                         <UniformGrid Columns="3" Rows="1">
                             <Border Classes="kpi" Margin="0,0,7,0">
                                 <StackPanel>
-                                    <Border Classes="kpi-icone"><TextBlock Classes="kpi-icone-texto" Text="▤" /></Border>
+                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="BuildingStore" IconVariant="Regular" IconSize="Size20" /></Border>
                                     <TextBlock Classes="kpi-rotulo" Text="Total de Fornecedores" />
                                     <TextBlock Classes="kpi-valor" Text="{Binding TotalFornecedoresTexto}" />
                                     <TextBlock Classes="kpi-sub" Text="Registados no sistema" />
@@ -338,7 +310,7 @@
                             </Border>
                             <Border Classes="kpi" Margin="7,0">
                                 <StackPanel>
-                                    <Border Classes="kpi-icone"><TextBlock Classes="kpi-icone-texto" Text="✓" /></Border>
+                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="Box" IconVariant="Regular" IconSize="Size20" /></Border>
                                     <TextBlock Classes="kpi-rotulo" Text="Com NIF registado" />
                                     <TextBlock Classes="kpi-valor" Text="{Binding FornecedoresComNifTexto}" />
                                     <TextBlock Classes="kpi-sub"
@@ -347,7 +319,7 @@
                             </Border>
                             <Border Classes="kpi" Margin="7,0,0,0">
                                 <StackPanel>
-                                    <Border Classes="kpi-icone"><TextBlock Classes="kpi-icone-texto" Text="◇" /></Border>
+                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="Document" IconVariant="Regular" IconSize="Size20" /></Border>
                                     <TextBlock Classes="kpi-rotulo" Text="Com produtos listados" />
                                     <TextBlock Classes="kpi-valor" Text="{Binding FornecedoresComProdutosTexto}" />
                                     <TextBlock Classes="kpi-sub" Text="Produtos fornecidos indicados" />
@@ -434,9 +406,7 @@
                         <Border Classes="aba-pilula">
                             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                 <TextBlock Classes="aba-rotulo" Text="Funcionários" />
-                                <Border Classes="aba-contador">
-                                    <TextBlock Classes="aba-contador-texto" Text="{Binding Funcionarios.Count}" />
-                                </Border>
+                                
                             </StackPanel>
                         </Border>
                     </TabItem.Header>
@@ -446,7 +416,7 @@
                         <UniformGrid Columns="4" Rows="1">
                             <Border Classes="kpi" Margin="0,0,7,0">
                                 <StackPanel>
-                                    <Border Classes="kpi-icone"><TextBlock Classes="kpi-icone-texto" Text="◉" /></Border>
+                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="People" IconVariant="Regular" IconSize="Size20" /></Border>
                                     <TextBlock Classes="kpi-rotulo" Text="Total de Funcionários" />
                                     <TextBlock Classes="kpi-valor" Text="{Binding TotalFuncionariosTexto}" />
                                     <TextBlock Classes="kpi-sub" Text="Registados no sistema" />
@@ -454,7 +424,7 @@
                             </Border>
                             <Border Classes="kpi" Margin="7,0">
                                 <StackPanel>
-                                    <Border Classes="kpi-icone"><TextBlock Classes="kpi-icone-texto" Text="✓" /></Border>
+                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="PersonAvailable" IconVariant="Regular" IconSize="Size20" /></Border>
                                     <TextBlock Classes="kpi-rotulo" Text="Funcionários Ativos" />
                                     <TextBlock Classes="kpi-valor" Text="{Binding FuncionariosAtivosTexto}" />
                                     <TextBlock Classes="kpi-sub">
@@ -465,7 +435,7 @@
                             </Border>
                             <Border Classes="kpi" Margin="7,0">
                                 <StackPanel>
-                                    <Border Classes="kpi-icone"><TextBlock Classes="kpi-icone-texto" Text="▣" /></Border>
+                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="Money" IconVariant="Regular" IconSize="Size20" /></Border>
                                     <TextBlock Classes="kpi-rotulo" Text="Massa Salarial" />
                                     <TextBlock Classes="kpi-valor" Text="{Binding MassaSalarialTexto}" />
                                     <TextBlock Classes="kpi-sub" Text="Soma dos salários base ativos" />
@@ -473,7 +443,7 @@
                             </Border>
                             <Border Classes="kpi" Margin="7,0,0,0">
                                 <StackPanel>
-                                    <Border Classes="kpi-icone"><TextBlock Classes="kpi-icone-texto" Text="↗" /></Border>
+                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="CalendarLtr" IconVariant="Regular" IconSize="Size20" /></Border>
                                     <TextBlock Classes="kpi-rotulo" Text="Admissões este ano" />
                                     <TextBlock Classes="kpi-valor" Text="{Binding AdmissoesEsteAnoTexto}" />
                                     <TextBlock Classes="kpi-sub" Text="Desde 1 de janeiro" />
@@ -572,88 +542,141 @@
 
             </TabControl>
 
-            <!-- ===================== Formulário (criar / editar) ===================== -->
-            <Border Classes="cartao" IsVisible="{Binding FormularioAberto}">
-                <StackPanel Spacing="16">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock Text="{Binding EntidadeEmEdicao, StringFormat={}Cadastro de {0}}"
-                                   FontSize="18" FontWeight="Bold" />
-                        <Button Grid.Column="1" Classes="acao-icone" Content="×"
-                                Command="{Binding FecharFormularioCommand}" />
-                    </Grid>
+            <!-- Popup de cadastro -->
+            <Grid IsVisible="{Binding FormularioAberto}" Background="#66000000">
+                <Border Classes="cartao" Width="760" MaxHeight="720"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="18">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Spacing="3">
+                                    <TextBlock Text="{Binding EntidadeEmEdicao, StringFormat={}Novo {0}}"
+                                               FontSize="20" FontWeight="Bold" />
+                                    <TextBlock Classes="subtitulo" Text="Preencha os dados e confirme o cadastro." />
+                                </StackPanel>
+                                <Button Grid.Column="1" Classes="acao-icone" Content="×"
+                                        Command="{Binding FecharFormularioCommand}" />
+                            </Grid>
 
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                        <StackPanel Spacing="4">
-                            <TextBlock Classes="rotulo-campo" Text="Nome / Razão Social" />
-                            <TextBox Text="{Binding Nome}" />
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Classes="rotulo-campo" Text="Nome / Razão Social" />
+                                    <TextBox Text="{Binding Nome}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="4">
+                                    <TextBlock Classes="rotulo-campo" Text="Telefone" />
+                                    <TextBox Text="{Binding Telefone}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="14" IsVisible="{Binding !EhFuncionario}">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Classes="rotulo-campo" Text="Email" />
+                                    <TextBox Text="{Binding Email}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="4">
+                                    <TextBlock Classes="rotulo-campo" Text="NIF" />
+                                    <TextBox Text="{Binding Nif}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel IsVisible="{Binding EhFornecedor}" Spacing="4">
+                                <TextBlock Classes="rotulo-campo" Text="Produtos fornecidos" />
+                                <TextBox Text="{Binding ProdutosFornecidos}" Watermark="ex.: Arroz, óleo, açúcar..." />
+                            </StackPanel>
+
+                            <StackPanel IsVisible="{Binding EhFuncionario}" Spacing="14">
+                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                                    <Border Classes="badge" Padding="10" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="1 · Dados pessoais" HorizontalAlignment="Center"
+                                                   Foreground="{DynamicResource VerdePrimarioBrush}" />
+                                    </Border>
+                                    <Border Grid.Column="1" Classes="badge" Padding="10" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="2 · Função" HorizontalAlignment="Center"
+                                                   Foreground="{DynamicResource TextoSecundarioBrush}" />
+                                    </Border>
+                                    <Border Grid.Column="2" Classes="badge" Padding="10" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="3 · Contrato" HorizontalAlignment="Center"
+                                                   Foreground="{DynamicResource TextoSecundarioBrush}" />
+                                    </Border>
+                                </Grid>
+
+                                <StackPanel IsVisible="{Binding FuncionarioEtapa1}" Spacing="14">
+                                    <TextBlock Text="Dados pessoais" FontSize="16" FontWeight="SemiBold" />
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Classes="rotulo-campo" Text="BI" />
+                                            <TextBox Text="{Binding Bi}" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="4">
+                                            <TextBlock Classes="rotulo-campo" Text="Email" />
+                                            <TextBox Text="{Binding Email}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+
+                                <StackPanel IsVisible="{Binding FuncionarioEtapa2}" Spacing="14">
+                                    <TextBlock Text="Função e organização" FontSize="16" FontWeight="SemiBold" />
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Classes="rotulo-campo" Text="Cargo / Perfil" />
+                                            <TextBox Text="{Binding Cargo}" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="4">
+                                            <TextBlock Classes="rotulo-campo" Text="Departamento" />
+                                            <TextBox Text="{Binding Departamento}" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Classes="rotulo-campo" Text="Turno / Caixa" />
+                                        <TextBox Text="{Binding Turno}" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel IsVisible="{Binding FuncionarioEtapa3}" Spacing="14">
+                                    <TextBlock Text="Contrato e remuneração" FontSize="16" FontWeight="SemiBold" />
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Classes="rotulo-campo" Text="Data de admissão" />
+                                            <DatePicker SelectedDate="{Binding DataAdmissao}" HorizontalAlignment="Stretch" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="4">
+                                            <TextBlock Classes="rotulo-campo" Text="Salário base (Kz)" />
+                                            <TextBox Text="{Binding SalarioBase}" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <CheckBox Content="Funcionário ativo" IsChecked="{Binding Ativo}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <TextBlock Classes="erro" Text="{Binding MensagemErro}"
+                                       IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                                <Button Content="Cancelar" Classes="secundario" Command="{Binding FecharFormularioCommand}" />
+                                <Button Content="Voltar" Classes="secundario"
+                                        Command="{Binding VoltarEtapaFuncionarioCommand}"
+                                        IsVisible="{Binding EhFuncionario}" />
+                                <Button Content="Avançar" Classes="primario"
+                                        Command="{Binding AvancarEtapaFuncionarioCommand}"
+                                        IsVisible="{Binding FuncionarioEtapa1}" />
+                                <Button Content="Avançar" Classes="primario"
+                                        Command="{Binding AvancarEtapaFuncionarioCommand}"
+                                        IsVisible="{Binding FuncionarioEtapa2}" />
+                                <Button Content="Guardar" Classes="primario"
+                                        Command="{Binding GuardarCommand}"
+                                        IsVisible="{Binding FuncionarioEtapa3}"
+                                        IsEnabled="{Binding !AGuardar}" />
+                                <Button Content="Guardar" Classes="primario"
+                                        Command="{Binding GuardarCommand}"
+                                        IsVisible="{Binding !EhFuncionario}"
+                                        IsEnabled="{Binding !AGuardar}" />
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Spacing="4">
-                            <TextBlock Classes="rotulo-campo" Text="Telefone" />
-                            <TextBox Text="{Binding Telefone}" />
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                        <StackPanel Spacing="4">
-                            <TextBlock Classes="rotulo-campo" Text="Email" />
-                            <TextBox Text="{Binding Email}" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Spacing="4">
-                            <TextBlock Classes="rotulo-campo" Text="NIF" />
-                            <TextBox Text="{Binding Nif}" />
-                        </StackPanel>
-                    </Grid>
-
-                    <StackPanel IsVisible="{Binding EhFornecedor}" Spacing="4">
-                        <TextBlock Classes="rotulo-campo" Text="Produtos fornecidos" />
-                        <TextBox Text="{Binding ProdutosFornecidos}" />
-                    </StackPanel>
-
-                    <StackPanel IsVisible="{Binding EhFuncionario}" Spacing="12">
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                            <StackPanel Spacing="4">
-                                <TextBlock Classes="rotulo-campo" Text="BI" />
-                                <TextBox Text="{Binding Bi}" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Spacing="4">
-                                <TextBlock Classes="rotulo-campo" Text="Cargo / Perfil" />
-                                <TextBox Text="{Binding Cargo}" />
-                            </StackPanel>
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                            <StackPanel Spacing="4">
-                                <TextBlock Classes="rotulo-campo" Text="Departamento" />
-                                <TextBox Text="{Binding Departamento}" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Spacing="4">
-                                <TextBlock Classes="rotulo-campo" Text="Turno / Caixa" />
-                                <TextBox Text="{Binding Turno}" />
-                            </StackPanel>
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                            <StackPanel Spacing="4">
-                                <TextBlock Classes="rotulo-campo" Text="Data de admissão" />
-                                <DatePicker SelectedDate="{Binding DataAdmissao}" HorizontalAlignment="Stretch" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Spacing="4">
-                                <TextBlock Classes="rotulo-campo" Text="Salário base (Kz)" />
-                                <TextBox Text="{Binding SalarioBase}" />
-                            </StackPanel>
-                        </Grid>
-                        <CheckBox Content="Funcionário ativo" IsChecked="{Binding Ativo}" />
-                    </StackPanel>
-
-                    <TextBlock Classes="erro" Text="{Binding MensagemErro}"
-                               IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
-
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Button Content="Guardar" Classes="primario" Command="{Binding GuardarCommand}"
-                                IsEnabled="{Binding !AGuardar}" />
-                        <Button Content="Cancelar" Classes="secundario" Command="{Binding FecharFormularioCommand}" />
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-
+                    </ScrollViewer>
+                </Border>
+            </Grid>
         </StackPanel>
     </ScrollViewer>
+</Grid>
 </UserControl>
