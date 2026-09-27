@@ -14,6 +14,15 @@ public partial class StockViewModel : ViewModelBase
     [ObservableProperty]
     private int _abaSelecionada;
 
+    public bool MostrarProdutos => AbaSelecionada == 0;
+    public bool MostrarAbastecer => AbaSelecionada == 1;
+
+    partial void OnAbaSelecionadaChanged(int value)
+    {
+        OnPropertyChanged(nameof(MostrarProdutos));
+        OnPropertyChanged(nameof(MostrarAbastecer));
+    }
+
     public StockViewModel(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao)
     {
         Produtos = new ProdutosViewModel(scopeFactory, sessao);
