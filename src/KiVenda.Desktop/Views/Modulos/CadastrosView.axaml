@@ -387,7 +387,7 @@
                             </Border>
                             <Border Classes="kpi" Margin="7,0,0,0">
                                 <StackPanel>
-                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="CalendarLtr" IconVariant="Regular" IconSize="Size20" /></Border>
+                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="Calendar" IconVariant="Regular" IconSize="Size20" /></Border>
                                     <TextBlock Classes="kpi-rotulo" Text="Admissões este ano" />
                                     <TextBlock Classes="kpi-valor" Text="{Binding AdmissoesEsteAnoTexto}" />
                                     <TextBlock Classes="kpi-sub" Text="Desde 1 de janeiro" />
