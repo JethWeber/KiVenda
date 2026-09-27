@@ -11,6 +11,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <conv:ValorKzConverter x:Key="ValorKzConverter" />
+            <conv:IniciaisConverter x:Key="IniciaisConverter" />
             <conv:EstadoStockParaTextoConverter x:Key="EstadoStockParaTextoConverter" />
             <conv:EstadoStockParaCorFundoConverter x:Key="EstadoStockParaCorFundoConverter" />
             <conv:EstadoStockParaCorTextoConverter x:Key="EstadoStockParaCorTextoConverter" />

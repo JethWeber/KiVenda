@@ -32,6 +32,8 @@ namespace KiVenda.Persistence.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Nome = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
                     Telefone = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 150, nullable: true),
+                    Nif = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
                     CriadoEm = table.Column<DateTime>(type: "TEXT", nullable: false),
                     AtualizadoEm = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
@@ -71,6 +73,8 @@ namespace KiVenda.Persistence.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Nome = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
                     Telefone = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 150, nullable: true),
+                    Nif = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
                     ProdutosFornecidos = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     CriadoEm = table.Column<DateTime>(type: "TEXT", nullable: false),
                     AtualizadoEm = table.Column<DateTime>(type: "TEXT", nullable: true)
@@ -78,6 +82,30 @@ namespace KiVenda.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Fornecedores", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Funcionarios",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Codigo = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    Nome = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    Telefone = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 150, nullable: true),
+                    BI = table.Column<string>(type: "TEXT", maxLength: 40, nullable: true),
+                    Cargo = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Departamento = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Turno = table.Column<string>(type: "TEXT", maxLength: 80, nullable: true),
+                    DataAdmissao = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    SalarioBase = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
+                    Ativo = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CriadoEm = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    AtualizadoEm = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Funcionarios", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -541,6 +569,11 @@ namespace KiVenda.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Clientes_Nif",
+                table: "Clientes",
+                column: "Nif");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Clientes_Nome",
                 table: "Clientes",
                 column: "Nome");
@@ -561,8 +594,29 @@ namespace KiVenda.Persistence.Migrations
                 column: "UtilizadorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Fornecedores_Nif",
+                table: "Fornecedores",
+                column: "Nif");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Fornecedores_Nome",
                 table: "Fornecedores",
+                column: "Nome");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Funcionarios_BI",
+                table: "Funcionarios",
+                column: "BI");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Funcionarios_Codigo",
+                table: "Funcionarios",
+                column: "Codigo",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Funcionarios_Nome",
+                table: "Funcionarios",
                 column: "Nome");
 
             migrationBuilder.CreateIndex(
@@ -762,6 +816,9 @@ namespace KiVenda.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Empresa");
+
+            migrationBuilder.DropTable(
+                name: "Funcionarios");
 
             migrationBuilder.DropTable(
                 name: "ItensCompra");

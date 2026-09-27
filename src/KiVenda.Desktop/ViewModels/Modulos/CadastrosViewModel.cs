@@ -1,14 +1,20 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KiVenda.Application.Cadastros;
 using KiVenda.Core.Exceptions;
+using KiVenda.Desktop.ViewModels.Common;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace KiVenda.Desktop.ViewModels.Modulos;
 
 public partial class CadastrosViewModel : ViewModelBase
 {
+    // Cultura apenas para separador de milhar nas contagens (não usar a
+    // cultura do sistema — mesma regra já seguida pelo FormatadorKz).
+    private static readonly CultureInfo CulturaNumerica = new("pt-PT");
+
     private readonly IServiceScopeFactory _scopeFactory;
     public ObservableCollection<ClienteCadastroDto> Clientes { get; } = new();
     public ObservableCollection<FornecedorCadastroDto> Fornecedores { get; } = new();
@@ -38,6 +44,31 @@ public partial class CadastrosViewModel : ViewModelBase
     [ObservableProperty] private bool _ehFornecedor;
     [ObservableProperty] private bool _ehFuncionario;
 
+    // Indicam qual aba está ativa, para a UI (ex.: qual botão "+ Novo"
+    // mostrar no cabeçalho). Derivadas de AbaSelecionada, nunca
+    // definidas diretamente.
+    [ObservableProperty] private bool _ehAbaClientes = true;
+    [ObservableProperty] private bool _ehAbaFornecedores;
+    [ObservableProperty] private bool _ehAbaFuncionarios;
+
+    // ===================== Indicadores =====================
+    // Apenas os calculáveis a partir dos dados já carregados nas
+    // coleções acima — nenhuma métrica fictícia ou de compliance.
+
+    [ObservableProperty] private string _totalClientesTexto = "—";
+    [ObservableProperty] private string _clientesComNifTexto = "—";
+    [ObservableProperty] private string _clientesComContactoTexto = "—";
+
+    [ObservableProperty] private string _totalFornecedoresTexto = "—";
+    [ObservableProperty] private string _fornecedoresComNifTexto = "—";
+    [ObservableProperty] private string _fornecedoresComProdutosTexto = "—";
+
+    [ObservableProperty] private string _totalFuncionariosTexto = "—";
+    [ObservableProperty] private string _funcionariosAtivosTexto = "—";
+    [ObservableProperty] private string _funcionariosInativosTexto = "—";
+    [ObservableProperty] private string _massaSalarialTexto = "—";
+    [ObservableProperty] private string _admissoesEsteAnoTexto = "—";
+
     public CadastrosViewModel(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
@@ -49,10 +80,82 @@ public partial class CadastrosViewModel : ViewModelBase
     partial void OnPesquisaFuncionariosChanged(string value) => _ = CarregarFuncionariosAsync();
     partial void OnEntidadeEmEdicaoChanged(string? value) { EhFornecedor = value == "Fornecedor"; EhFuncionario = value == "Funcionario"; }
 
+    partial void OnAbaSelecionadaChanged(int value)
+    {
+        EhAbaClientes = value == 0;
+        EhAbaFornecedores = value == 1;
+        EhAbaFuncionarios = value == 2;
+    }
+
+    [RelayCommand] private void SelecionarAbaClientes() => AbaSelecionada = 0;
+    [RelayCommand] private void SelecionarAbaFornecedores() => AbaSelecionada = 1;
+    [RelayCommand] private void SelecionarAbaFuncionarios() => AbaSelecionada = 2;
+
     private async Task InicializarAsync(){await CarregarClientesAsync();await CarregarFornecedoresAsync();await CarregarFuncionariosAsync();}
-    private async Task CarregarClientesAsync(){try{await using var s=_scopeFactory.CreateAsyncScope();var x=await s.ServiceProvider.GetRequiredService<ListarClientesCadastroUseCase>().ExecutarAsync(PesquisaClientes);Clientes.Clear();foreach(var i in x)Clientes.Add(i);}catch(Exception ex){MensagemErro=ex.Message;}}
-    private async Task CarregarFornecedoresAsync(){try{await using var s=_scopeFactory.CreateAsyncScope();var x=await s.ServiceProvider.GetRequiredService<ListarFornecedoresCadastroUseCase>().ExecutarAsync(PesquisaFornecedores);Fornecedores.Clear();foreach(var i in x)Fornecedores.Add(i);}catch(Exception ex){MensagemErro=ex.Message;}}
-    private async Task CarregarFuncionariosAsync(){try{await using var s=_scopeFactory.CreateAsyncScope();var x=await s.ServiceProvider.GetRequiredService<ListarFuncionariosUseCase>().ExecutarAsync(PesquisaFuncionarios);Funcionarios.Clear();foreach(var i in x)Funcionarios.Add(i);}catch(Exception ex){MensagemErro=ex.Message;}}
+
+    private async Task CarregarClientesAsync()
+    {
+        try
+        {
+            await using var s=_scopeFactory.CreateAsyncScope();
+            var x=await s.ServiceProvider.GetRequiredService<ListarClientesCadastroUseCase>().ExecutarAsync(PesquisaClientes);
+            Clientes.Clear();
+            foreach(var i in x)Clientes.Add(i);
+            AtualizarIndicadoresClientes();
+        }
+        catch(Exception ex){MensagemErro=ex.Message;}
+    }
+
+    private async Task CarregarFornecedoresAsync()
+    {
+        try
+        {
+            await using var s=_scopeFactory.CreateAsyncScope();
+            var x=await s.ServiceProvider.GetRequiredService<ListarFornecedoresCadastroUseCase>().ExecutarAsync(PesquisaFornecedores);
+            Fornecedores.Clear();
+            foreach(var i in x)Fornecedores.Add(i);
+            AtualizarIndicadoresFornecedores();
+        }
+        catch(Exception ex){MensagemErro=ex.Message;}
+    }
+
+    private async Task CarregarFuncionariosAsync()
+    {
+        try
+        {
+            await using var s=_scopeFactory.CreateAsyncScope();
+            var x=await s.ServiceProvider.GetRequiredService<ListarFuncionariosUseCase>().ExecutarAsync(PesquisaFuncionarios);
+            Funcionarios.Clear();
+            foreach(var i in x)Funcionarios.Add(i);
+            AtualizarIndicadoresFuncionarios();
+        }
+        catch(Exception ex){MensagemErro=ex.Message;}
+    }
+
+    private void AtualizarIndicadoresClientes()
+    {
+        TotalClientesTexto = FormatarInteiro(Clientes.Count);
+        ClientesComNifTexto = FormatarInteiro(Clientes.Count(c => !string.IsNullOrWhiteSpace(c.Nif)));
+        ClientesComContactoTexto = FormatarInteiro(Clientes.Count(c => !string.IsNullOrWhiteSpace(c.Telefone) || !string.IsNullOrWhiteSpace(c.Email)));
+    }
+
+    private void AtualizarIndicadoresFornecedores()
+    {
+        TotalFornecedoresTexto = FormatarInteiro(Fornecedores.Count);
+        FornecedoresComNifTexto = FormatarInteiro(Fornecedores.Count(f => !string.IsNullOrWhiteSpace(f.Nif)));
+        FornecedoresComProdutosTexto = FormatarInteiro(Fornecedores.Count(f => !string.IsNullOrWhiteSpace(f.ProdutosFornecidos)));
+    }
+
+    private void AtualizarIndicadoresFuncionarios()
+    {
+        TotalFuncionariosTexto = FormatarInteiro(Funcionarios.Count);
+        FuncionariosAtivosTexto = FormatarInteiro(Funcionarios.Count(f => f.Ativo));
+        FuncionariosInativosTexto = FormatarInteiro(Funcionarios.Count(f => !f.Ativo));
+        MassaSalarialTexto = FormatadorKz.Formatar(Funcionarios.Where(f => f.Ativo).Sum(f => f.SalarioBase));
+        AdmissoesEsteAnoTexto = FormatarInteiro(Funcionarios.Count(f => f.DataAdmissao.Year == DateTime.Today.Year));
+    }
+
+    private static string FormatarInteiro(int valor) => valor.ToString("N0", CulturaNumerica);
 
     [RelayCommand] private void NovoCliente()=>Abrir("Cliente");
     [RelayCommand] private void NovoFornecedor()=>Abrir("Fornecedor");
