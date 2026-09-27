@@ -542,6 +542,8 @@
 
             </TabControl>
 
+        </StackPanel>
+    </ScrollViewer>
             <!-- Popup de cadastro -->
             <Grid IsVisible="{Binding FormularioAberto}" Background="#66000000">
                 <Border Classes="cartao" Width="760" MaxHeight="720"
@@ -676,7 +678,5 @@
                     </ScrollViewer>
                 </Border>
             </Grid>
-        </StackPanel>
-    </ScrollViewer>
 </Grid>
 </UserControl>
