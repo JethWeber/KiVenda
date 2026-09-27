@@ -3,6 +3,7 @@
              xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
              xmlns:views="using:KiVenda.Desktop.Views.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.StockView"
+             x:Name="Root"
              x:DataType="vm:StockViewModel">
 
     <Grid RowDefinitions="Auto,*" RowSpacing="20">
@@ -25,30 +26,32 @@
                 <Grid ColumnDefinitions="Auto,Auto,*">
                     <Grid Grid.Column="0">
                         <Button Classes="primario" Content="Produto"
-                                Command="{Binding DataContext.SelecionarProdutosCommand, RelativeSource={RelativeSource AncestorType=views:StockView}}"
+                                Command="{Binding #Root.DataContext.SelecionarProdutosCommand}"
                                 Padding="18,9"
-                                IsVisible="{Binding DataContext.MostrarProdutos, RelativeSource={RelativeSource AncestorType=views:StockView}}" />
+                                IsVisible="{Binding #Root.DataContext.MostrarProdutos}" />
                         <Button Classes="secundario" Content="Produto"
-                                Command="{Binding DataContext.SelecionarProdutosCommand, RelativeSource={RelativeSource AncestorType=views:StockView}}"
+                                Command="{Binding #Root.DataContext.SelecionarProdutosCommand}"
                                 Padding="18,9"
-                                IsVisible="{Binding DataContext.MostrarAbastecer, RelativeSource={RelativeSource AncestorType=views:StockView}}" />
+                                IsVisible="{Binding #Root.DataContext.MostrarAbastecer}" />
                     </Grid>
                     <Grid Grid.Column="1" Margin="4,0,0,0">
                         <Button Classes="primario" Content="Abastecer"
-                                Command="{Binding DataContext.SelecionarAbastecerCommand, RelativeSource={RelativeSource AncestorType=views:StockView}}"
+                                Command="{Binding #Root.DataContext.SelecionarAbastecerCommand}"
                                 Padding="18,9"
-                                IsVisible="{Binding DataContext.MostrarAbastecer, RelativeSource={RelativeSource AncestorType=views:StockView}}" />
+                                IsVisible="{Binding #Root.DataContext.MostrarAbastecer}" />
                         <Button Classes="secundario" Content="Abastecer"
-                                Command="{Binding DataContext.SelecionarAbastecerCommand, RelativeSource={RelativeSource AncestorType=views:StockView}}"
+                                Command="{Binding #Root.DataContext.SelecionarAbastecerCommand}"
                                 Padding="18,9"
-                                IsVisible="{Binding DataContext.MostrarProdutos, RelativeSource={RelativeSource AncestorType=views:StockView}}" />
+                                IsVisible="{Binding #Root.DataContext.MostrarProdutos}" />
                     </Grid>
                 </Grid>
             </Border>
 
-                        <Grid Grid.Row="1">
-                <views:ProdutosView DataContext="{Binding Produtos}" IsVisible="{Binding DataContext.MostrarProdutos, RelativeSource={RelativeSource AncestorType=views:StockView}}" />
-                <views:ComprasView DataContext="{Binding Abastecer}" IsVisible="{Binding DataContext.MostrarAbastecer, RelativeSource={RelativeSource AncestorType=views:StockView}}" />
+            <Grid Grid.Row="1">
+                <views:ProdutosView DataContext="{Binding Produtos}"
+                                    IsVisible="{Binding #Root.DataContext.MostrarProdutos}" />
+                <views:ComprasView DataContext="{Binding Abastecer}"
+                                   IsVisible="{Binding #Root.DataContext.MostrarAbastecer}" />
             </Grid>
         </Grid>
     </Grid>
