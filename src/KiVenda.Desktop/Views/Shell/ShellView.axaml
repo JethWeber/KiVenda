@@ -52,12 +52,6 @@
                             <DataTemplate DataType="vmc:ItemMenuLateral"><StackPanel Orientation="Horizontal" Spacing="12"><TextBlock Text="{Binding Icone}" FontSize="16" Width="22" /><TextBlock Text="{Binding Nome}" FontSize="14" VerticalAlignment="Center" /></StackPanel></DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <ListBoxItem>
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="📦" FontSize="16" Width="22" />
-                            <TextBlock Text="Stock" FontSize="14" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </ListBoxItem>
                 </StackPanel>
                 <!-- submenu Stock -->
                 <!-- os itens do Stock são selecionados pelos comandos acima -->
