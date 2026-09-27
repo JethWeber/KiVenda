@@ -201,7 +201,7 @@
                 <Grid ColumnDefinitions="Auto,*">
                     <TextBlock Grid.Column="0" Text="🔍" FontSize="14" VerticalAlignment="Center" Margin="0,0,10,0" Opacity="0.6" />
                     <TextBox Grid.Column="1" Text="{Binding TextoBusca, Mode=TwoWay}"
-                             Watermark="Pesquisar por horário, descrição, tipo, operador ou valor..."
+                             Watermark="Pesquisar por descrição, tipo ou valor..."
                              Background="Transparent" BorderThickness="0" Padding="0,10" />
                 </Grid>
             </Border>
@@ -229,7 +229,7 @@
                         <TextBlock Grid.Column="0" Text="HORÁRIO" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" Margin="20,0,0,0" />
                         <TextBlock Grid.Column="1" Text="DESCRIÇÃO" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" />
                         <TextBlock Grid.Column="2" Text="TIPO" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="3" Text="OPERADOR" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="3" Text="UTILIZADOR" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" />
                         <TextBlock Grid.Column="4" Text="VALOR (KZ)" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,16,0" />
                         <TextBlock Grid.Column="5" Text="AÇÕES" Classes="subtitulo" FontWeight="SemiBold" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,20,0" />
                     </Grid>
@@ -239,13 +239,10 @@
                             <DataTemplate DataType="caixa:MovimentoCaixaDto">
                                 <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,14">
                                     <Grid ColumnDefinitions="80,2*,110,1*,1*,60">
-                                        <TextBlock Grid.Column="0" Text="{Binding HorarioTexto}" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="0" Text="{Binding Data, StringFormat='{}{0:HH\\:mm}'}" VerticalAlignment="Center" />
 
                                         <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Descricao}" FontWeight="Medium" />
-                                            <TextBlock Text="{Binding DescricaoSecundaria}"
-                                                       IsVisible="{Binding DescricaoSecundaria, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                                                       Foreground="{StaticResource TextoSecundarioBrush}" FontSize="12" />
                                         </StackPanel>
 
                                         <Border Grid.Column="2" Background="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaCorFundoConverter}}"
@@ -255,7 +252,7 @@
                                                        FontSize="11" FontWeight="Bold" />
                                         </Border>
 
-                                        <TextBlock Grid.Column="3" Text="{Binding Operador}" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="3" Text="{Binding UtilizadorId}" VerticalAlignment="Center" FontSize="11" />
 
                                         <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,16,0">
                                             <TextBlock Text="{Binding Tipo, Converter={StaticResource TipoMovimentoCaixaParaSinalConverter}}"
