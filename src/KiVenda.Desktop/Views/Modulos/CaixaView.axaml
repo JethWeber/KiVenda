@@ -293,5 +293,6 @@
             </Border>
 
         </StackPanel>
+    </StackPanel>
     </ScrollViewer>
 </UserControl>
