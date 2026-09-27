@@ -9,6 +9,7 @@
 
     <UserControl.DataTemplates>
         <DataTemplate DataType="vmm:DashboardViewModel"><views:DashboardView /></DataTemplate>
+        <DataTemplate DataType="vmm:StockViewModel"><views:StockView /></DataTemplate>
         <DataTemplate DataType="vmm:VendasViewModel"><views:VendasView /></DataTemplate>
         <DataTemplate DataType="vmm:CaixaViewModel"><views:CaixaView /></DataTemplate>
         <DataTemplate DataType="vmm:ProdutosViewModel"><views:ProdutosView /></DataTemplate>
@@ -51,12 +52,12 @@
                             <DataTemplate DataType="vmc:ItemMenuLateral"><StackPanel Orientation="Horizontal" Spacing="12"><TextBlock Text="{Binding Icone}" FontSize="16" Width="22" /><TextBlock Text="{Binding Nome}" FontSize="14" VerticalAlignment="Center" /></StackPanel></DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Expander Header="📦  Stock" IsExpanded="True" Margin="0,2">
-                        <StackPanel Margin="18,2,0,2" Spacing="2">
-                            <Button Content="Produtos" Command="{Binding SelecionarProdutosCommand}" Classes="secundario" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="14,9" />
-                            <Button Content="Abastecer" Command="{Binding SelecionarAbastecerCommand}" Classes="secundario" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="14,9" />
+                    <ListBoxItem>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="📦" FontSize="16" Width="22" />
+                            <TextBlock Text="Stock" FontSize="14" VerticalAlignment="Center" />
                         </StackPanel>
-                    </Expander>
+                    </ListBoxItem>
                 </StackPanel>
                 <!-- submenu Stock -->
                 <!-- os itens do Stock são selecionados pelos comandos acima -->
