@@ -44,6 +44,12 @@ public partial class CadastrosViewModel : ViewModelBase
     [ObservableProperty] private bool _ehFornecedor;
     [ObservableProperty] private bool _ehFuncionario;
 
+    // Etapas do cadastro de funcionário (formulário longo).
+    [ObservableProperty] private int _etapaFuncionario;
+    [ObservableProperty] private bool _funcionarioEtapa1 = true;
+    [ObservableProperty] private bool _funcionarioEtapa2;
+    [ObservableProperty] private bool _funcionarioEtapa3;
+
     // Indicam qual aba está ativa, para a UI (ex.: qual botão "+ Novo"
     // mostrar no cabeçalho). Derivadas de AbaSelecionada, nunca
     // definidas diretamente.
@@ -78,7 +84,22 @@ public partial class CadastrosViewModel : ViewModelBase
     partial void OnPesquisaClientesChanged(string value) => _ = CarregarClientesAsync();
     partial void OnPesquisaFornecedoresChanged(string value) => _ = CarregarFornecedoresAsync();
     partial void OnPesquisaFuncionariosChanged(string value) => _ = CarregarFuncionariosAsync();
-    partial void OnEntidadeEmEdicaoChanged(string? value) { EhFornecedor = value == "Fornecedor"; EhFuncionario = value == "Funcionario"; }
+    partial void OnEntidadeEmEdicaoChanged(string? value)
+    {
+        EhFornecedor = value == "Fornecedor";
+        EhFuncionario = value == "Funcionario";
+        EtapaFuncionario = 0;
+        AtualizarEtapaFuncionario();
+    }
+
+    partial void OnEtapaFuncionarioChanged(int value) => AtualizarEtapaFuncionario();
+
+    private void AtualizarEtapaFuncionario()
+    {
+        FuncionarioEtapa1 = EtapaFuncionario == 0;
+        FuncionarioEtapa2 = EtapaFuncionario == 1;
+        FuncionarioEtapa3 = EtapaFuncionario == 2;
+    }
 
     partial void OnAbaSelecionadaChanged(int value)
     {
@@ -160,6 +181,20 @@ public partial class CadastrosViewModel : ViewModelBase
     [RelayCommand] private void NovoCliente()=>Abrir("Cliente");
     [RelayCommand] private void NovoFornecedor()=>Abrir("Fornecedor");
     [RelayCommand] private void NovoFuncionario()=>Abrir("Funcionario");
+
+    [RelayCommand]
+    private void AvancarEtapaFuncionario()
+    {
+        if (EtapaFuncionario < 2)
+            EtapaFuncionario++;
+    }
+
+    [RelayCommand]
+    private void VoltarEtapaFuncionario()
+    {
+        if (EtapaFuncionario > 0)
+            EtapaFuncionario--;
+    }
     private void Abrir(string tipo){EntidadeEmEdicao=tipo;IdEmEdicao=null;FormularioAberto=true;MensagemErro=null;Nome=Telefone=Email=Nif=ProdutosFornecidos=Bi=Cargo=Departamento=Turno="";DataAdmissao=new DateTimeOffset(DateTime.Today);SalarioBase=0;Ativo=true;}
     [RelayCommand] private void EditarCliente(ClienteCadastroDto x){Abrir("Cliente");IdEmEdicao=x.Id;Nome=x.Nome;Telefone=x.Telefone??"";Email=x.Email??"";Nif=x.Nif??"";}
     [RelayCommand] private void EditarFornecedor(FornecedorCadastroDto x){Abrir("Fornecedor");IdEmEdicao=x.Id;Nome=x.Nome;Telefone=x.Telefone??"";Email=x.Email??"";Nif=x.Nif??"";ProdutosFornecidos=x.ProdutosFornecidos??"";}
