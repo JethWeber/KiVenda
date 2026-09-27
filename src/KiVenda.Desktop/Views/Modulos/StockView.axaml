@@ -24,29 +24,21 @@
                     Padding="5">
                 <Grid ColumnDefinitions="Auto,Auto,*">
                     <Button Grid.Column="0" Classes="secundario"
-                            Background="{Binding AbaSelecionada, Converter={StaticResource AbaSelecionadaParaFundoConverter}, ConverterParameter=0}"
                             Content="Produto"
                             Command="{Binding SelecionarProdutosCommand}"
                             Padding="18,9"
                             Margin="0,0,4,0" />
                     <Button Grid.Column="1" Classes="secundario"
-                            Background="{Binding AbaSelecionada, Converter={StaticResource AbaSelecionadaParaFundoConverter}, ConverterParameter=1}"
                             Content="Abastecer"
                             Command="{Binding SelecionarAbastecerCommand}"
                             Padding="18,9" />
                 </Grid>
             </Border>
 
-            <ContentControl Grid.Row="1">
-                <ContentControl.Styles>
-                    <Style Selector="ContentControl">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ContentControl.Styles>
-                <views:ProdutosView DataContext="{Binding Produtos}" IsVisible="{Binding AbaSelecionada, Converter={StaticResource AbaSelecionadaParaVisibilidadeConverter}, ConverterParameter=0}" />
-                <views:ComprasView DataContext="{Binding Abastecer}" IsVisible="{Binding AbaSelecionada, Converter={StaticResource AbaSelecionadaParaVisibilidadeConverter}, ConverterParameter=1}" />
-            </ContentControl>
+                        <Grid Grid.Row="1">
+                <views:ProdutosView DataContext="{Binding Produtos}" IsVisible="{Binding AbaSelecionada, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=0}" />
+                <views:ComprasView DataContext="{Binding Abastecer}" IsVisible="{Binding AbaSelecionada, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=1}" />
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
