@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:views="using:KiVenda.Desktop.Views.Modulos"
+             x:Class="KiVenda.Desktop.Views.Modulos.StockView"
+             x:DataType="vm:StockViewModel">
+
+    <Grid RowDefinitions="Auto,*" RowSpacing="20">
+        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+            <StackPanel Spacing="3">
+                <TextBlock Classes="titulo-pagina" Text="Stock" />
+                <TextBlock Classes="subtitulo" Text="Produtos, entradas e controlo do inventário." />
+            </StackPanel>
+            <Border Grid.Column="1" Classes="badge badge-neutro" Padding="12,7">
+                <TextBlock Text="GESTÃO DE INVENTÁRIO" FontSize="10" FontWeight="Bold" />
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="1" RowDefinitions="Auto,*" RowSpacing="16">
+            <Border Background="{DynamicResource SuperficieBrush}"
+                    BorderBrush="{DynamicResource BordaBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="5">
+                <Grid ColumnDefinitions="Auto,Auto,*">
+                    <Button Grid.Column="0" Classes="secundario"
+                            Background="{Binding AbaSelecionada, Converter={StaticResource AbaSelecionadaParaFundoConverter}, ConverterParameter=0}"
+                            Content="Produto"
+                            Command="{Binding SelecionarProdutosCommand}"
+                            Padding="18,9"
+                            Margin="0,0,4,0" />
+                    <Button Grid.Column="1" Classes="secundario"
+                            Background="{Binding AbaSelecionada, Converter={StaticResource AbaSelecionadaParaFundoConverter}, ConverterParameter=1}"
+                            Content="Abastecer"
+                            Command="{Binding SelecionarAbastecerCommand}"
+                            Padding="18,9" />
+                </Grid>
+            </Border>
+
+            <ContentControl Grid.Row="1">
+                <ContentControl.Styles>
+                    <Style Selector="ContentControl">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ContentControl.Styles>
+                <views:ProdutosView DataContext="{Binding Produtos}" IsVisible="{Binding AbaSelecionada, Converter={StaticResource AbaSelecionadaParaVisibilidadeConverter}, ConverterParameter=0}" />
+                <views:ComprasView DataContext="{Binding Abastecer}" IsVisible="{Binding AbaSelecionada, Converter={StaticResource AbaSelecionadaParaVisibilidadeConverter}, ConverterParameter=1}" />
+            </ContentControl>
+        </Grid>
+    </Grid>
+</UserControl>
