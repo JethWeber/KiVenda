@@ -251,6 +251,7 @@
                        HorizontalAlignment="Center" />
         </Border>
 
+        </Grid>
     </ScrollViewer>
     </Grid>
 
