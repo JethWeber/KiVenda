@@ -4,7 +4,7 @@
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoTemaView"
              x:DataType="vm:ConfiguracaoTemaViewModel">
 
-    <ScrollViewer>
+    
         <StackPanel Spacing="16" MaxWidth="980" Margin="0,8,0,24">
 
             <StackPanel Spacing="4">
@@ -47,5 +47,5 @@
             </Border>
 
         </StackPanel>
-    </ScrollViewer>
+    
 </UserControl>
