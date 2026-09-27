@@ -39,7 +39,9 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid RowDefinitions="Auto,Auto"
+    <Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid RowDefinitions="Auto,Auto"
           VerticalAlignment="Top">
         <Grid Grid.Row="0"
               RowDefinitions="Auto,Auto,Auto,Auto"
@@ -248,6 +250,9 @@
                        Foreground="{DynamicResource TextoSecundarioBrush}"
                        HorizontalAlignment="Center" />
         </Border>
+
+    </ScrollViewer>
+    </Grid>
 
         <!-- Popup/modal de alertas -->
         <Border Grid.RowSpan="2" ZIndex="100"
