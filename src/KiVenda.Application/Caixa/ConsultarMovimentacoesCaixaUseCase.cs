@@ -1,5 +1,6 @@
 using KiVenda.Application.Abstractions.Auth;
 using KiVenda.Application.Abstractions.Persistence;
+using KiVenda.Application.Common;
 using KiVenda.Core.Enums;
 using KiVenda.Core.Exceptions;
 using KiVenda.Core.Utilizadores;
