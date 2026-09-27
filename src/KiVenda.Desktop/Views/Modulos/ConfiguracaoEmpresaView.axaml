@@ -3,7 +3,7 @@
              xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoEmpresaView"
              x:DataType="vm:ConfiguracaoEmpresaViewModel">
-    <ScrollViewer>
+    
         <StackPanel Spacing="16" MaxWidth="980" Margin="0,8,0,24">
             <StackPanel Spacing="4">
                 <TextBlock Classes="titulo-pagina" Text="Empresa" />
@@ -50,5 +50,5 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-    </ScrollViewer>
+    
 </UserControl>
