@@ -96,8 +96,10 @@ public partial class DashboardViewModel : ViewModelBase
 
     public ObservableCollection<AlertaDashboard> Alertas { get; } = new();
 
+    public IReadOnlyList<AlertaDashboard> AlertasVisiveis => Alertas.Take(3).ToList();
     public bool TemAlertas => Alertas.Count > 0;
     public bool SemAlertas => Alertas.Count == 0;
+    public bool TemMaisAlertas => Alertas.Count > 3;
 
     public DashboardViewModel(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao)
     {
@@ -152,7 +154,7 @@ public partial class DashboardViewModel : ViewModelBase
                     alerta.Tipo,
                     alerta.Titulo,
                     alerta.Mensagem,
-                    true));
+                    false));
             }
 
             if (CaixaFechado)
@@ -162,8 +164,11 @@ public partial class DashboardViewModel : ViewModelBase
                     "caixa",
                     "Sessão de Caixa",
                     "Não existe uma sessão de caixa aberta neste momento.",
-                    true));
+                    false));
             }
+
+            OnPropertyChanged(nameof(AlertasVisiveis));
+            OnPropertyChanged(nameof(TemMaisAlertas));
         }
         catch (Exception ex)
         {
@@ -254,8 +259,10 @@ public partial class DashboardViewModel : ViewModelBase
         }
 
         Alertas.Remove(alerta);
+        OnPropertyChanged(nameof(AlertasVisiveis));
         OnPropertyChanged(nameof(TemAlertas));
-            OnPropertyChanged(nameof(SemAlertas));
+        OnPropertyChanged(nameof(SemAlertas));
+        OnPropertyChanged(nameof(TemMaisAlertas));
 
         if (alerta.Id is not Guid notificacaoId)
         {
@@ -281,4 +288,7 @@ public sealed record AlertaDashboard(
     string Tipo,
     string Titulo,
     string Mensagem,
-    bool PodeEliminar);
+    bool PodeEliminar)
+{
+    public bool EhStock => string.Equals(Tipo, "stock", StringComparison.OrdinalIgnoreCase);
+}
