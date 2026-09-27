@@ -3,7 +3,7 @@
              xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoLicencaView"
              x:DataType="vm:ConfiguracaoLicencaViewModel">
-    <ScrollViewer>
+    
         <StackPanel Spacing="18" MaxWidth="920">
             <StackPanel Spacing="4">
                 <TextBlock Classes="titulo-pagina" Text="Licença" />
@@ -88,5 +88,5 @@
                 </Grid>
             </Border>
         </StackPanel>
-    </ScrollViewer>
+    
 </UserControl>
