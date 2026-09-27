@@ -23,15 +23,26 @@
                     CornerRadius="12"
                     Padding="5">
                 <Grid ColumnDefinitions="Auto,Auto,*">
-                    <Button Grid.Column="0" Classes="secundario"
-                            Content="Produto"
-                            Command="{Binding SelecionarProdutosCommand}"
-                            Padding="18,9"
-                            Margin="0,0,4,0" />
-                    <Button Grid.Column="1" Classes="secundario"
-                            Content="Abastecer"
-                            Command="{Binding SelecionarAbastecerCommand}"
-                            Padding="18,9" />
+                    <Grid Grid.Column="0">
+                        <Button Classes="primario" Content="Produto"
+                                Command="{Binding SelecionarProdutosCommand}"
+                                Padding="18,9"
+                                IsVisible="{Binding MostrarProdutos}" />
+                        <Button Classes="secundario" Content="Produto"
+                                Command="{Binding SelecionarProdutosCommand}"
+                                Padding="18,9"
+                                IsVisible="{Binding MostrarAbastecer}" />
+                    </Grid>
+                    <Grid Grid.Column="1" Margin="4,0,0,0">
+                        <Button Classes="primario" Content="Abastecer"
+                                Command="{Binding SelecionarAbastecerCommand}"
+                                Padding="18,9"
+                                IsVisible="{Binding MostrarAbastecer}" />
+                        <Button Classes="secundario" Content="Abastecer"
+                                Command="{Binding SelecionarAbastecerCommand}"
+                                Padding="18,9"
+                                IsVisible="{Binding MostrarProdutos}" />
+                    </Grid>
                 </Grid>
             </Border>
 
