@@ -4,7 +4,9 @@
              xmlns:aud="using:KiVenda.Core.Auditoria"
              x:Class="KiVenda.Desktop.Views.Modulos.AuditoriaView"
              x:DataType="vm:AuditoriaViewModel">
-    <StackPanel Spacing="18">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="18">
+
         <StackPanel Spacing="4">
             <TextBlock Classes="titulo-pagina" Text="Auditoria" />
             <TextBlock Classes="subtitulo"
@@ -83,5 +85,7 @@
                 </ItemsControl>
             </StackPanel>
         </Border>
-    </StackPanel>
+    
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
