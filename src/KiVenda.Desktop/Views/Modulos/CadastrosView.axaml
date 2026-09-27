@@ -158,7 +158,7 @@
     </UserControl.Styles>
 
     <Grid>
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    
         <StackPanel Spacing="18">
 
             <!-- ===================== Cabeçalho ===================== -->
@@ -487,12 +487,12 @@
             </TabControl>
 
         </StackPanel>
-    </ScrollViewer>
+    
             <!-- Popup de cadastro -->
             <Grid IsVisible="{Binding FormularioAberto}" Background="#66000000">
                 <Border Classes="cartao" Width="760" MaxHeight="720"
                         HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    
                         <StackPanel Spacing="18">
                             <Grid ColumnDefinitions="*,Auto">
                                 <StackPanel Spacing="3">
@@ -619,7 +619,7 @@
                                         IsEnabled="{Binding !AGuardar}" />
                             </StackPanel>
                         </StackPanel>
-                    </ScrollViewer>
+                    
                 </Border>
             </Grid>
 </Grid>
