@@ -7,7 +7,9 @@
              x:Class="KiVenda.Desktop.Views.Modulos.ComprasView"
              x:DataType="vmm:ComprasViewModel">
 
-    <StackPanel Spacing="20">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="20">
+
 
         <Grid ColumnDefinitions="*,Auto">
             <StackPanel Grid.Column="0" Spacing="2">
@@ -91,6 +93,7 @@
             </StackPanel>
         </Border>
 
-    </StackPanel>
-
+    
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
