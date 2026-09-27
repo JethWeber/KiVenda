@@ -6,7 +6,9 @@
              x:Class="KiVenda.Desktop.Views.Modulos.RelatoriosView"
              x:DataType="vmm:RelatoriosViewModel">
 
-    <StackPanel Spacing="20">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="20">
+
         <Grid ColumnDefinitions="*,Auto">
             <StackPanel>
                 <TextBlock Classes="titulo-pagina" Text="Relatórios" />
@@ -122,5 +124,7 @@
             </ItemsControl>
             </StackPanel>
         </Border>
-    </StackPanel>
+    
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
