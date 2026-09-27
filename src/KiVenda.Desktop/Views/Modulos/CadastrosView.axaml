@@ -190,34 +190,6 @@
 
                     <StackPanel Spacing="18">
 
-                        <UniformGrid Columns="3" Rows="1">
-                            <Border Classes="kpi" Margin="0,0,7,0">
-                                <StackPanel>
-                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="People" IconVariant="Regular" IconSize="Size20" /></Border>
-                                    <TextBlock Classes="kpi-rotulo" Text="Total de Clientes" />
-                                    <TextBlock Classes="kpi-valor" Text="{Binding TotalClientesTexto}" />
-                                    <TextBlock Classes="kpi-sub" Text="Registados no sistema" />
-                                </StackPanel>
-                            </Border>
-                            <Border Classes="kpi" Margin="7,0">
-                                <StackPanel>
-                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="CheckmarkCircle" IconVariant="Regular" IconSize="Size20" /></Border>
-                                    <TextBlock Classes="kpi-rotulo" Text="Com NIF registado" />
-                                    <TextBlock Classes="kpi-valor" Text="{Binding ClientesComNifTexto}" />
-                                    <TextBlock Classes="kpi-sub"
-                                               Text="{Binding TotalClientesTexto, StringFormat='de {0} clientes'}" />
-                                </StackPanel>
-                            </Border>
-                            <Border Classes="kpi" Margin="7,0,0,0">
-                                <StackPanel>
-                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="Phone" IconVariant="Regular" IconSize="Size20" /></Border>
-                                    <TextBlock Classes="kpi-rotulo" Text="Com contacto" />
-                                    <TextBlock Classes="kpi-valor" Text="{Binding ClientesComContactoTexto}" />
-                                    <TextBlock Classes="kpi-sub" Text="Telefone ou email preenchido" />
-                                </StackPanel>
-                            </Border>
-                        </UniformGrid>
-
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="2">
                             <Border Classes="campo-busca">
                                 <Grid ColumnDefinitions="Auto,*">
@@ -298,34 +270,6 @@
                     </TabItem.Header>
 
                     <StackPanel Spacing="18">
-
-                        <UniformGrid Columns="3" Rows="1">
-                            <Border Classes="kpi" Margin="0,0,7,0">
-                                <StackPanel>
-                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="BuildingStore" IconVariant="Regular" IconSize="Size20" /></Border>
-                                    <TextBlock Classes="kpi-rotulo" Text="Total de Fornecedores" />
-                                    <TextBlock Classes="kpi-valor" Text="{Binding TotalFornecedoresTexto}" />
-                                    <TextBlock Classes="kpi-sub" Text="Registados no sistema" />
-                                </StackPanel>
-                            </Border>
-                            <Border Classes="kpi" Margin="7,0">
-                                <StackPanel>
-                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="Box" IconVariant="Regular" IconSize="Size20" /></Border>
-                                    <TextBlock Classes="kpi-rotulo" Text="Com NIF registado" />
-                                    <TextBlock Classes="kpi-valor" Text="{Binding FornecedoresComNifTexto}" />
-                                    <TextBlock Classes="kpi-sub"
-                                               Text="{Binding TotalFornecedoresTexto, StringFormat='de {0} fornecedores'}" />
-                                </StackPanel>
-                            </Border>
-                            <Border Classes="kpi" Margin="7,0,0,0">
-                                <StackPanel>
-                                    <Border Classes="kpi-icone"><ic:FluentIcon Classes="kpi-icone-symbol" Icon="Document" IconVariant="Regular" IconSize="Size20" /></Border>
-                                    <TextBlock Classes="kpi-rotulo" Text="Com produtos listados" />
-                                    <TextBlock Classes="kpi-valor" Text="{Binding FornecedoresComProdutosTexto}" />
-                                    <TextBlock Classes="kpi-sub" Text="Produtos fornecidos indicados" />
-                                </StackPanel>
-                            </Border>
-                        </UniformGrid>
 
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="2">
                             <Border Classes="campo-busca">
