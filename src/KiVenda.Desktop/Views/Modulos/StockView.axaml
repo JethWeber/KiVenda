@@ -36,8 +36,8 @@
             </Border>
 
                         <Grid Grid.Row="1">
-                <views:ProdutosView DataContext="{Binding Produtos}" IsVisible="{Binding AbaSelecionada, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=0}" />
-                <views:ComprasView DataContext="{Binding Abastecer}" IsVisible="{Binding AbaSelecionada, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=1}" />
+                <views:ProdutosView DataContext="{Binding Produtos}" IsVisible="{Binding MostrarProdutos}" />
+                <views:ComprasView DataContext="{Binding Abastecer}" IsVisible="{Binding MostrarAbastecer}" />
             </Grid>
         </Grid>
     </Grid>
