@@ -185,16 +185,13 @@
                 </Grid>
             </Border>
 
-            <ScrollViewer Grid.Row="1"
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled">
-                <ContentControl Content="{Binding ConteudoAtual}"
-                                Margin="24,24,24,32"
-                                HorizontalContentAlignment="Stretch"
-                                VerticalContentAlignment="Top"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Top" />
-            </ScrollViewer>
+            <ContentControl Grid.Row="1"
+                            Content="{Binding ConteudoAtual}"
+                            Margin="24,24,24,32"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch" />
         </Grid>
 
         <!-- Notification panel -->
