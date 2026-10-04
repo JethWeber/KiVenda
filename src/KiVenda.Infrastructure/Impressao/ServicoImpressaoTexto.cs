@@ -66,7 +66,7 @@ public sealed class ServicoImpressaoTexto : IServicoImpressao
 
         Separador();
 
-        sb.AppendLine($"FATURA {recibo.VendaId.ToString()[..8].ToUpperInvariant()}");
+        sb.AppendLine($"RECIBO DE VENDA {recibo.VendaId.ToString()[..8].ToUpperInvariant()}");
         sb.AppendLine($"Data:     {recibo.Data.ToLocalTime():dd/MM/yyyy HH:mm}");
         sb.AppendLine($"Operador: {recibo.OperadorNome}");
         sb.AppendLine("Cliente:  Consumidor Final");
