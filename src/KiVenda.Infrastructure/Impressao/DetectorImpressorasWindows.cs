@@ -1,3 +1,4 @@
+using System.IO.Ports;
 using System.Runtime.InteropServices;
 
 namespace KiVenda.Infrastructure.Impressao;
@@ -14,11 +15,22 @@ public sealed class DetectorImpressorasWindows : IDetectorImpressoras
         cancellationToken.ThrowIfCancellationRequested();
 
         if (!OperatingSystem.IsWindows())
-        {
             return Task.FromResult<IReadOnlyList<DispositivoImpressora>>(Array.Empty<DispositivoImpressora>());
-        }
 
         var dispositivos = new List<DispositivoImpressora>();
+        DetetarSpooler(dispositivos, cancellationToken);
+        DetetarPortasSeriais(dispositivos, cancellationToken);
+
+        return Task.FromResult<IReadOnlyList<DispositivoImpressora>>(
+            dispositivos
+                .OrderBy(d => d.Nome, StringComparer.OrdinalIgnoreCase)
+                .ToList());
+    }
+
+    private static void DetetarSpooler(
+        List<DispositivoImpressora> dispositivos,
+        CancellationToken cancellationToken)
+    {
         IntPtr buffer = IntPtr.Zero;
 
         try
@@ -37,9 +49,7 @@ public sealed class DetectorImpressorasWindows : IDetectorImpressoras
 
             var erro = Marshal.GetLastWin32Error();
             if (needed == 0 && erro != ErrorInsufficientBuffer)
-            {
-                return Task.FromResult<IReadOnlyList<DispositivoImpressora>>(dispositivos);
-            }
+                return;
 
             buffer = Marshal.AllocHGlobal((int)needed);
 
@@ -51,9 +61,7 @@ public sealed class DetectorImpressorasWindows : IDetectorImpressoras
                     needed,
                     ref needed,
                     ref count))
-            {
-                return Task.FromResult<IReadOnlyList<DispositivoImpressora>>(dispositivos);
-            }
+                return;
 
             var tamanho = Marshal.SizeOf<PrinterInfo2>();
 
@@ -61,67 +69,81 @@ public sealed class DetectorImpressorasWindows : IDetectorImpressoras
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var ptr = IntPtr.Add(buffer, i * tamanho);
-                var info = Marshal.PtrToStructure<PrinterInfo2>(ptr);
+                var info = Marshal.PtrToStructure<PrinterInfo2>(
+                    IntPtr.Add(buffer, i * tamanho));
 
                 var nome = LerTexto(info.PrinterName);
                 if (string.IsNullOrWhiteSpace(nome))
-                {
                     continue;
-                }
 
                 var porta = LerTexto(info.PortName);
-                var id = $"winspool:{nome}";
-
-                dispositivos.Add(
-                    new DispositivoImpressora(
-                        id,
-                        nome,
-                        "Windows",
-                        porta,
-                        EstadoDispositivoImpressora.Disponivel,
-                        string.IsNullOrWhiteSpace(porta) ? null : $"Porta: {porta}"));
+                dispositivos.Add(new DispositivoImpressora(
+                    $"winspool:{nome}",
+                    nome,
+                    "Windows",
+                    porta,
+                    EstadoDispositivoImpressora.Disponivel,
+                    TipoConexaoImpressora.WindowsSpooler,
+                    string.IsNullOrWhiteSpace(porta) ? null : $"Porta: {porta}"));
             }
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            dispositivos.Add(
-                new DispositivoImpressora(
-                    "windows:erro",
-                    "Deteção de impressoras do Windows",
-                    "Windows",
-                    string.Empty,
-                    EstadoDispositivoImpressora.Erro,
-                    ex.Message));
+            dispositivos.Add(new DispositivoImpressora(
+                "windows:erro",
+                "Deteção de impressoras do Windows",
+                "Windows",
+                string.Empty,
+                EstadoDispositivoImpressora.Erro,
+                TipoConexaoImpressora.WindowsSpooler,
+                ex.Message));
         }
         finally
         {
             if (buffer != IntPtr.Zero)
-            {
                 Marshal.FreeHGlobal(buffer);
+        }
+    }
+
+    private static void DetetarPortasSeriais(
+        List<DispositivoImpressora> dispositivos,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            foreach (var porta in SerialPort.GetPortNames().OrderBy(x => x))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                dispositivos.Add(new DispositivoImpressora(
+                    porta,
+                    $"Porta serial {porta}",
+                    "Windows",
+                    porta,
+                    EstadoDispositivoImpressora.Disponivel,
+                    TipoConexaoImpressora.Serial));
             }
         }
-
-        return Task.FromResult<IReadOnlyList<DispositivoImpressora>>(
-            dispositivos
-                .OrderBy(d => d.Nome, StringComparer.OrdinalIgnoreCase)
-                .ToList());
+        catch (Exception ex)
+        {
+            dispositivos.Add(new DispositivoImpressora(
+                "windows:serial-erro",
+                "Portas seriais",
+                "Windows",
+                string.Empty,
+                EstadoDispositivoImpressora.Erro,
+                TipoConexaoImpressora.Serial,
+                ex.Message));
+        }
     }
 
     private static string LerTexto(IntPtr ponteiro) =>
-        ponteiro == IntPtr.Zero
-            ? string.Empty
-            : Marshal.PtrToStringUni(ponteiro) ?? string.Empty;
+        ponteiro == IntPtr.Zero ? string.Empty : Marshal.PtrToStringUni(ponteiro) ?? string.Empty;
 
     [DllImport("winspool.drv", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern bool EnumPrinters(
-        uint flags,
-        string? name,
-        uint level,
-        IntPtr printerEnum,
-        uint cbBuf,
-        ref uint pcbNeeded,
-        ref uint pcReturned);
+        uint flags, string? name, uint level, IntPtr printerEnum,
+        uint cbBuf, ref uint pcbNeeded, ref uint pcReturned);
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     private struct PrinterInfo2
