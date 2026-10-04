@@ -7,6 +7,7 @@ using KiVenda.Application.Produtos;
 using KiVenda.Application.Vendas;
 using KiVenda.Desktop.ViewModels.Modulos;
 using KiVenda.Desktop.Views.Dialogos;
+using KiVenda.Infrastructure.Configuracao;
 using KiVenda.Infrastructure.Impressao;
 using KiVenda.Infrastructure.Scanner;
 using Microsoft.Extensions.DependencyInjection;
