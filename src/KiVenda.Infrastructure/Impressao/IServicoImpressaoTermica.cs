@@ -3,6 +3,6 @@ namespace KiVenda.Infrastructure.Impressao;
 public interface IServicoImpressaoTermica
 {
     Task TestarImpressoraAsync(
-        string dispositivo,
+        ConfiguracaoImpressoraTermica configuracao,
         CancellationToken cancellationToken = default);
 }
