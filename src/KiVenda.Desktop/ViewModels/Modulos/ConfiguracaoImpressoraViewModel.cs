@@ -220,7 +220,7 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
 
         OnPropertyChanged(nameof(EhRede));
         OnPropertyChanged(nameof(EhSerial));
-        OnPropertyChanged(nameof(EhConexaoLocal));
+        OnPropertyChanged(nameof(EhConexaoLocal));\n        OnPropertyChanged(nameof(MostrarEntradaManual));
 
         _ = ProcurarAsync();
     }
