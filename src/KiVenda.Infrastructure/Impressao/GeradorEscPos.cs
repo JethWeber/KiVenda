@@ -1,132 +1,184 @@
+using System.Globalization;
 using System.Text;
+using ESCPOS_NET.Emitters;
+using ESCPOS_NET.Utilities;
 using KiVenda.Application.Vendas;
 
 namespace KiVenda.Infrastructure.Impressao;
 
 /// <summary>
-/// Gera bytes ESC/POS sem conhecer USB, serial, rede ou qualquer outro
-/// transporte. Isto permite testar a impressão sem hardware real.
+/// Monta o recibo em comandos ESC/POS através do ESCPOS.NET.
+/// Não conhece o transporte nem o sistema operativo.
 /// </summary>
 public sealed class GeradorEscPos
 {
-    private static readonly byte[] Inicializar = [0x1B, 0x40];
     private readonly ConfiguracaoImpressoraTermica _configuracao;
 
     public GeradorEscPos(ConfiguracaoImpressoraTermica configuracao)
     {
         _configuracao = configuracao;
+        _configuracao.Validar();
     }
 
     public byte[] GerarRecibo(ReciboVendaDto recibo, DadosLoja dadosLoja)
     {
-        var encoding = _configuracao.ObterEncoding();
-        using var stream = new MemoryStream();
-
-        Escrever(stream, Inicializar);
-        DefinirAlinhamento(stream, 1);
-        DefinirNegrito(stream, true);
-        EscreverTexto(stream, dadosLoja.Nome, encoding);
-        DefinirNegrito(stream, false);
+        var e = CriarEmitter();
+        var cultura = ObterCultura();
+        var linhas = new List<byte[]>
+        {
+            e.Initialize(),
+            e.CenterAlign(),
+            e.SetStyles(PrintStyle.Bold | PrintStyle.DoubleHeight),
+            e.PrintLine(Limitar(dadosLoja.Nome)),
+            e.SetStyles(PrintStyle.None)
+        };
 
         if (!string.IsNullOrWhiteSpace(dadosLoja.Nif))
-            EscreverTexto(stream, $"NIF: {dadosLoja.Nif}", encoding);
+            linhas.Add(e.PrintLine(Limitar($"NIF: {dadosLoja.Nif}")));
 
-        DefinirAlinhamento(stream, 0);
-        EscreverLinha(stream, new string('-', _configuracao.Colunas), encoding);
-        EscreverLinha(stream, $"FATURA {recibo.VendaId.ToString()[..8].ToUpperInvariant()}", encoding);
-        EscreverLinha(stream, $"Data: {recibo.Data.ToLocalTime():dd/MM/yyyy HH:mm}", encoding);
-        EscreverLinha(stream, $"Operador: {recibo.OperadorNome}", encoding);
-        EscreverLinha(stream, "Cliente: Consumidor Final", encoding);
-        EscreverLinha(stream, new string('-', _configuracao.Colunas), encoding);
+        linhas.Add(e.SetStyles(PrintStyle.None));
+        linhas.Add(e.LeftAlign());
+        linhas.Add(e.PrintLine(Separador('-')));
+        linhas.Add(e.SetStyles(PrintStyle.Bold));
+        linhas.Add(e.PrintLine($"FATURA {recibo.VendaId.ToString()[..8].ToUpperInvariant()}"));
+        linhas.Add(e.SetStyles(PrintStyle.None));
+        linhas.Add(e.PrintLine($"Data: {recibo.Data.ToLocalTime():dd/MM/yyyy HH:mm}"));
+        linhas.Add(e.PrintLine($"Operador: {Limitar(recibo.OperadorNome)}"));
+        linhas.Add(e.PrintLine("Cliente: Consumidor Final"));
+        linhas.Add(e.PrintLine(Separador('-')));
 
         foreach (var item in recibo.Itens)
         {
-            EscreverLinha(stream, item.ProdutoNome, encoding);
-            var quantidade = item.QuantidadeNaApresentacao.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
-            var total = item.ValorTotal.ToString("N2", ObterCultura());
-            EscreverLinha(stream, $"  {quantidade} {item.ApresentacaoNome}  {total} Kz", encoding);
+            foreach (var linha in QuebrarTexto(item.ProdutoNome))
+                linhas.Add(e.PrintLine(linha));
+
+            var quantidade = item.QuantidadeNaApresentacao.ToString("0.##", cultura);
+            var total = $"{item.ValorTotal.ToString("N2", cultura)} Kz";
+            linhas.Add(e.PrintLine(ColunasDuplas(
+                $"{quantidade} {item.ApresentacaoNome}",
+                total)));
         }
 
-        EscreverLinha(stream, new string('-', _configuracao.Colunas), encoding);
-        EscreverLinha(stream, $"Subtotal: {recibo.Subtotal.ToString("N2", ObterCultura())} Kz", encoding);
+        linhas.Add(e.PrintLine(Separador('-')));
+        linhas.Add(e.PrintLine(ColunasDuplas("Subtotal:", $"{recibo.Subtotal.ToString("N2", cultura)} Kz")));
+        linhas.Add(e.SetStyles(PrintStyle.Bold));
+        linhas.Add(e.PrintLine(ColunasDuplas("TOTAL A PAGAR:", $"{recibo.Total.ToString("N2", cultura)} Kz")));
+        linhas.Add(e.SetStyles(PrintStyle.None));
+        linhas.Add(e.PrintLine($"Pagamento: {recibo.MetodoPagamento}"));
+        linhas.Add(e.PrintLine(Separador('=')));
 
-        DefinirNegrito(stream, true);
-        EscreverLinha(stream, $"TOTAL A PAGAR: {recibo.Total.ToString("N2", ObterCultura())} Kz", encoding);
-        DefinirNegrito(stream, false);
+        linhas.Add(e.CenterAlign());
+        foreach (var texto in new[] { dadosLoja.Endereco, 
+                                      string.Join(" - ", new[] { dadosLoja.Municipio, dadosLoja.Provincia }.Where(x => !string.IsNullOrWhiteSpace(x))),
+                                      string.IsNullOrWhiteSpace(dadosLoja.Contacto) ? null : $"Tel: {dadosLoja.Contacto}",
+                                      dadosLoja.Website,
+                                      "Obrigado pela preferência!",
+                                      "Volte Sempre!",
+                                      "PROCESSADO POR COMPUTADOR",
+                                      "KiVenda Desktop" })
+        {
+            if (!string.IsNullOrWhiteSpace(texto))
+                foreach (var linha in QuebrarTexto(texto))
+                    linhas.Add(e.PrintLine(linha));
+        }
 
-        EscreverLinha(stream, $"Pagamento: {recibo.MetodoPagamento}", encoding);
-        EscreverLinha(stream, new string('=', _configuracao.Colunas), encoding);
-
-        DefinirAlinhamento(stream, 1);
-        if (!string.IsNullOrWhiteSpace(dadosLoja.Endereco))
-            EscreverTexto(stream, dadosLoja.Endereco, encoding);
-
-        var localizacao = string.Join(" - ", new[] { dadosLoja.Municipio, dadosLoja.Provincia }
-            .Where(x => !string.IsNullOrWhiteSpace(x)));
-
-        if (!string.IsNullOrWhiteSpace(localizacao))
-            EscreverTexto(stream, localizacao, encoding);
-
-        if (!string.IsNullOrWhiteSpace(dadosLoja.Contacto))
-            EscreverTexto(stream, $"Tel: {dadosLoja.Contacto}", encoding);
-
-        if (!string.IsNullOrWhiteSpace(dadosLoja.Website))
-            EscreverTexto(stream, dadosLoja.Website, encoding);
-
-        EscreverTexto(stream, "Obrigado pela preferência!", encoding);
-        EscreverTexto(stream, "Volte Sempre!", encoding);
-        EscreverTexto(stream, string.Empty, encoding);
-        EscreverTexto(stream, "PROCESSADO POR COMPUTADOR", encoding);
-        EscreverTexto(stream, "KiVenda Desktop", encoding);
-
-        Escrever(stream, [0x1B, 0x64, (byte)Math.Clamp(_configuracao.LinhasAlimentacaoFinal, 0, 255)]);
+        linhas.Add(e.FeedLines(Math.Clamp(_configuracao.LinhasAlimentacaoFinal, 0, 20)));
 
         if (_configuracao.CortarPapel)
-            Escrever(stream, [0x1D, 0x56, 0x00]);
+            linhas.Add(e.FullCut());
 
-        return stream.ToArray();
+        return ByteSplicer.Combine(linhas.ToArray());
     }
 
     public byte[] GerarTeste(string texto)
     {
-        var encoding = _configuracao.ObterEncoding();
-        using var stream = new MemoryStream();
-
-        Escrever(stream, Inicializar);
-        DefinirAlinhamento(stream, 1);
-        DefinirNegrito(stream, true);
-        EscreverTexto(stream, "KiVenda ESC/POS", encoding);
-        DefinirNegrito(stream, false);
-        EscreverTexto(stream, texto, encoding);
-        Escrever(stream, [0x1B, 0x64, 0x03]);
+        var e = CriarEmitter();
+        var linhas = new List<byte[]>
+        {
+            e.Initialize(),
+            e.CenterAlign(),
+            e.SetStyles(PrintStyle.Bold | PrintStyle.DoubleHeight),
+            e.PrintLine("KiVenda"),
+            e.SetStyles(PrintStyle.None),
+            e.PrintLine("Teste de impressão ESC/POS"),
+            e.PrintLine(texto),
+            e.PrintLine(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")),
+            e.FeedLines(3)
+        };
 
         if (_configuracao.CortarPapel)
-            Escrever(stream, [0x1D, 0x56, 0x00]);
+            linhas.Add(e.FullCut());
 
-        return stream.ToArray();
+        return ByteSplicer.Combine(linhas.ToArray());
     }
 
-    private static void DefinirAlinhamento(Stream stream, byte alinhamento) =>
-        Escrever(stream, [0x1B, 0x61, alinhamento]);
+    private EPSON CriarEmitter() => new() { Encoding = _configuracao.ObterEncoding() };
 
-    private static void DefinirNegrito(Stream stream, bool ativo) =>
-        Escrever(stream, [0x1B, 0x45, ativo ? (byte)1 : (byte)0]);
+    private string Separador(char caractere) =>
+        new(caractere, Math.Max(1, _configuracao.Colunas));
 
-    private static void EscreverTexto(Stream stream, string texto, Encoding encoding) =>
-        EscreverLinha(stream, texto, encoding);
-
-    private static void EscreverLinha(Stream stream, string texto, Encoding encoding)
+    private string ColunasDuplas(string esquerda, string direita)
     {
-        Escrever(stream, encoding.GetBytes(texto));
-        Escrever(stream, [0x0A]);
+        var largura = Math.Max(24, _configuracao.Colunas);
+        var maxEsquerda = Math.Max(1, largura - direita.Length - 1);
+        if (esquerda.Length > maxEsquerda)
+            esquerda = esquerda[..maxEsquerda];
+
+        return esquerda.PadRight(largura - direita.Length) + direita;
     }
 
-    private static void Escrever(Stream stream, byte[] bytes) =>
-        stream.Write(bytes, 0, bytes.Length);
+    private string Limitar(string texto) =>
+        string.IsNullOrWhiteSpace(texto)
+            ? string.Empty
+            : QuebrarTexto(texto).FirstOrDefault() ?? string.Empty;
 
-    private static System.Globalization.CultureInfo ObterCultura()
+    private IEnumerable<string> QuebrarTexto(string texto)
     {
-        var cultura = (System.Globalization.CultureInfo)System.Globalization.CultureInfo.InvariantCulture.Clone();
+        var largura = Math.Max(1, _configuracao.Colunas);
+        if (string.IsNullOrWhiteSpace(texto))
+            yield break;
+
+        foreach (var paragrafo in texto.Replace("\r", string.Empty).Split('\n'))
+        {
+            var palavras = paragrafo.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var linha = new StringBuilder();
+
+            foreach (var palavra in palavras)
+            {
+                if (palavra.Length > largura)
+                {
+                    if (linha.Length > 0)
+                    {
+                        yield return linha.ToString();
+                        linha.Clear();
+                    }
+
+                    for (var i = 0; i < palavra.Length; i += largura)
+                        yield return palavra.Substring(i, Math.Min(largura, palavra.Length - i));
+
+                    continue;
+                }
+
+                if (linha.Length > 0 && linha.Length + palavra.Length + 1 > largura)
+                {
+                    yield return linha.ToString();
+                    linha.Clear();
+                }
+
+                if (linha.Length > 0)
+                    linha.Append(' ');
+
+                linha.Append(palavra);
+            }
+
+            if (linha.Length > 0)
+                yield return linha.ToString();
+        }
+    }
+
+    private static CultureInfo ObterCultura()
+    {
+        var cultura = (CultureInfo)CultureInfo.InvariantCulture.Clone();
         cultura.NumberFormat.NumberDecimalSeparator = ",";
         cultura.NumberFormat.NumberGroupSeparator = ".";
         return cultura;
