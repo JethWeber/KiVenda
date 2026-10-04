@@ -1,3 +1,4 @@
+using System.IO.Ports;
 using ESCPOS_NET;
 
 namespace KiVenda.Infrastructure.Impressao;
@@ -19,13 +20,11 @@ public sealed class TransporteImpressoraLinux : ITransporteImpressora
         switch (configuracao.TipoConexao)
         {
             case TipoConexaoImpressora.DispositivoLocal:
-                using (var printer = new FilePrinter(configuracao.Dispositivo))
-                    printer.Write(dados.ToArray());
+                await EnviarFicheiroDispositivoAsync(configuracao.Dispositivo, dados, cancellationToken);
                 break;
 
             case TipoConexaoImpressora.Serial:
-                using (var printer = new SerialPrinter(configuracao.Dispositivo, configuracao.BaudRate))
-                    printer.Write(dados.ToArray());
+                await EnviarSerialAsync(configuracao.Dispositivo, configuracao.BaudRate, dados, cancellationToken);
                 break;
 
             case TipoConexaoImpressora.Rede:
@@ -42,7 +41,57 @@ public sealed class TransporteImpressoraLinux : ITransporteImpressora
 
             default:
                 throw new PlatformNotSupportedException(
-                    $"A conexão '{configuracao.TipoConexao}' não é suportada neste ambiente Linux.");
+                    $"A conexão '{configuracao.TipoConexao}' não é suportada no Linux.");
         }
+    }
+
+    private static async Task EnviarFicheiroDispositivoAsync(
+        string dispositivo,
+        ReadOnlyMemory<byte> dados,
+        CancellationToken cancellationToken)
+    {
+        if (!File.Exists(dispositivo))
+            throw new FileNotFoundException($"O dispositivo '{dispositivo}' não está disponível.", dispositivo);
+
+        try
+        {
+            await using var stream = new FileStream(
+                dispositivo,
+                FileMode.Open,
+                FileAccess.Write,
+                FileShare.ReadWrite,
+                4096,
+                FileOptions.Asynchronous);
+
+            await stream.WriteAsync(dados, cancellationToken);
+            await stream.FlushAsync(cancellationToken);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            throw new UnauthorizedAccessException(
+                $"Sem permissão para escrever na impressora '{dispositivo}'. " +
+                "No Linux, confirme as permissões do dispositivo e o acesso do utilizador ao grupo adequado.",
+                ex);
+        }
+    }
+
+    private static Task EnviarSerialAsync(
+        string porta,
+        int baudRate,
+        ReadOnlyMemory<byte> dados,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        using var serial = new SerialPort(porta, baudRate)
+        {
+            WriteTimeout = 5000
+        };
+
+        serial.Open();
+        var bytes = dados.ToArray();
+        serial.Write(bytes, 0, bytes.Length);
+
+        return Task.CompletedTask;
     }
 }
