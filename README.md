@@ -25,13 +25,13 @@ documentação. O plano detalhado de cada fase está em
 | Base de dados | SQLite (local, sem servidor) |
 | ORM | Entity Framework Core |
 | DI | Microsoft.Extensions.DependencyInjection |
-| Logging | Serilog (consola + ficheiro) |
+| Logging | Serilog (consola + ficheiro) |\n| Impressão térmica | ESCPOS_NET (ESC/POS) + transportes nativos Windows/Linux |
 | Testes | xUnit + FluentAssertions |
 | Gestão de pacotes | Versão explícita por `PackageReference` em cada `.csproj` (Central Package Management foi tentado e revertido — [ver nota](#correção-pós-fase-3--central-package-management-revertido)) |
 
 ---
 
-## Estrutura do repositório
+## Impressão térmica\n\nA impressão ESC/POS multiplataforma está implementada em `KiVenda.Infrastructure/Impressao`, com deteção adaptativa ao sistema operativo, spooler RAW no Windows, dispositivo/serial/rede e configuração persistente. O fluxo técnico está documentado em [`docs/IMPRESSAO_ESC_POS.md`](docs/IMPRESSAO_ESC_POS.md).\n\n## Estrutura do repositório
 
 ```
 KiVenda/                              ← raiz do repositório
