@@ -84,7 +84,7 @@ public partial class VendasView : UserControl
                 empresa.Logo,
                 empresa.LogoMimeType);
 
-        var preview = ServicoImpressaoTexto.GerarPreview(recibo, dadosLoja);
+        var armazenamento = scope.ServiceProvider.GetRequiredService<IArmazenamentoConfiguracaoLocal>();\n        var configuracao = await armazenamento.ObterAsync<ConfiguracaoImpressoraTermica>(\n            ConfiguracaoImpressoraTermica.Chave);\n\n        if (configuracao is null || !configuracao.NormalizarParaAmbiente().Ativo)\n        {\n            if (DataContext is VendasViewModel vmSemImpressao)\n                vmSemImpressao.MensagemErro = "A impressão térmica não está ativa. A venda foi concluída sem impressão.";\n\n            return false;\n        }\n\n        var preview = ServicoImpressaoTexto.GerarPreview(recibo, dadosLoja);
         var dialogo = new ConfirmarImpressaoWindow(preview);
         var imprimir = await dialogo.ShowDialog<bool>(owner);
 
