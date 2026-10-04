@@ -15,9 +15,46 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
 
     public ObservableCollection<DispositivoImpressora> Dispositivos { get; } = [];
 
+    public IReadOnlyList<OpcaoConexaoImpressora> TiposConexao { get; } =
+        OperatingSystem.IsWindows()
+            ? new[]
+            {
+                new OpcaoConexaoImpressora(
+                    TipoConexaoImpressora.WindowsSpooler,
+                    "Impressora instalada",
+                    "Usa o spooler do Windows; ideal para USB, rede ou impressoras instaladas pelo sistema."),
+                new OpcaoConexaoImpressora(
+                    TipoConexaoImpressora.Rede,
+                    "Rede (TCP/IP)",
+                    "Liga diretamente ao IP/hostname da impressora, normalmente na porta 9100."),
+                new OpcaoConexaoImpressora(
+                    TipoConexaoImpressora.Serial,
+                    "Serial / USB-Serial",
+                    "Usa uma porta COM disponibilizada pela impressora ou adaptador.")
+            }
+            : new[]
+            {
+                new OpcaoConexaoImpressora(
+                    TipoConexaoImpressora.DispositivoLocal,
+                    "USB / dispositivo Linux",
+                    "Usa diretamente /dev/usb/lp* ou outro dispositivo de impressão."),
+                new OpcaoConexaoImpressora(
+                    TipoConexaoImpressora.Rede,
+                    "Rede (TCP/IP)",
+                    "Liga diretamente ao IP/hostname da impressora, normalmente na porta 9100."),
+                new OpcaoConexaoImpressora(
+                    TipoConexaoImpressora.Serial,
+                    "Serial / USB-Serial",
+                    "Usa /dev/ttyUSB*, /dev/ttyACM* ou /dev/serial/by-id/*.")
+            };
+
+    [ObservableProperty] private TipoConexaoImpressora _tipoConexao;
     [ObservableProperty] private bool _ativo;
     [ObservableProperty] private string _dispositivo = string.Empty;
     [ObservableProperty] private DispositivoImpressora? _dispositivoSelecionado;
+    [ObservableProperty] private string _enderecoRede = string.Empty;
+    [ObservableProperty] private int _portaRede;
+    [ObservableProperty] private int _baudRate;
     [ObservableProperty] private int _colunas;
     [ObservableProperty] private int _linhasAlimentacaoFinal;
     [ObservableProperty] private bool _cortarPapel;
@@ -27,26 +64,31 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
     [ObservableProperty] private bool _aDetetar;
     [ObservableProperty] private bool _aTestar;
     [ObservableProperty] private string _mensagem = string.Empty;
-    [ObservableProperty] private string _estadoDeteccao = "A procurar impressoras...";
+    [ObservableProperty] private string _estadoDeteccao = "A procurar dispositivos...";
+
+    public bool EhRede => TipoConexao == TipoConexaoImpressora.Rede;
+    public bool EhSerial => TipoConexao == TipoConexaoImpressora.Serial;
+    public bool EhConexaoLocal =>
+        TipoConexao is TipoConexaoImpressora.WindowsSpooler or TipoConexaoImpressora.DispositivoLocal or TipoConexaoImpressora.Serial;
 
     public ConfiguracaoImpressoraViewModel()
     {
         _armazenamento = App.Services.GetRequiredService<IArmazenamentoConfiguracaoLocal>();
         _detector = App.Services.GetRequiredService<IDetectorImpressoras>();
         _servicoImpressao = App.Services.GetRequiredService<IServicoImpressaoTermica>();
-
         _ = InicializarAsync();
     }
 
     private async Task InicializarAsync()
     {
         ACarregar = true;
+
         try
         {
             var configuracao = await _armazenamento.ObterAsync<ConfiguracaoImpressoraTermica>(
                 ConfiguracaoImpressoraTermica.Chave);
 
-            Aplicar(configuracao ?? ConfiguracaoImpressoraTermica.Padrao);
+            Aplicar((configuracao ?? ConfiguracaoImpressoraTermica.Padrao).NormalizarParaAmbiente());
             await ProcurarAsync();
         }
         catch (Exception ex)
@@ -63,59 +105,37 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
     [RelayCommand]
     private async Task ProcurarAsync()
     {
-        if (ADetetar)
-        {
+        if (ADetetar || TipoConexao == TipoConexaoImpressora.Rede)
             return;
-        }
 
         ADetetar = true;
         Mensagem = string.Empty;
-        EstadoDeteccao = "A procurar impressoras...";
+        EstadoDeteccao = "A procurar dispositivos...";
 
         try
         {
             var encontrados = await _detector.DetetarAsync();
 
             Dispositivos.Clear();
-            foreach (var dispositivo in encontrados)
-            {
+            foreach (var dispositivo in encontrados.Where(d => d.TipoConexao == TipoConexao))
                 Dispositivos.Add(dispositivo);
-            }
 
-            var correspondenciaGuardada = Dispositivos.FirstOrDefault(d =>
+            var correspondencia = Dispositivos.FirstOrDefault(d =>
                 string.Equals(d.Id, Dispositivo, StringComparison.OrdinalIgnoreCase));
 
-            var disponiveisDetetados = Dispositivos
-                .Where(d => d.Disponivel)
-                .ToList();
+            var disponiveis = Dispositivos.Where(d => d.Disponivel).ToList();
 
-            DispositivoSelecionado = correspondenciaGuardada
-                ?? (disponiveisDetetados.Count == 1 ? disponiveisDetetados[0] : null);
+            DispositivoSelecionado = correspondencia ??
+                (disponiveis.Count == 1 ? disponiveis[0] : null);
 
-            if (Dispositivos.Count == 0)
-            {
-                EstadoDeteccao = "Nenhuma impressora foi detetada.";
-            }
-            else
-            {
-                var disponiveis = Dispositivos.Count(d => d.Disponivel);
-                EstadoDeteccao = disponiveis == 1
-                    ? "1 impressora disponível."
-                    : $"{disponiveis} impressoras disponíveis.";
-
-                var semPermissao = Dispositivos.Count(
-                    d => d.Estado == EstadoDispositivoImpressora.SemPermissao);
-
-                if (semPermissao > 0)
-                {
-                    EstadoDeteccao += $" {semPermissao} dispositivo(s) sem permissão de escrita.";
-                }
-            }
+            EstadoDeteccao = Dispositivos.Count == 0
+                ? "Nenhum dispositivo compatível foi detetado."
+                : $"{disponiveis.Count} dispositivo(s) disponível(is).";
         }
         catch (Exception ex)
         {
             EstadoDeteccao = "Falha na deteção.";
-            Mensagem = $"Não foi possível procurar impressoras: {ex.Message}";
+            Mensagem = $"Não foi possível procurar dispositivos: {ex.Message}";
         }
         finally
         {
@@ -127,29 +147,23 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
     private async Task TestarAsync()
     {
         if (ATestar)
-        {
             return;
-        }
-
-        var dispositivo = Dispositivo.Trim();
-
-        if (string.IsNullOrWhiteSpace(dispositivo))
-        {
-            Mensagem = "Selecione uma impressora para testar.";
-            return;
-        }
-
-        ATestar = true;
-        Mensagem = "A enviar teste ESC/POS...";
 
         try
         {
-            await _servicoImpressao.TestarImpressoraAsync(dispositivo);
+            var configuracao = CriarConfiguracao();
+            configuracao.Validar();
+
+            ATestar = true;
+            Mensagem = "A enviar teste ESC/POS...";
+
+            await _servicoImpressao.TestarImpressoraAsync(configuracao);
+
             Mensagem = "Teste enviado com sucesso. Verifique a impressora.";
         }
         catch (UnauthorizedAccessException)
         {
-            Mensagem = "A impressora foi encontrada, mas o KiVenda não tem permissão para escrever nela.";
+            Mensagem = "A impressora existe, mas o KiVenda não tem permissão para escrever nela.";
         }
         catch (Exception ex)
         {
@@ -169,16 +183,8 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
 
         try
         {
-            var dispositivo = Dispositivo.Trim();
-
-            var configuracao = new ConfiguracaoImpressoraTermica(
-                dispositivo,
-                Colunas > 0 ? Colunas : 48,
-                LinhasAlimentacaoFinal >= 0 ? LinhasAlimentacaoFinal : 4,
-                CortarPapel,
-                2,
-                string.IsNullOrWhiteSpace(EncodingNome) ? "cp850" : EncodingNome.Trim(),
-                Ativo);
+            var configuracao = CriarConfiguracao();
+            configuracao.Validar();
 
             await _armazenamento.GuardarAsync(
                 ConfiguracaoImpressoraTermica.Chave,
@@ -206,30 +212,58 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
         await ProcurarAsync();
     }
 
+    partial void OnTipoConexaoChanged(TipoConexaoImpressora value)
+    {
+        DispositivoSelecionado = null;
+        Dispositivo = string.Empty;
+        EnderecoRede = string.Empty;
+
+        OnPropertyChanged(nameof(EhRede));
+        OnPropertyChanged(nameof(EhSerial));
+        OnPropertyChanged(nameof(EhConexaoLocal));
+
+        _ = ProcurarAsync();
+    }
+
     partial void OnDispositivoSelecionadoChanged(DispositivoImpressora? value)
     {
         if (value is not null)
-        {
             Dispositivo = value.Id;
-        }
     }
 
     partial void OnDispositivoChanged(string value)
     {
         if (DispositivoSelecionado is not null &&
             !string.Equals(DispositivoSelecionado.Id, value, StringComparison.OrdinalIgnoreCase))
-        {
             DispositivoSelecionado = null;
-        }
     }
+
+    private ConfiguracaoImpressoraTermica CriarConfiguracao() =>
+        new(
+            TipoConexao,
+            Dispositivo.Trim(),
+            EnderecoRede.Trim(),
+            PortaRede > 0 ? PortaRede : 9100,
+            BaudRate > 0 ? BaudRate : 115200,
+            Colunas > 0 ? Colunas : 48,
+            LinhasAlimentacaoFinal >= 0 ? LinhasAlimentacaoFinal : 4,
+            CortarPapel,
+            string.IsNullOrWhiteSpace(EncodingNome) ? "cp850" : EncodingNome.Trim(),
+            Ativo);
 
     private void Aplicar(ConfiguracaoImpressoraTermica configuracao)
     {
-        Ativo = configuracao.Ativo;
-        Dispositivo = configuracao.Dispositivo;
-        Colunas = configuracao.Colunas;
-        LinhasAlimentacaoFinal = configuracao.LinhasAlimentacaoFinal;
-        CortarPapel = configuracao.CortarPapel;
-        EncodingNome = configuracao.EncodingNome;
+        var normalizada = configuracao.NormalizarParaAmbiente();
+
+        TipoConexao = normalizada.TipoConexao;
+        Ativo = normalizada.Ativo;
+        Dispositivo = normalizada.Dispositivo;
+        EnderecoRede = normalizada.EnderecoRede;
+        PortaRede = normalizada.PortaRede;
+        BaudRate = normalizada.BaudRate;
+        Colunas = normalizada.Colunas;
+        LinhasAlimentacaoFinal = normalizada.LinhasAlimentacaoFinal;
+        CortarPapel = normalizada.CortarPapel;
+        EncodingNome = normalizada.EncodingNome;
     }
 }
