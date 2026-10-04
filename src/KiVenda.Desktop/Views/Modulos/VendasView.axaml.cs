@@ -84,7 +84,19 @@ public partial class VendasView : UserControl
                 empresa.Logo,
                 empresa.LogoMimeType);
 
-        var armazenamento = scope.ServiceProvider.GetRequiredService<IArmazenamentoConfiguracaoLocal>();\n        var configuracao = await armazenamento.ObterAsync<ConfiguracaoImpressoraTermica>(\n            ConfiguracaoImpressoraTermica.Chave);\n\n        if (configuracao is null || !configuracao.NormalizarParaAmbiente().Ativo)\n        {\n            if (DataContext is VendasViewModel vmSemImpressao)\n                vmSemImpressao.MensagemErro = "A impressão térmica não está ativa. A venda foi concluída sem impressão.";\n\n            return false;\n        }\n\n        var preview = ServicoImpressaoTexto.GerarPreview(recibo, dadosLoja);
+        var armazenamento = scope.ServiceProvider.GetRequiredService<IArmazenamentoConfiguracaoLocal>();
+        var configuracao = await armazenamento.ObterAsync<ConfiguracaoImpressoraTermica>(
+            ConfiguracaoImpressoraTermica.Chave);
+
+        if (configuracao is null || !configuracao.NormalizarParaAmbiente().Ativo)
+        {
+            if (DataContext is VendasViewModel vmSemImpressao)
+                vmSemImpressao.MensagemErro = "A impressão térmica não está ativa. A venda foi concluída sem impressão.";
+
+            return false;
+        }
+
+        var preview = ServicoImpressaoTexto.GerarPreview(recibo, dadosLoja);
         var dialogo = new ConfirmarImpressaoWindow(preview);
         var imprimir = await dialogo.ShowDialog<bool>(owner);
 
@@ -93,10 +105,19 @@ public partial class VendasView : UserControl
             return false;
         }
 
-        var servicoImpressao = scope.ServiceProvider.GetRequiredService<IServicoImpressao>();
-        await servicoImpressao.ImprimirReciboVendaAsync(recibo, dadosLoja);
+        try
+        {
+            var servicoImpressao = scope.ServiceProvider.GetRequiredService<IServicoImpressao>();
+            await servicoImpressao.ImprimirReciboVendaAsync(recibo, dadosLoja);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            if (DataContext is VendasViewModel vmComErro)
+                vmComErro.MensagemErro = $"Venda concluída, mas a impressão falhou: {ex.Message}";
 
-        return true;
+            return false;
+        }
     }
 
     private async void OnCodigoLido(string codigo)
