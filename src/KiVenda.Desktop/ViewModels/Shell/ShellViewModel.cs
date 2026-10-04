@@ -6,7 +6,6 @@ using KiVenda.Application.Empresas;
 using KiVenda.Core.Enums;
 using KiVenda.Core.Utilizadores;
 using KiVenda.Desktop.Autenticacao;
-using KiVenda.Desktop.ViewModels.Modulos;
 using KiVenda.Desktop.Notificacoes;
 using KiVenda.Desktop.Tema;
 using KiVenda.Desktop.ViewModels.Common;
