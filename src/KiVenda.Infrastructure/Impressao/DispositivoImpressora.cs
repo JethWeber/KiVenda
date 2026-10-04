@@ -14,6 +14,7 @@ public sealed record DispositivoImpressora(
     string SistemaOperativo,
     string Porta,
     EstadoDispositivoImpressora Estado,
+    TipoConexaoImpressora TipoConexao,
     string? Detalhe = null)
 {
     public bool Disponivel => Estado == EstadoDispositivoImpressora.Disponivel;
