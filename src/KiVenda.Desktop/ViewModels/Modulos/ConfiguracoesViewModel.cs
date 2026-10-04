@@ -16,6 +16,14 @@ public partial class ConfiguracoesViewModel : ViewModelBase
     [ObservableProperty]
     private int _indiceAbaSelecionada;
 
+    [ObservableProperty]
+    private bool _somenteLicenca;
+
+    public bool AbasGeraisVisiveis => !SomenteLicenca;
+
+    partial void OnSomenteLicencaChanged(bool value) =>
+        OnPropertyChanged(nameof(AbasGeraisVisiveis));
+
     public ConfiguracoesViewModel(IServicoBackup servicoBackup, ServicoTema servicoTema)
     {
         Backup = new ConfiguracaoBackupViewModel(servicoBackup);
@@ -23,4 +31,10 @@ public partial class ConfiguracoesViewModel : ViewModelBase
     }
 
     public void SelecionarLicenca() => IndiceAbaSelecionada = 2;
+
+    public void BloquearNasLicenca()
+    {
+        SomenteLicenca = true;
+        IndiceAbaSelecionada = 2;
+    }
 }
