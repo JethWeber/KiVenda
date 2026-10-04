@@ -115,8 +115,7 @@ public partial class ShellViewModel : ViewModelBase
 
         if (politica.Bloqueado)
         {
-            if (Permissoes.Permite(_sessao.Perfil, Acao.ConfigurarSistema))
-                ItensMenuInferiores.Add(Item("Configurações", "⚙️", CriarConfiguracoes));
+            ItensMenuInferiores.Add(Item("Configurações", "⚙️", CriarConfiguracoes));
             return;
         }
 
@@ -147,7 +146,7 @@ public partial class ShellViewModel : ViewModelBase
     {
         var configuracoes = App.Services.GetRequiredService<ConfiguracoesViewModel>();
         if (PoliticaLicencaKiVenda.Avaliar().Bloqueado)
-            configuracoes.SelecionarLicenca();
+            configuracoes.BloquearNasLicenca();
 
         return configuracoes;
     }
