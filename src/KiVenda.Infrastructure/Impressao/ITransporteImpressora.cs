@@ -3,7 +3,7 @@ namespace KiVenda.Infrastructure.Impressao;
 public interface ITransporteImpressora
 {
     Task EnviarAsync(
-        string dispositivo,
+        ConfiguracaoImpressoraTermica configuracao,
         ReadOnlyMemory<byte> dados,
         CancellationToken cancellationToken = default);
 }
