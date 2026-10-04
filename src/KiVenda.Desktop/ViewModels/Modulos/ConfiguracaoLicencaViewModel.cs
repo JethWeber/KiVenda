@@ -25,7 +25,7 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
     public bool PodeImportar => Estado != LicenseStatus.Valid;
     public bool MostrarQr => PrecisaAtivacao && QrCode is not null;
     public bool MostrarDetalhes => LicencaValida || LicencaExpirada;
-    public bool PlataformaSuportada => OperatingSystem.IsWindows();
+    public bool PlataformaSuportada => OperatingSystem.IsWindows() || OperatingSystem.IsLinux();
 
     public ConfiguracaoLicencaViewModel()
     {
@@ -39,15 +39,6 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
 
         try
         {
-            if (!OperatingSystem.IsWindows())
-            {
-                Estado = LicenseStatus.NotFound;
-                Mensagem = "O licenciamento do KiVenda usa Machine ID via WMI e é validado no Windows. O SDK está integrado, mas a ativação real deve ser feita no Windows.";
-                QrCode = null;
-                NotificarEstado();
-                return;
-            }
-
             if (Licensing.GetLicensePath() is null)
             {
                 Licensing.Initialize(ProductType.KiVenda, ProductId);
@@ -80,12 +71,6 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
 
         try
         {
-            if (!OperatingSystem.IsWindows())
-            {
-                Mensagem = "A ativação real do KiVenda deve ser feita no Windows.";
-                return;
-            }
-
             if (Licensing.CurrentStatus == LicenseStatus.NotFound)
             {
                 Licensing.Initialize(ProductType.KiVenda, ProductId);
@@ -144,7 +129,7 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
     {
         QrCode = null;
 
-        if (!PrecisaAtivacao || !OperatingSystem.IsWindows())
+        if (!PrecisaAtivacao || !PlataformaSuportada)
         {
             OnPropertyChanged(nameof(MostrarQr));
             return;
