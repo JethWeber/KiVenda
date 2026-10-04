@@ -21,6 +21,14 @@ public sealed record ConfiguracaoImpressoraTermica(
             ? new(TipoConexaoImpressora.WindowsSpooler)
             : new(TipoConexaoImpressora.DispositivoLocal);
 
+    public ConfiguracaoImpressoraTermica NormalizarParaAmbiente()
+    {
+        if (OperatingSystem.IsLinux() && TipoConexao == TipoConexaoImpressora.WindowsSpooler)
+            return this with { TipoConexao = TipoConexaoImpressora.DispositivoLocal };
+
+        return this;
+    }
+
     public Encoding ObterEncoding()
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -40,14 +48,24 @@ public sealed record ConfiguracaoImpressoraTermica(
 
         switch (TipoConexao)
         {
+            case TipoConexaoImpressora.WindowsSpooler when !OperatingSystem.IsWindows():
+                throw new PlatformNotSupportedException("O spooler Windows só está disponível no Windows.");
+
             case TipoConexaoImpressora.WindowsSpooler when string.IsNullOrWhiteSpace(Dispositivo):
                 throw new InvalidOperationException("Selecione a impressora instalada no Windows.");
+
+            case TipoConexaoImpressora.DispositivoLocal when !OperatingSystem.IsLinux():
+                throw new PlatformNotSupportedException("Dispositivo local direto é suportado no Linux.");
+
             case TipoConexaoImpressora.DispositivoLocal when string.IsNullOrWhiteSpace(Dispositivo):
                 throw new InvalidOperationException("Selecione o dispositivo local da impressora.");
+
             case TipoConexaoImpressora.Serial when string.IsNullOrWhiteSpace(Dispositivo):
                 throw new InvalidOperationException("Indique a porta serial da impressora.");
+
             case TipoConexaoImpressora.Rede when string.IsNullOrWhiteSpace(EnderecoRede):
                 throw new InvalidOperationException("Indique o endereço IP ou nome da impressora de rede.");
+
             case TipoConexaoImpressora.Rede when PortaRede is < 1 or > 65535:
                 throw new InvalidOperationException("A porta TCP da impressora não é válida.");
         }
