@@ -40,7 +40,7 @@ public sealed class GeradorEscPos
         linhas.Add(e.LeftAlign());
         linhas.Add(e.PrintLine(Separador('-')));
         linhas.Add(e.SetStyles(PrintStyle.Bold));
-        linhas.Add(e.PrintLine($"FATURA {recibo.VendaId.ToString()[..8].ToUpperInvariant()}"));
+        linhas.Add(e.PrintLine($"RECIBO DE VENDA {recibo.VendaId.ToString()[..8].ToUpperInvariant()}"));
         linhas.Add(e.SetStyles(PrintStyle.None));
         linhas.Add(e.PrintLine($"Data: {recibo.Data.ToLocalTime():dd/MM/yyyy HH:mm}"));
         linhas.Add(e.PrintLine($"Operador: {Limitar(recibo.OperadorNome)}"));
