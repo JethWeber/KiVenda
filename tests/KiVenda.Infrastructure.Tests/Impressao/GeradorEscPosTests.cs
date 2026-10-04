@@ -13,6 +13,7 @@ public sealed class GeradorEscPosTests
     public void Deve_gerar_comandos_ESC_POS_para_recibo()
     {
         var configuracao = new ConfiguracaoImpressoraTermica(
+            TipoConexaoImpressora.DispositivoLocal,
             "/dev/usb/lp0",
             Colunas: 48,
             CortarPapel: true,
@@ -26,11 +27,13 @@ public sealed class GeradorEscPosTests
             [
                 new ItemReciboDto("Arroz", "Un", 2, 1000m)
             ],
-            1000m,
-            1000m,
+            2000m,
+            2000m,
             200m,
             MetodoPagamento.Dinheiro,
-            "Jeth");
+            "Jeth",
+            2500m,
+            500m);
 
         var dadosLoja = new DadosLoja(
             "Cantina Modelo",
@@ -38,10 +41,13 @@ public sealed class GeradorEscPosTests
             Endereco: "Luanda");
 
         var dados = gerador.GerarRecibo(recibo, dadosLoja);
+        var texto = Encoding.ASCII.GetString(dados);
 
         dados.Should().ContainInOrder((byte)0x1B, (byte)0x40);
-        Encoding.ASCII.GetString(dados).Should().Contain("Cantina Modelo");
-        Encoding.ASCII.GetString(dados).Should().Contain("TOTAL A PAGAR");
+        texto.Should().Contain("Cantina Modelo");
+        texto.Should().Contain("TOTAL A PAGAR");
+        texto.Should().Contain("Valor pago:");
+        texto.Should().Contain("Troco:");
         dados.Should().ContainInOrder((byte)0x1D, (byte)0x56, (byte)0x00);
     }
 
@@ -49,6 +55,7 @@ public sealed class GeradorEscPosTests
     public void Deve_gerar_sem_corte_quando_desativado()
     {
         var configuracao = new ConfiguracaoImpressoraTermica(
+            TipoConexaoImpressora.DispositivoLocal,
             "/dev/usb/lp0",
             CortarPapel: false,
             EncodingNome: "ascii");
@@ -57,5 +64,16 @@ public sealed class GeradorEscPosTests
         var dados = gerador.GerarTeste("TESTE");
 
         dados.Should().NotContainInOrder((byte)0x1D, (byte)0x56, (byte)0x00);
+    }
+
+    [Fact]
+    public void Deve_validar_configuracao_de_rede()
+    {
+        var configuracao = new ConfiguracaoImpressoraTermica(
+            TipoConexaoImpressora.Rede,
+            EnderecoRede: "192.168.1.200",
+            PortaRede: 9100);
+
+        configuracao.Validar();
     }
 }
