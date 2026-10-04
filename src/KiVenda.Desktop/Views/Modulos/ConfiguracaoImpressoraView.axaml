@@ -8,25 +8,44 @@
         <StackPanel Spacing="4">
             <TextBlock Classes="titulo-pagina" Text="Impressora térmica" />
             <TextBlock Classes="subtitulo"
-                       Text="O KiVenda identifica automaticamente as impressoras disponíveis no sistema operativo. A seleção é guardada localmente em JSON."
+                       Text="O KiVenda usa ESC/POS diretamente. O sistema operativo define as opções locais disponíveis; a ligação de rede pode ser usada em Windows ou Linux."
                        TextWrapping="Wrap" />
         </StackPanel>
 
         <Border Classes="cartao" Padding="18">
             <StackPanel Spacing="16">
-                <TextBlock Text="Impressora ESC/POS" FontSize="18" FontWeight="Bold" />
+                <TextBlock Text="Ligação da impressora" FontSize="18" FontWeight="Bold" />
 
                 <CheckBox Content="Ativar impressão térmica"
                           IsChecked="{Binding Ativo}"
                           IsEnabled="{Binding !ACarregar}" />
 
                 <StackPanel Spacing="6">
-                    <TextBlock Text="Impressora detetada" FontWeight="SemiBold" />
+                    <TextBlock Text="Tipo de ligação" FontWeight="SemiBold" />
+                    <ComboBox ItemsSource="{Binding TiposConexao}"
+                              SelectedItem="{Binding TipoConexaoSelecionada, Mode=TwoWay}"
+                              IsEnabled="{Binding !ACarregar}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="impressao:OpcaoConexaoImpressora">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding Descricao}"
+                                               Classes="subtitulo"
+                                               TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Spacing="6" IsVisible="{Binding EhConexaoLocal}">
+                    <TextBlock Text="Dispositivo" FontWeight="SemiBold" />
 
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                         <ComboBox Grid.Column="0"
                                   ItemsSource="{Binding Dispositivos}"
                                   SelectedItem="{Binding DispositivoSelecionado, Mode=TwoWay}"
+                                  IsVisible="{Binding !EhRede}"
                                   IsEnabled="{Binding !ACarregar}"
                                   MaxWidth="600">
                             <ComboBox.ItemTemplate>
@@ -41,9 +60,22 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding Dispositivo}"
+                                 Watermark="COM3 ou /dev/serial/by-id/..."
+                                 IsVisible="{Binding EhSerial}"
+                                 IsEnabled="{Binding !ACarregar}" />
+
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding Dispositivo}"
+                                 Watermark="/dev/usb/lp0"
+                                 IsVisible="{Binding !EhSerial}"
+                                 IsEnabled="{Binding !ACarregar}" />
+
                         <Button Grid.Column="1"
                                 Content="🔄 Procurar"
                                 Command="{Binding ProcurarCommand}"
+                                IsVisible="{Binding !EhRede}"
                                 IsEnabled="{Binding !ADetetar}" />
                     </Grid>
 
@@ -52,15 +84,71 @@
                                TextWrapping="Wrap" />
                 </StackPanel>
 
-                <Border Background="{StaticResource NeutroSuaveBrush}"
-                        CornerRadius="8"
-                        Padding="12">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Configuração automática" FontWeight="Bold" />
-                        <TextBlock Text="Linux usa os dispositivos de impressão/USB detetados pelo sistema. Windows usa as impressoras instaladas e respetivas portas. O KiVenda escolhe o transporte correto sem o utilizador precisar indicar /dev/usb/lp0 ou COM3."
-                                   TextWrapping="Wrap" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" IsVisible="{Binding EhRede}">
+                    <StackPanel Grid.Column="0" Spacing="6">
+                        <TextBlock Text="IP ou hostname" FontWeight="SemiBold" />
+                        <TextBox Text="{Binding EnderecoRede}"
+                                 Watermark="192.168.1.200"
+                                 IsEnabled="{Binding !ACarregar}" />
                     </StackPanel>
-                </Border>
+
+                    <StackPanel Grid.Column="1" Spacing="6" Width="120">
+                        <TextBlock Text="Porta TCP" FontWeight="SemiBold" />
+                        <NumericUpDown Value="{Binding PortaRede}"
+                                       Minimum="1"
+                                       Maximum="65535"
+                                       FormatString="0"
+                                       IsEnabled="{Binding !ACarregar}" />
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Spacing="6" IsVisible="{Binding EhSerial}">
+                    <TextBlock Text="Velocidade serial (baud)" FontWeight="SemiBold" />
+                    <NumericUpDown Value="{Binding BaudRate}"
+                                   Minimum="1200"
+                                   Maximum="921600"
+                                   Increment="1200"
+                                   FormatString="0"
+                                   IsEnabled="{Binding !ACarregar}" />
+                    <TextBlock Classes="subtitulo"
+                               Text="Se a impressora usar USB-Serial, o sistema deve expô-la como uma porta COM no Windows ou ttyUSB/ttyACM no Linux."
+                               TextWrapping="Wrap" />
+                </StackPanel>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                    <StackPanel Grid.Column="0" Spacing="6">
+                        <TextBlock Text="Largura" FontWeight="SemiBold" />
+                        <NumericUpDown Value="{Binding Colunas}"
+                                       Minimum="24"
+                                       Maximum="64"
+                                       FormatString="0"
+                                       IsEnabled="{Binding !ACarregar}" />
+                        <TextBlock Classes="subtitulo" Text="Normalmente 32, 40 ou 48 colunas." />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Spacing="6">
+                        <TextBlock Text="Alimentação final" FontWeight="SemiBold" />
+                        <NumericUpDown Value="{Binding LinhasAlimentacaoFinal}"
+                                       Minimum="0"
+                                       Maximum="20"
+                                       FormatString="0"
+                                       IsEnabled="{Binding !ACarregar}" />
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Codificação" FontWeight="SemiBold" />
+                    <TextBox Text="{Binding EncodingNome}"
+                             Watermark="cp850"
+                             IsEnabled="{Binding !ACarregar}" />
+                    <TextBlock Classes="subtitulo"
+                               Text="Padrão cp850. Se caracteres como ã, ç ou outros saírem incorretos, deve ser escolhida uma code page compatível com a impressora."
+                               TextWrapping="Wrap" />
+                </StackPanel>
+
+                <CheckBox Content="Cortar papel automaticamente"
+                          IsChecked="{Binding CortarPapel}"
+                          IsEnabled="{Binding !ACarregar}" />
 
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <Button Content="🖨 Testar impressão"
@@ -76,57 +164,6 @@
                             Command="{Binding RestaurarPadraoCommand}"
                             IsEnabled="{Binding !AGuardar}" />
                 </StackPanel>
-
-                <Expander Header="Configuração avançada"
-                          IsExpanded="False">
-                    <StackPanel Spacing="10" Margin="0,10,0,0">
-                        <TextBlock Classes="subtitulo"
-                                   Text="Use apenas quando a deteção automática não encontrar o dispositivo. O valor é o identificador técnico usado pelo sistema operativo."
-                                   TextWrapping="Wrap" />
-
-                        <TextBox Text="{Binding Dispositivo}"
-                                 Watermark="Identificador do dispositivo"
-                                 IsEnabled="{Binding !ACarregar}" />
-
-                        <TextBlock Text="Linux: /dev/serial/by-id/... ou /dev/usb/lp0. Windows: winspool:Nome da impressora."
-                                   Classes="subtitulo"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-                </Expander>
-
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
-                    <StackPanel Grid.Column="0" Spacing="6">
-                        <TextBlock Text="Colunas" FontWeight="SemiBold" />
-                        <NumericUpDown Value="{Binding Colunas}"
-                                       Minimum="1"
-                                       Maximum="100"
-                                       FormatString="0"
-                                       IsEnabled="{Binding !ACarregar}" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="1" Spacing="6">
-                        <TextBlock Text="Linhas no final" FontWeight="SemiBold" />
-                        <NumericUpDown Value="{Binding LinhasAlimentacaoFinal}"
-                                       Minimum="0"
-                                       Maximum="20"
-                                       FormatString="0"
-                                       IsEnabled="{Binding !ACarregar}" />
-                    </StackPanel>
-                </Grid>
-
-                <StackPanel Spacing="6">
-                    <TextBlock Text="Codificação" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding EncodingNome}"
-                             Watermark="cp850"
-                             IsEnabled="{Binding !ACarregar}" />
-                    <TextBlock Classes="subtitulo"
-                               Text="Padrão: cp850. Pode ser alterado quando o modelo da impressora exigir outra codificação."
-                               TextWrapping="Wrap" />
-                </StackPanel>
-
-                <CheckBox Content="Cortar papel automaticamente"
-                          IsChecked="{Binding CortarPapel}"
-                          IsEnabled="{Binding !ACarregar}" />
 
                 <TextBlock Text="{Binding Mensagem}"
                            TextWrapping="Wrap"
