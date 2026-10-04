@@ -3,11 +3,6 @@ using KiVenda.Infrastructure.Configuracao;
 
 namespace KiVenda.Infrastructure.Impressao;
 
-/// <summary>
-/// Serviço de impressão térmica ESC/POS multiplataforma.
-/// A camada de infraestrutura escolhe o detector e transporte adequados ao
-/// sistema operativo; a UI trabalha apenas com identificadores descobertos.
-/// </summary>
 public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao, IServicoImpressaoTermica
 {
     private readonly IArmazenamentoConfiguracaoLocal _armazenamento;
@@ -35,23 +30,14 @@ public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao, IServicoImpre
         var configuracao = await ObterConfiguracaoAsync(cancellationToken);
 
         if (!configuracao.Ativo)
-        {
             return;
-        }
 
-        if (string.IsNullOrWhiteSpace(configuracao.Dispositivo))
-        {
-            throw new InvalidOperationException(
-                "A impressão térmica está ativa, mas nenhuma impressora foi selecionada.");
-        }
+        configuracao.Validar();
 
         var gerador = new GeradorEscPos(configuracao);
         var dados = gerador.GerarRecibo(recibo, dadosLoja);
 
-        await _transporte.EnviarAsync(
-            configuracao.Dispositivo,
-            dados,
-            cancellationToken);
+        await _transporte.EnviarAsync(configuracao, dados, cancellationToken);
     }
 
     public Task ImprimirTextoAsync(
@@ -72,29 +58,17 @@ public sealed class ServicoImpressaoEscPosUsb : IServicoImpressao, IServicoImpre
     }
 
     public async Task TestarImpressoraAsync(
-        string dispositivo,
+        ConfiguracaoImpressoraTermica configuracao,
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(dispositivo))
-        {
-            throw new InvalidOperationException(
-                "Selecione uma impressora antes de executar o teste.");
-        }
+        cancellationToken.ThrowIfCancellationRequested();
 
-        var configuracao = await ObterConfiguracaoAsync(cancellationToken);
-        var configuracaoTeste = configuracao with
-        {
-            Dispositivo = dispositivo,
-            Ativo = true
-        };
+        configuracao.Validar();
 
-        var gerador = new GeradorEscPos(configuracaoTeste);
-        var dados = gerador.GerarTeste("TESTE KIVENDA");
+        var gerador = new GeradorEscPos(configuracao);
+        var dados = gerador.GerarTeste("Teste de comunicação");
 
-        await _transporte.EnviarAsync(
-            dispositivo,
-            dados,
-            cancellationToken);
+        await _transporte.EnviarAsync(configuracao, dados, cancellationToken);
     }
 
     private async Task<ConfiguracaoImpressoraTermica> ObterConfiguracaoAsync(
