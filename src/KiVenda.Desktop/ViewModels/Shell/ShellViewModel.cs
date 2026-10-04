@@ -1,10 +1,12 @@
 using System.Collections.ObjectModel;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KiVenda.Application.Empresas;
 using KiVenda.Core.Enums;
 using KiVenda.Core.Utilizadores;
 using KiVenda.Desktop.Autenticacao;
+using KiVenda.Desktop.ViewModels.Modulos;
 using KiVenda.Desktop.Notificacoes;
 using KiVenda.Desktop.Tema;
 using KiVenda.Desktop.ViewModels.Common;
@@ -21,6 +23,7 @@ public partial class ShellViewModel : ViewModelBase
     private readonly SessaoUtilizadorAtual _sessao;
     private readonly ServicoNotificacoes _servicoNotificacoes;
     private readonly ServicoTema _servicoTema;
+    private readonly DispatcherTimer _timerLicenca;
 
     public string NomeUtilizador => _sessao.Nome;
     public string IniciaisNome => ObterIniciais(_sessao.Nome);
@@ -34,8 +37,24 @@ public partial class ShellViewModel : ViewModelBase
     [ObservableProperty] private ViewModelBase? _conteudoAtual;
     [ObservableProperty] private bool _notificacoesAbertas;
 
+    [ObservableProperty] private bool _mostrarBannerLicenca;
+    [ObservableProperty] private string _bannerLicencaTitulo = string.Empty;
+    [ObservableProperty] private string _bannerLicencaMensagem = string.Empty;
+    [ObservableProperty] private bool _bannerLicencaBloqueado;
+
     partial void OnItemSelecionadoChanged(ItemMenuLateral? value)
     {
+        var politica = PoliticaLicencaKiVenda.Avaliar();
+        if (politica.Bloqueado && value?.Nome != "Configurações")
+        {
+            var configuracoes = ItensMenuInferiores.FirstOrDefault(x => x.Nome == "Configurações");
+            if (configuracoes is not null)
+            {
+                ItemSelecionado = configuracoes;
+                return;
+            }
+        }
+
         ConteudoAtual = value?.FabricaConteudo();
     }
 
@@ -56,9 +75,19 @@ public partial class ShellViewModel : ViewModelBase
 
         _servicoNotificacoes.Alteradas += OnNotificacoesAlteradas;
         Licensing.StatusChanged += OnLicensingStatusChanged;
+
+        _timerLicenca = new DispatcherTimer { Interval = TimeSpan.FromMinutes(1) };
+        _timerLicenca.Tick += (_, _) => AtualizarEstadoLicenca();
+        _timerLicenca.Start();
+
         _ = CarregarEmpresaAsync();
+        AtualizarEstadoLicenca();
         ConstruirMenu();
-        ItemSelecionado = ItensMenu.FirstOrDefault();
+
+        var politicaInicial = PoliticaLicencaKiVenda.Avaliar();
+        ItemSelecionado = politicaInicial.Bloqueado
+            ? ItensMenuInferiores.FirstOrDefault(x => x.Nome == "Configurações")
+            : ItensMenu.FirstOrDefault();
     }
 
     private async Task CarregarEmpresaAsync()
@@ -83,7 +112,9 @@ public partial class ShellViewModel : ViewModelBase
         ItensMenu.Clear();
         ItensMenuInferiores.Clear();
 
-        if (OperatingSystem.IsWindows() && Licensing.CurrentStatus != LicenseStatus.Valid)
+        var politica = PoliticaLicencaKiVenda.Avaliar();
+
+        if (politica.Bloqueado)
         {
             if (Permissoes.Permite(_sessao.Perfil, Acao.ConfigurarSistema))
                 ItensMenuInferiores.Add(Item("Configurações", "⚙️", CriarConfiguracoes));
@@ -113,13 +144,42 @@ public partial class ShellViewModel : ViewModelBase
             ItensMenuInferiores.Add(Item("Configurações", "⚙️", CriarConfiguracoes));
     }
 
-    private static ConfiguracoesViewModel CriarConfiguracoes() =>
-        App.Services.GetRequiredService<ConfiguracoesViewModel>();
+    private ConfiguracoesViewModel CriarConfiguracoes()
+    {
+        var configuracoes = App.Services.GetRequiredService<ConfiguracoesViewModel>();
+        if (PoliticaLicencaKiVenda.Avaliar().Bloqueado)
+            configuracoes.SelecionarLicenca();
+
+        return configuracoes;
+    }
+
+    private void AtualizarEstadoLicenca()
+    {
+        var politica = PoliticaLicencaKiVenda.Avaliar();
+
+        MostrarBannerLicenca = politica.MostrarBanner;
+        BannerLicencaTitulo = politica.Titulo;
+        BannerLicencaMensagem = politica.Mensagem;
+        BannerLicencaBloqueado = politica.Bloqueado;
+
+        if (politica.Bloqueado)
+        {
+            ConstruirMenu();
+            var configuracoes = ItensMenuInferiores.FirstOrDefault(x => x.Nome == "Configurações");
+            if (configuracoes is not null)
+                ItemSelecionado = configuracoes;
+        }
+    }
 
     private void OnLicensingStatusChanged(object? sender, EventArgs e)
     {
+        AtualizarEstadoLicenca();
         ConstruirMenu();
-        ItemSelecionado = ItensMenu.FirstOrDefault();
+
+        var politica = PoliticaLicencaKiVenda.Avaliar();
+        ItemSelecionado = politica.Bloqueado
+            ? ItensMenuInferiores.FirstOrDefault(x => x.Nome == "Configurações")
+            : ItensMenu.FirstOrDefault();
     }
 
     private void OnNotificacoesAlteradas(object? sender, EventArgs e)
@@ -175,6 +235,8 @@ public partial class ShellViewModel : ViewModelBase
         Licensing.StatusChanged -= OnLicensingStatusChanged;
         _servicoNotificacoes.Alteradas -= OnNotificacoesAlteradas;
         _servicoNotificacoes.PararAtualizacaoAutomatica();
+        _timerLicenca.Stop();
+        _timerLicenca.Tick -= (_, _) => AtualizarEstadoLicenca();
         _sessao.TerminarSessao();
         SessaoTerminada?.Invoke(this, EventArgs.Empty);
     }
