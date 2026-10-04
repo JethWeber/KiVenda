@@ -112,7 +112,7 @@
 
                                 <Button Content="Entrar"
                                         Command="{Binding EntrarCommand}"
-                                        IsEnabled="{Binding !AEntrar &amp;&amp; !EstaBloqueado}"
+                                        IsEnabled="{Binding PodeEntrar}"
                                         Classes="primario"
                                         Height="46"
                                         HorizontalAlignment="Stretch"
