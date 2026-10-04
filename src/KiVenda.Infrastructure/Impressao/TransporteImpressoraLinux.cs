@@ -1,44 +1,48 @@
+using ESCPOS_NET;
+
 namespace KiVenda.Infrastructure.Impressao;
 
 public sealed class TransporteImpressoraLinux : ITransporteImpressora
 {
     public async Task EnviarAsync(
-        string dispositivo,
+        ConfiguracaoImpressoraTermica configuracao,
         ReadOnlyMemory<byte> dados,
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(dispositivo))
-        {
-            throw new ArgumentException(
-                "O dispositivo da impressora não pode estar vazio.",
-                nameof(dispositivo));
-        }
+        cancellationToken.ThrowIfCancellationRequested();
 
-        if (!File.Exists(dispositivo))
-        {
-            throw new FileNotFoundException(
-                $"A impressora não está disponível no dispositivo '{dispositivo}'.",
-                dispositivo);
-        }
+        if (!OperatingSystem.IsLinux())
+            throw new PlatformNotSupportedException("O transporte Linux só pode ser usado no Linux.");
 
-        try
-        {
-            await using var stream = new FileStream(
-                dispositivo,
-                FileMode.Open,
-                FileAccess.Write,
-                FileShare.ReadWrite,
-                4096,
-                FileOptions.Asynchronous);
+        configuracao.Validar();
 
-            await stream.WriteAsync(dados, cancellationToken);
-            await stream.FlushAsync(cancellationToken);
-        }
-        catch (UnauthorizedAccessException ex)
+        switch (configuracao.TipoConexao)
         {
-            throw new UnauthorizedAccessException(
-                $"Sem permissão para escrever na impressora '{dispositivo}'.",
-                ex);
+            case TipoConexaoImpressora.DispositivoLocal:
+                using (var printer = new FilePrinter(configuracao.Dispositivo))
+                    printer.Write(dados.ToArray());
+                break;
+
+            case TipoConexaoImpressora.Serial:
+                using (var printer = new SerialPrinter(configuracao.Dispositivo, configuracao.BaudRate))
+                    printer.Write(dados.ToArray());
+                break;
+
+            case TipoConexaoImpressora.Rede:
+                var printerRede = new ImmediateNetworkPrinter(
+                    new ImmediateNetworkPrinterSettings
+                    {
+                        ConnectionString = $"{configuracao.EnderecoRede}:{configuracao.PortaRede}",
+                        PrinterName = configuracao.EnderecoRede,
+                        ConnectTimeoutMs = 5000,
+                        SendTimeoutMs = 5000
+                    });
+                await printerRede.WriteAsync(dados.ToArray());
+                break;
+
+            default:
+                throw new PlatformNotSupportedException(
+                    $"A conexão '{configuracao.TipoConexao}' não é suportada neste ambiente Linux.");
         }
     }
 }
