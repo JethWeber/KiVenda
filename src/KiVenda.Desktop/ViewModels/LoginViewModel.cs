@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KiVenda.Application.Utilizadores;
@@ -20,6 +21,8 @@ public partial class LoginViewModel : ViewModelBase
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly SessaoUtilizadorAtual _sessao;
+    private readonly ServicoBloqueioLogin _bloqueioLogin;
+    private readonly DispatcherTimer _timerBloqueio;
 
     [ObservableProperty]
     private string _nomeUtilizador = string.Empty;
@@ -36,14 +39,45 @@ public partial class LoginViewModel : ViewModelBase
     [ObservableProperty]
     private bool _mostrarSenha;
 
+    [ObservableProperty]
+    private bool _estaBloqueado;
+
+    [ObservableProperty]
+    private string _tempoBloqueio = string.Empty;
+
     public char PasswordChar => MostrarSenha ? '\0' : '•';
 
     public event EventHandler<UtilizadorAutenticadoDto>? LoginBemSucedido;
 
-    public LoginViewModel(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao)
+    public LoginViewModel(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao, ServicoBloqueioLogin bloqueioLogin)
     {
         _scopeFactory = scopeFactory;
         _sessao = sessao;
+        _bloqueioLogin = bloqueioLogin;
+
+        _timerBloqueio = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _timerBloqueio.Tick += (_, _) => AtualizarBloqueio();
+        _timerBloqueio.Start();
+    }
+
+    private void AtualizarBloqueio()
+    {
+        if (string.IsNullOrWhiteSpace(NomeUtilizador))
+        {
+            EstaBloqueado = false;
+            TempoBloqueio = string.Empty;
+            return;
+        }
+
+        if (_bloqueioLogin.PodeTentar(NomeUtilizador, out var restante))
+        {
+            EstaBloqueado = false;
+            TempoBloqueio = string.Empty;
+            return;
+        }
+
+        EstaBloqueado = true;
+        TempoBloqueio = FormatarTempo(restante);
     }
 
     partial void OnMostrarSenhaChanged(bool value)
@@ -61,6 +95,13 @@ public partial class LoginViewModel : ViewModelBase
     private async Task EntrarAsync()
     {
         MensagemErro = null;
+
+        AtualizarBloqueio();
+        if (EstaBloqueado)
+        {
+            MensagemErro = $"Demasiadas tentativas. Tente novamente em {TempoBloqueio}.";
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(NomeUtilizador) || string.IsNullOrWhiteSpace(Senha))
         {
@@ -82,14 +123,18 @@ public partial class LoginViewModel : ViewModelBase
 
             var utilizador = await autenticarUseCase.ExecutarAsync(new AutenticarUtilizadorCommand(NomeUtilizador, Senha));
 
+            _bloqueioLogin.RegistarSucesso(NomeUtilizador);
             _sessao.IniciarSessao(utilizador.UtilizadorId, utilizador.Nome, utilizador.Perfil);
             LoginBemSucedido?.Invoke(this, utilizador);
         }
         catch (DomainException ex)
         {
-            // AutenticarUtilizadorUseCase devolve sempre a mesma mensagem
-            // genérica ("Utilizador ou password inválidos.") — ver Fase 3.
-            MensagemErro = ex.Message;
+            TimeSpan bloqueio = _bloqueioLogin.RegistarFalha(NomeUtilizador);
+            MensagemErro = bloqueio > TimeSpan.Zero
+                ? $"Demasiadas tentativas. Acesso bloqueado por {FormatarDuracao(bloqueio)}."
+                : ex.Message;
+
+            AtualizarBloqueio();
         }
         finally
         {
@@ -105,5 +150,25 @@ public partial class LoginViewModel : ViewModelBase
         MensagemErro = null;
         AEntrar = false;
         MostrarSenha = false;
+        AtualizarBloqueio();
+    }
+
+    private static string FormatarTempo(TimeSpan restante)
+    {
+        if (restante.TotalHours >= 1)
+            return $"{(int)restante.TotalHours}h {restante.Minutes:00}min";
+
+        if (restante.TotalMinutes >= 1)
+            return $"{(int)restante.TotalMinutes}min {restante.Seconds:00}s";
+
+        return $"{Math.Max(1, restante.Seconds)}s";
+    }
+
+    private static string FormatarDuracao(TimeSpan duracao)
+    {
+        if (duracao.TotalHours >= 1)
+            return $"{(int)duracao.TotalHours} hora(s)";
+
+        return $"{(int)duracao.TotalMinutes} minuto(s)";
     }
 }
