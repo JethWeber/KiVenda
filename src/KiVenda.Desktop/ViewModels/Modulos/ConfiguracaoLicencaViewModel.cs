@@ -107,6 +107,10 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
     private void AplicarInfo()
     {
         var info = Licensing.GetLicenseInfo();
+        var politica = PoliticaLicencaKiVenda.Avaliar();
+
+        if (politica.Acesso is AcessoLicenca.Tolerancia or AcessoLicenca.Bloqueado)
+            Estado = LicenseStatus.Expired;
 
         Cliente = info?.CustomerName ?? "-";
         Plano = info?.Plan ?? "MVP";
@@ -121,6 +125,9 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
             Validade = "Perpétua";
             DiasRestantes = "∞";
         }
+
+        if (politica.MostrarBanner)
+            Mensagem = politica.Mensagem;
 
         NotificarEstado();
     }
