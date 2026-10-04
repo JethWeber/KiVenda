@@ -7,8 +7,10 @@ public sealed class DetectorImpressorasLinux : IDetectorImpressoras
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var caminhos = new HashSet<string>(StringComparer.Ordinal);
+        if (!OperatingSystem.IsLinux())
+            return Task.FromResult<IReadOnlyList<DispositivoImpressora>>(Array.Empty<DispositivoImpressora>());
 
+        var caminhos = new HashSet<string>(StringComparer.Ordinal);
         AdicionarSeExistir(caminhos, "/dev/serial/by-id/*");
         AdicionarSeExistir(caminhos, "/dev/usb/lp*");
         AdicionarSeExistir(caminhos, "/dev/ttyUSB*");
@@ -22,9 +24,7 @@ public sealed class DetectorImpressorasLinux : IDetectorImpressoras
         return Task.FromResult<IReadOnlyList<DispositivoImpressora>>(dispositivos);
     }
 
-    private static void AdicionarSeExistir(
-        HashSet<string> caminhos,
-        string padrao)
+    private static void AdicionarSeExistir(HashSet<string> caminhos, string padrao)
     {
         var diretorio = Path.GetDirectoryName(padrao);
         var nome = Path.GetFileName(padrao);
@@ -32,19 +32,21 @@ public sealed class DetectorImpressorasLinux : IDetectorImpressoras
         if (string.IsNullOrWhiteSpace(diretorio) ||
             string.IsNullOrWhiteSpace(nome) ||
             !Directory.Exists(diretorio))
-        {
             return;
-        }
 
         foreach (var caminho in Directory.EnumerateFileSystemEntries(diretorio, nome))
-        {
             caminhos.Add(caminho);
-        }
     }
 
     private static DispositivoImpressora CriarDispositivo(string caminho)
     {
         var nome = Path.GetFileName(caminho);
+        var tipo = caminho.Contains("/ttyUSB", StringComparison.OrdinalIgnoreCase) ||
+                   caminho.Contains("/ttyACM", StringComparison.OrdinalIgnoreCase) ||
+                   caminho.Contains("/serial/", StringComparison.OrdinalIgnoreCase)
+            ? TipoConexaoImpressora.Serial
+            : TipoConexaoImpressora.DispositivoLocal;
+
         var estado = EstadoDispositivoImpressora.Disponivel;
         string? detalhe = null;
 
@@ -55,15 +57,9 @@ public sealed class DetectorImpressorasLinux : IDetectorImpressoras
                 estado = EstadoDispositivoImpressora.Indisponivel;
                 detalhe = "O dispositivo deixou de estar disponível.";
             }
-            else
+            else if (tipo == TipoConexaoImpressora.DispositivoLocal)
             {
-                using var stream = new FileStream(
-                    caminho,
-                    FileMode.Open,
-                    FileAccess.Write,
-                    FileShare.ReadWrite,
-                    1,
-                    FileOptions.None);
+                using var stream = new FileStream(caminho, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, 1);
             }
         }
         catch (UnauthorizedAccessException)
@@ -83,6 +79,7 @@ public sealed class DetectorImpressorasLinux : IDetectorImpressoras
             "Linux",
             caminho,
             estado,
+            tipo,
             detalhe);
     }
 }
