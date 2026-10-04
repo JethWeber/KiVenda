@@ -45,7 +45,7 @@
                         <ComboBox Grid.Column="0"
                                   ItemsSource="{Binding Dispositivos}"
                                   SelectedItem="{Binding DispositivoSelecionado, Mode=TwoWay}"
-                                  IsVisible="{Binding !EhRede}"
+                                  IsVisible="{Binding !MostrarEntradaManual}"
                                   IsEnabled="{Binding !ACarregar}"
                                   MaxWidth="600">
                             <ComboBox.ItemTemplate>
@@ -62,20 +62,14 @@
 
                         <TextBox Grid.Column="0"
                                  Text="{Binding Dispositivo}"
-                                 Watermark="COM3 ou /dev/serial/by-id/..."
-                                 IsVisible="{Binding EhSerial}"
-                                 IsEnabled="{Binding !ACarregar}" />
-
-                        <TextBox Grid.Column="0"
-                                 Text="{Binding Dispositivo}"
-                                 Watermark="/dev/usb/lp0"
-                                 IsVisible="{Binding !EhSerial}"
+                                 Watermark="COM3 ou /dev/usb/lp0"
+                                 IsVisible="{Binding MostrarEntradaManual}"
                                  IsEnabled="{Binding !ACarregar}" />
 
                         <Button Grid.Column="1"
                                 Content="🔄 Procurar"
                                 Command="{Binding ProcurarCommand}"
-                                IsVisible="{Binding !EhRede}"
+                                IsVisible="{Binding !MostrarEntradaManual}"
                                 IsEnabled="{Binding !ADetetar}" />
                     </Grid>
 
