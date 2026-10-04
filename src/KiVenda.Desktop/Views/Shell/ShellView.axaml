@@ -88,13 +88,13 @@
         <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*">
             <Border Grid.Row="0"
                     IsVisible="{Binding MostrarBannerLicenca}"
-                    Background="{DynamicResource AmareloSuaveBrush}"
-                    BorderBrush="{DynamicResource AmareloPrimarioBrush}"
+                    Background="{DynamicResource AvisoSuaveBrush}"
+                    BorderBrush="{DynamicResource AvisoBrush}"
                     BorderThickness="0,0,0,1"
                     Padding="18,10">
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                     <TextBlock Text="⚠" FontSize="20" VerticalAlignment="Center"
-                               Foreground="{DynamicResource AmareloPrimarioBrush}" />
+                               Foreground="{DynamicResource AvisoBrush}" />
                     <StackPanel Grid.Column="1" Spacing="2">
                         <TextBlock Text="{Binding BannerLicencaTitulo}" FontWeight="Bold" />
                         <TextBlock Text="{Binding BannerLicencaMensagem}" TextWrapping="Wrap"
