@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.IO.Ports;
 using System.Runtime.InteropServices;
 using ESCPOS_NET;
 
@@ -25,8 +26,7 @@ public sealed class TransporteImpressoraWindows : ITransporteImpressora
                 break;
 
             case TipoConexaoImpressora.Serial:
-                using (var printer = new SerialPrinter(configuracao.Dispositivo, configuracao.BaudRate))
-                    printer.Write(dados.ToArray());
+                await EnviarSerialAsync(configuracao.Dispositivo, configuracao.BaudRate, dados, cancellationToken);
                 break;
 
             case TipoConexaoImpressora.Rede:
@@ -43,8 +43,28 @@ public sealed class TransporteImpressoraWindows : ITransporteImpressora
 
             default:
                 throw new PlatformNotSupportedException(
-                    $"A conexão '{configuracao.TipoConexao}' não é suportada como transporte local no Windows.");
+                    $"A conexão '{configuracao.TipoConexao}' não é suportada no Windows.");
         }
+    }
+
+    private static Task EnviarSerialAsync(
+        string porta,
+        int baudRate,
+        ReadOnlyMemory<byte> dados,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        using var serial = new SerialPort(porta, baudRate)
+        {
+            WriteTimeout = 5000
+        };
+
+        serial.Open();
+        var bytes = dados.ToArray();
+        serial.Write(bytes, 0, bytes.Length);
+
+        return Task.CompletedTask;
     }
 
     private static void EnviarSpooler(string dispositivo, ReadOnlyMemory<byte> dados)
@@ -69,7 +89,7 @@ public sealed class TransporteImpressoraWindows : ITransporteImpressora
             try
             {
                 if (!StartPagePrinter(handle))
-                    throw CriarErroWindows($"Não foi possível iniciar a página em '{nomeImpressora}'.");
+                    throw CriarErroWindows($"Não foi possível iniciar a página de impressão em '{nomeImpressora}'.");
 
                 try
                 {
