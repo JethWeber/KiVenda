@@ -46,6 +46,7 @@ public partial class LoginViewModel : ViewModelBase
     private string _tempoBloqueio = string.Empty;
 
     public char PasswordChar => MostrarSenha ? '\0' : '•';
+    public bool PodeEntrar => !AEntrar && !EstaBloqueado;
 
     public event EventHandler<UtilizadorAutenticadoDto>? LoginBemSucedido;
 
@@ -84,6 +85,10 @@ public partial class LoginViewModel : ViewModelBase
     {
         OnPropertyChanged(nameof(PasswordChar));
     }
+
+    partial void OnAEntrarChanged(bool value) => OnPropertyChanged(nameof(PodeEntrar));
+    partial void OnEstaBloqueadoChanged(bool value) => OnPropertyChanged(nameof(PodeEntrar));
+    partial void OnNomeUtilizadorChanged(string value) => AtualizarBloqueio();
 
     [RelayCommand]
     private void AlternarVisibilidadeSenha()
