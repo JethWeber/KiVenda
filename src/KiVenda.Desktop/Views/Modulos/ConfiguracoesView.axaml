@@ -12,10 +12,10 @@
             <TextBlock Classes="subtitulo" Text="Preferências do sistema, scanner, assinatura e proteção dos dados." />
         </StackPanel>
         <TabControl SelectedIndex="{Binding IndiceAbaSelecionada}">
-            <TabItem Header="Empresa">
+            <TabItem Header="Empresa" IsVisible="{Binding AbasGeraisVisiveis}">
                 <views:ConfiguracaoEmpresaView DataContext="{Binding Empresa}" />
             </TabItem>
-            <TabItem Header="Dispositivos">
+            <TabItem Header="Dispositivos" IsVisible="{Binding AbasGeraisVisiveis}">
                 <StackPanel Spacing="24">
                         <views:ConfiguracaoScannerView DataContext="{Binding Scanner}" />
                         <views:ConfiguracaoImpressoraView DataContext="{Binding Impressora}" />
@@ -24,10 +24,10 @@
             <TabItem Header="Licença">
                 <views:ConfiguracaoLicencaView DataContext="{Binding Licenca}" />
             </TabItem>
-            <TabItem Header="Backup">
+            <TabItem Header="Backup" IsVisible="{Binding AbasGeraisVisiveis}">
                 <views:ConfiguracaoBackupView DataContext="{Binding Backup}" />
             </TabItem>
-            <TabItem Header="Ajustes">
+            <TabItem Header="Ajustes" IsVisible="{Binding AbasGeraisVisiveis}">
                 <views:ConfiguracaoTemaView DataContext="{Binding Tema}" />
             </TabItem>
         </TabControl>
