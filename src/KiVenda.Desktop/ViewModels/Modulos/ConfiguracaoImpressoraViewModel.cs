@@ -48,7 +48,7 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
                     "Usa /dev/ttyUSB*, /dev/ttyACM* ou /dev/serial/by-id/*.")
             };
 
-    [ObservableProperty] private TipoConexaoImpressora _tipoConexao;
+    [ObservableProperty] private TipoConexaoImpressora _tipoConexao;\n    [ObservableProperty] private OpcaoConexaoImpressora? _tipoConexaoSelecionada;
     [ObservableProperty] private bool _ativo;
     [ObservableProperty] private string _dispositivo = string.Empty;
     [ObservableProperty] private DispositivoImpressora? _dispositivoSelecionado;
@@ -225,7 +225,7 @@ public partial class ConfiguracaoImpressoraViewModel : ViewModelBase
         _ = ProcurarAsync();
     }
 
-    partial void OnDispositivoSelecionadoChanged(DispositivoImpressora? value)
+    partial void OnTipoConexaoSelecionadaChanged(OpcaoConexaoImpressora? value)\n    {\n        if (value is not null && value.Valor != TipoConexao)\n            TipoConexao = value.Valor;\n    }\n\n    partial void OnDispositivoSelecionadoChanged(DispositivoImpressora? value)
     {
         if (value is not null)
             Dispositivo = value.Id;
