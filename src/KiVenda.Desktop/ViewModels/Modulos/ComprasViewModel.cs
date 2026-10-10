@@ -165,6 +165,10 @@ public partial class ComprasViewModel : ListaModuloViewModelBase<CompraDto>
         {
             MensagemErroFormulario = ex.Message;
         }
+        catch (Exception ex)
+        {
+            MensagemErroFormulario = $"Não foi possível registar a compra. {ex.Message}";
+        }
         finally
         {
             AGuardar = false;
