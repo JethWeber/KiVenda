@@ -69,16 +69,42 @@ public partial class ComprasViewModel : ListaModuloViewModelBase<CompraDto>
             Fornecedores.Add(fornecedor);
         }
 
-        var produtos = await scope.ServiceProvider.GetRequiredService<ListarProdutosUseCase>().ExecutarAsync(new ListarProdutosQuery());
+        await CarregarProdutosAsync(scope.ServiceProvider);
+    }
+
+    private async Task CarregarProdutosAsync(IServiceProvider? servicos = null)
+    {
+        if (servicos is not null)
+        {
+            var produtos = await servicos.GetRequiredService<ListarProdutosUseCase>()
+                .ExecutarAsync(new ListarProdutosQuery());
+
+            Produtos.Clear();
+            foreach (var produto in produtos)
+            {
+                Produtos.Add(produto);
+            }
+
+            return;
+        }
+
+        await using var scope = ScopeFactory.CreateAsyncScope();
+        var listaProdutos = await scope.ServiceProvider.GetRequiredService<ListarProdutosUseCase>()
+            .ExecutarAsync(new ListarProdutosQuery());
+
         Produtos.Clear();
-        foreach (var produto in produtos)
+        foreach (var produto in listaProdutos)
         {
             Produtos.Add(produto);
         }
     }
 
     [RelayCommand]
-    private void AbrirFormulario() => FormularioAberto = true;
+    private async Task AbrirFormularioAsync()
+    {
+        await CarregarProdutosAsync();
+        FormularioAberto = true;
+    }
 
     [RelayCommand]
     private void FecharFormulario()
