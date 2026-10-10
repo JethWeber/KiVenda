@@ -156,6 +156,10 @@ public partial class ProdutosViewModel : ListaModuloViewModelBase<ProdutoDto>
         {
             MensagemErroFormulario = ex.Message;
         }
+        catch (Exception ex)
+        {
+            MensagemErroFormulario = $"Não foi possível guardar o produto. {ex.Message}";
+        }
         finally
         {
             AGuardar = false;
