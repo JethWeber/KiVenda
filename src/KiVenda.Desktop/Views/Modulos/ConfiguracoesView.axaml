@@ -4,34 +4,122 @@
              xmlns:views="using:KiVenda.Desktop.Views.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracoesView"
              x:DataType="vm:ConfiguracoesViewModel">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Spacing="18" MaxWidth="980">
 
-        <StackPanel Spacing="4">
-            <TextBlock Classes="titulo-pagina" Text="Configurações" />
-            <TextBlock Classes="subtitulo" Text="Preferências do sistema, scanner, assinatura e proteção dos dados." />
-        </StackPanel>
-        <TabControl SelectedIndex="{Binding IndiceAbaSelecionada}">
-            <TabItem Header="Empresa" IsVisible="{Binding AbasGeraisVisiveis}">
-                <views:ConfiguracaoEmpresaView DataContext="{Binding Empresa}" />
-            </TabItem>
-            <TabItem Header="Dispositivos" IsVisible="{Binding AbasGeraisVisiveis}">
-                <StackPanel Spacing="24">
-                        <views:ConfiguracaoScannerView DataContext="{Binding Scanner}" />
-                        <views:ConfiguracaoImpressoraView DataContext="{Binding Impressora}" />
+    <UserControl.Styles>
+        <!-- Ajuste o nome do assembly se não for KiVenda.Desktop -->
+        <StyleInclude Source="avares://KiVenda.Desktop/Styles/ConfiguracoesStyles.axaml" />
+    </UserControl.Styles>
+
+    <Border>
+        <Grid RowDefinitions="Auto,*,Auto"
+              MaxWidth="1240"
+              Margin="40,32,40,16">
+
+            <!-- Título -->
+            <TextBlock Grid.Row="0"
+                       Classes="cfg-page-title"
+                       Margin="0,0,0,22"
+                       Text="Configurações do Sistema" />
+
+            <!-- Abas + conteúdo (o botão Guardar fica sobreposto à linha das abas) -->
+            <Grid Grid.Row="1">
+                <TabControl x:Name="Abas"
+                            Classes="cfg-tabs"
+                            SelectedIndex="{Binding IndiceAbaSelecionada}"
+                            SelectionChanged="Abas_SelectionChanged">
+
+                    <TabItem IsVisible="{Binding AbasGeraisVisiveis}">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <PathIcon Data="{DynamicResource CfgIconBusiness}" />
+                                <TextBlock Text="Empresa" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <views:ConfiguracaoEmpresaView DataContext="{Binding Empresa}" />
+                    </TabItem>
+
+                    <TabItem IsVisible="{Binding AbasGeraisVisiveis}">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <PathIcon Data="{DynamicResource CfgIconDevices}" />
+                                <TextBlock Text="Dispositivos" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="24" VerticalAlignment="Top">
+                            <views:ConfiguracaoScannerView Grid.Column="0"
+                                                           VerticalAlignment="Top"
+                                                           DataContext="{Binding Scanner}" />
+                            <views:ConfiguracaoImpressoraView Grid.Column="1"
+                                                              VerticalAlignment="Top"
+                                                              DataContext="{Binding Impressora}" />
+                        </Grid>
+                    </TabItem>
+
+                    <TabItem>
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <PathIcon Data="{DynamicResource CfgIconKey}" />
+                                <TextBlock Text="Licença" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <views:ConfiguracaoLicencaView DataContext="{Binding Licenca}" />
+                    </TabItem>
+
+                    <TabItem IsVisible="{Binding AbasGeraisVisiveis}">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <PathIcon Data="{DynamicResource CfgIconBackup}" />
+                                <TextBlock Text="Backup" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <views:ConfiguracaoBackupView DataContext="{Binding Backup}" />
+                    </TabItem>
+
+                    <TabItem IsVisible="{Binding AbasGeraisVisiveis}">
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <PathIcon Data="{DynamicResource CfgIconTune}" />
+                                <TextBlock Text="Ajustes" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <views:ConfiguracaoTemaView DataContext="{Binding Tema}" />
+                    </TabItem>
+                </TabControl>
+
+                <Button x:Name="GuardarBtn"
+                        Classes="primario cfg"
+                        Height="52"
+                        Padding="26,0"
+                        CornerRadius="14"
+                        FontSize="14"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Click="Guardar_Click">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon Data="{DynamicResource CfgIconSave}" Width="16" Height="16" />
+                        <TextBlock Text="Guardar alterações" VerticalAlignment="Center" />
                     </StackPanel>
-            </TabItem>
-            <TabItem Header="Licença">
-                <views:ConfiguracaoLicencaView DataContext="{Binding Licenca}" />
-            </TabItem>
-            <TabItem Header="Backup" IsVisible="{Binding AbasGeraisVisiveis}">
-                <views:ConfiguracaoBackupView DataContext="{Binding Backup}" />
-            </TabItem>
-            <TabItem Header="Ajustes" IsVisible="{Binding AbasGeraisVisiveis}">
-                <views:ConfiguracaoTemaView DataContext="{Binding Tema}" />
-            </TabItem>
-        </TabControl>
-    
-        </StackPanel>
-    </ScrollViewer>
+                </Button>
+            </Grid>
+
+            <!-- Rodapé -->
+            <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,12,0,0">
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <TextBlock x:Name="VersaoText" Classes="cfg-hint" />
+                    <Border Width="1" Height="12" Background="{DynamicResource NeutroSuaveBrush}" />
+                    <TextBlock Classes="cfg-hint" Text="Backup:" />
+                    <TextBlock Classes="cfg-hint"
+                               Text="{Binding Backup.UltimoBackup}"
+                               MaxWidth="460"
+                               TextWrapping="NoWrap"
+                               TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="14">
+                    <Button x:Name="SuporteLink" Classes="cfg link" Content="Suporte" Click="Suporte_Click" />
+                    <Button x:Name="DocumentacaoLink" Classes="cfg link" Content="Documentação" Click="Documentacao_Click" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
 </UserControl>
