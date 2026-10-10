@@ -21,7 +21,16 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
 
     public bool LicencaValida => Estado == LicenseStatus.Valid;
     public bool LicencaExpirada => Estado == LicenseStatus.Expired;
-    public bool PrecisaAtivacao => Estado is LicenseStatus.NotFound or LicenseStatus.Invalid or LicenseStatus.ProductMismatch or LicenseStatus.MachineMismatch;
+
+    // Uma licença expirada também precisa de mostrar o fluxo de renovação.
+    // Caso contrário, o botão de importar .wta fica escondido pelo painel pai.
+    public bool PrecisaAtivacao => Estado is
+        LicenseStatus.NotFound or
+        LicenseStatus.Invalid or
+        LicenseStatus.ProductMismatch or
+        LicenseStatus.MachineMismatch or
+        LicenseStatus.Expired;
+
     public bool PodeImportar => Estado != LicenseStatus.Valid;
     public bool MostrarQr => PrecisaAtivacao && QrCode is not null;
     public bool MostrarDetalhes => LicencaValida || LicencaExpirada;
