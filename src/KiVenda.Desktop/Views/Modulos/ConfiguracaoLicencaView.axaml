@@ -4,6 +4,8 @@
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoLicencaView"
              x:DataType="vm:ConfiguracaoLicencaViewModel">
     
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Disabled">
         <StackPanel Spacing="18" MaxWidth="920">
             <StackPanel Spacing="4">
                 <TextBlock Classes="titulo-pagina" Text="Licença" />
@@ -88,5 +90,6 @@
                 </Grid>
             </Border>
         </StackPanel>
+    </ScrollViewer>
     
 </UserControl>
