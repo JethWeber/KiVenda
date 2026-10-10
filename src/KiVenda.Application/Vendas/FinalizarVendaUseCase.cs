@@ -59,7 +59,7 @@ public sealed class FinalizarVendaUseCase(IUnitOfWork uow, IContextoAutenticacao
 
         venda.Finalizar();
 
-        var itensRecibo = new List<ItemReciboDto>();
+        var itensReciboDetalhados = new List<(Guid ProdutoId, Guid ApresentacaoId, ItemReciboDto Item)>();
 
         foreach (var item in venda.Itens)
         {
@@ -90,8 +90,29 @@ public sealed class FinalizarVendaUseCase(IUnitOfWork uow, IContextoAutenticacao
                     cancellationToken);
             }
 
-            itensRecibo.Add(new ItemReciboDto(produto.Nome, apresentacao.Nome, item.QuantidadeNaApresentacao, item.ValorTotal));
+            itensReciboDetalhados.Add((
+                item.ProdutoId,
+                item.ApresentacaoProdutoId,
+                new ItemReciboDto(
+                    produto.Nome,
+                    apresentacao.Nome,
+                    item.QuantidadeNaApresentacao,
+                    item.ValorTotal)));
         }
+
+        var itensRecibo = itensReciboDetalhados
+            .GroupBy(x => (x.ProdutoId, x.ApresentacaoId))
+            .Select(grupo =>
+            {
+                var primeiro = grupo.First();
+
+                return new ItemReciboDto(
+                    primeiro.Item.ProdutoNome,
+                    primeiro.Item.ApresentacaoNome,
+                    grupo.Sum(x => x.Item.QuantidadeNaApresentacao),
+                    grupo.Sum(x => x.Item.ValorTotal));
+            })
+            .ToList();
 
         var sessaoCaixa = await uow.SessoesCaixa.ObterPorIdAsync(venda.SessaoCaixaId, cancellationToken)
             ?? throw new DomainException("Sessão de caixa da venda não encontrada.");
