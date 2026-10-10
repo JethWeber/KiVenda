@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using KiVenda.Desktop.Autenticacao;
 using WeberTech.Licensing.Enums;
 using WeberTech.Licensing.Services;
 
