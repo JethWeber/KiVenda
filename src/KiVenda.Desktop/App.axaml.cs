@@ -51,16 +51,13 @@ public partial class App : Avalonia.Application
 
     private static void InicializarLicenciamento()
     {
-        if (!OperatingSystem.IsWindows())
-        {
-            Log.Information("Licenciamento Weber Tech: inicialização real adiada porque o ambiente não é Windows.");
-            return;
-        }
-
         try
         {
             Licensing.Initialize(ProductType.KiVenda, "kivenda.desktop_v03");
-            Log.Information("Licenciamento Weber Tech inicializado. Estado: {Estado}", Licensing.CurrentStatus);
+            Log.Information(
+                "Licenciamento Weber Tech inicializado em {SistemaOperativo}. Estado: {Estado}",
+                Environment.OSVersion.Platform,
+                Licensing.CurrentStatus);
         }
         catch (Exception ex)
         {
@@ -79,6 +76,7 @@ public partial class App : Avalonia.Application
         services.AddSingleton<ServicoTema>();
         services.AddSingleton<KiVenda.Desktop.Notificacoes.ServicoNotificacoes>();
         services.AddSingleton<KiVenda.Desktop.Notificacoes.ServicoMonitorLicenca>();
+        services.AddSingleton<KiVenda.Desktop.Autenticacao.ServicoBloqueioLogin>();
         services.AddTransient<ConfiguracoesViewModel>();
 
         services.AddSingleton<SessaoUtilizadorAtual>();
