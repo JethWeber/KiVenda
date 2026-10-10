@@ -6,228 +6,384 @@
              x:Class="KiVenda.Desktop.Views.Modulos.RelatoriosView"
              x:DataType="vmm:RelatoriosViewModel">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Spacing="20">
+    <UserControl.Resources>
+        <StreamGeometry x:Key="IconeVisto">M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z</StreamGeometry>
+        <StreamGeometry x:Key="IconeFechar">M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z</StreamGeometry>
+    </UserControl.Resources>
 
-            <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
-                <StackPanel Spacing="3">
-                    <TextBlock Classes="titulo-pagina" Text="Relatórios" />
-                    <TextBlock Classes="subtitulo" Text="Acompanhe vendas, resultados e estado do stock." />
-                </StackPanel>
-                <Button Grid.Column="1" Content="Imprimir relatório" Classes="primario"
-                        Command="{Binding ImprimirCommand}" IsEnabled="{Binding !ACarregar}" />
-            </Grid>
+    <UserControl.Styles>
+        <!-- Separadores (mesmo desenho do Stock e dos Cadastros) -->
+        <Style Selector="Button.tab">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0,0,0,2" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Padding" Value="20,11" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Foreground" Value="{DynamicResource TextoSecundarioBrush}" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="Button.tab:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource NeutroSuaveBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextoPrimarioBrush}" />
+        </Style>
+        <Style Selector="Button.tab.ativa">
+            <Setter Property="Foreground" Value="{DynamicResource VerdePrimarioBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.tab.ativa /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="BorderBrush" Value="{DynamicResource VerdePrimarioBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource VerdePrimarioBrush}" />
+        </Style>
+        <Style Selector="Button.tab.ativa:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="BorderBrush" Value="{DynamicResource VerdePrimarioBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource VerdePrimarioBrush}" />
+        </Style>
+    </UserControl.Styles>
 
-            <Border Background="{DynamicResource SuperficieBrush}"
+    <Grid>
+        <Grid RowDefinitions="Auto,Auto,*" RowSpacing="0">
+
+            <!-- Cabeçalho -->
+            <StackPanel Grid.Row="0" Spacing="3" Margin="0,0,0,20">
+                <TextBlock Classes="titulo-pagina" Text="Relatórios" />
+                <TextBlock Classes="subtitulo" Text="Acompanhe vendas, resultados e estado do stock." />
+            </StackPanel>
+
+            <!-- Separadores (a barra de progresso aparece na linha de baixo enquanto carrega) -->
+            <Border Grid.Row="1"
                     BorderBrush="{DynamicResource BordaBrush}"
-                    BorderThickness="1" CornerRadius="12" Padding="5">
-                <StackPanel Orientation="Horizontal" Spacing="4">
-                    <Button Content="Diário" Command="{Binding SelecionarDiarioCommand}" Classes="secundario" Padding="18,9" />
-                    <Button Content="Mensal" Command="{Binding SelecionarMensalCommand}" Classes="secundario" Padding="18,9" />
-                    <Button Content="Stock" Command="{Binding SelecionarStockCommand}" Classes="secundario" Padding="18,9" />
-                </StackPanel>
-            </Border>
-
-            <Border Classes="cartao">
-                <Grid ColumnDefinitions="Auto,220,Auto,220,*" ColumnSpacing="12">
-                    <TextBlock Grid.Column="0" Classes="rotulo-campo" Text="Período" VerticalAlignment="Center"
-                               IsVisible="{Binding MostrarFiltrosData}" />
-                    <DatePicker Grid.Column="1" SelectedDate="{Binding DataSelecionada}"
-                                IsVisible="{Binding MostrarFiltrosData}" />
-                    <TextBlock Grid.Column="2" Classes="rotulo-campo" Text="Utilizador" VerticalAlignment="Center"
-                               IsVisible="{Binding MostrarFiltroUtilizador}" />
-                    <ComboBox Grid.Column="3" ItemsSource="{Binding Utilizadores}"
-                              SelectedItem="{Binding UtilizadorSelecionado}"
-                              PlaceholderText="Todos os utilizadores"
-                              IsVisible="{Binding MostrarFiltroUtilizador}" />
-                    <TextBlock Grid.Column="4" Text="A carregar..." HorizontalAlignment="Right"
-                               Foreground="{DynamicResource TextoSecundarioBrush}"
-                               IsVisible="{Binding ACarregar}" />
+                    BorderThickness="0,0,0,1"
+                    Margin="0,0,0,20">
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Classes="tab"
+                                Classes.ativa="{Binding MostrarDiario}"
+                                Content="Diário"
+                                Command="{Binding SelecionarDiarioCommand}" />
+                        <Button Classes="tab"
+                                Classes.ativa="{Binding MostrarMensal}"
+                                Content="Mensal"
+                                Command="{Binding SelecionarMensalCommand}" />
+                        <Button Classes="tab"
+                                Classes.ativa="{Binding MostrarStock}"
+                                Content="Stock"
+                                Command="{Binding SelecionarStockCommand}" />
+                    </StackPanel>
+                    <ProgressBar VerticalAlignment="Bottom" Height="2" MinHeight="2"
+                                 IsIndeterminate="True"
+                                 IsVisible="{Binding ACarregar}" />
                 </Grid>
             </Border>
 
-            <TextBlock Classes="erro" Text="{Binding Mensagem}"
-                       IsVisible="{Binding Mensagem, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            <!-- Conteúdo -->
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Spacing="20">
 
-            <!-- Diário -->
-            <StackPanel Spacing="16" IsVisible="{Binding MostrarDiario}">
-                <Border Classes="cartao" IsVisible="{Binding Diario, Converter={x:Static ObjectConverters.IsNotNull}}">
-                    <StackPanel Spacing="18">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <StackPanel Spacing="3">
-                                <TextBlock Text="Relatório Diário" FontSize="19" FontWeight="Bold" />
-                                <TextBlock Text="{Binding Diario.Data, StringFormat='{}{0:dddd, dd/MM/yyyy}'}"
-                                           Classes="subtitulo" />
-                            </StackPanel>
-                            <Border Grid.Column="1" Classes="badge badge-neutro">
-                                <TextBlock Text="VENDAS DO DIA" FontSize="10" FontWeight="Bold" />
-                            </Border>
-                        </Grid>
+                    <!-- Filtros à esquerda, ação principal à direita -->
+                    <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="16">
+                        <StackPanel Grid.Column="0" Spacing="4" IsVisible="{Binding MostrarFiltrosData}">
+                            <TextBlock Classes="rotulo-campo" Text="Data" IsVisible="{Binding MostrarDiario}" />
+                            <TextBlock Classes="rotulo-campo" Text="Mês de referência" IsVisible="{Binding MostrarMensal}" />
+                            <DatePicker Width="240" SelectedDate="{Binding DataSelecionada}" />
+                        </StackPanel>
 
-                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
-                            <Border Grid.Column="0" Classes="cartao-estatistica">
-                                <StackPanel Spacing="5">
-                                    <TextBlock Text="Total vendido" Classes="subtitulo" />
-                                    <TextBlock Text="{Binding Diario.TotalVendido, Converter={StaticResource ValorKzConverter}}"
-                                               FontSize="21" FontWeight="Bold" />
-                                </StackPanel>
-                            </Border>
-                            <Border Grid.Column="1" Classes="cartao-estatistica">
-                                <StackPanel Spacing="5">
-                                    <TextBlock Text="Lucro estimado" Classes="subtitulo" />
-                                    <TextBlock Text="{Binding Diario.LucroEstimado, Converter={StaticResource ValorKzConverter}}"
-                                               FontSize="21" FontWeight="Bold"
-                                               Foreground="{StaticResource SucessoBrush}" />
-                                </StackPanel>
-                            </Border>
-                            <Border Grid.Column="2" Classes="cartao-estatistica">
-                                <StackPanel Spacing="5">
-                                    <TextBlock Text="Vendas realizadas" Classes="subtitulo" />
-                                    <TextBlock Text="{Binding Diario.NumeroDeVendas}" FontSize="21" FontWeight="Bold" />
-                                </StackPanel>
-                            </Border>
-                            <Border Grid.Column="3" Classes="cartao-estatistica">
-                                <StackPanel Spacing="5">
-                                    <TextBlock Text="Produtos vendidos" Classes="subtitulo" />
-                                    <TextBlock Text="{Binding Diario.ProdutosVendidos.Count}" FontSize="21" FontWeight="Bold" />
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                    </StackPanel>
-                </Border>
+                        <StackPanel Grid.Column="1" Spacing="4" IsVisible="{Binding MostrarFiltroUtilizador}">
+                            <TextBlock Classes="rotulo-campo" Text="Utilizador" />
+                            <ComboBox Width="240"
+                                      ItemsSource="{Binding Utilizadores}"
+                                      SelectedItem="{Binding UtilizadorSelecionado}"
+                                      PlaceholderText="Todos os utilizadores" />
+                        </StackPanel>
 
-                <Border Classes="cartao" Padding="0"
-                        IsVisible="{Binding Diario, Converter={x:Static ObjectConverters.IsNotNull}}">
-                    <StackPanel>
-                        <Grid ColumnDefinitions="2*,1*,1.2*" Margin="20,17">
-                            <TextBlock Text="Produtos vendidos" FontWeight="Bold" FontSize="15" />
-                            <TextBlock Grid.Column="1" Text="QUANTIDADE" Classes="subtitulo" FontWeight="SemiBold" />
-                            <TextBlock Grid.Column="2" Text="TOTAL" Classes="subtitulo" FontWeight="SemiBold" HorizontalAlignment="Right" />
-                        </Grid>
-                        <ItemsControl ItemsSource="{Binding Diario.ProdutosVendidos}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="rel:ProdutoVendidoDto">
-                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,13">
+                        <TextBlock Grid.Column="0" Grid.ColumnSpan="3" Classes="subtitulo"
+                                   VerticalAlignment="Center"
+                                   Text="Estado atual do inventário, sem filtro de datas."
+                                   IsVisible="{Binding MostrarStock}" />
+
+                        <Button Grid.Column="3" Content="Imprimir relatório" Classes="primario"
+                                Padding="20,10" VerticalAlignment="Bottom"
+                                Command="{Binding ImprimirCommand}"
+                                IsEnabled="{Binding PodeImprimir}" />
+                    </Grid>
+
+                    <TextBlock Classes="erro" Text="{Binding Mensagem}"
+                               IsVisible="{Binding Mensagem, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                    <!-- ===================== Diário ===================== -->
+                    <StackPanel Spacing="20" IsVisible="{Binding MostrarDiario}">
+                        <StackPanel Spacing="20" IsVisible="{Binding Diario, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Spacing="3">
+                                    <TextBlock Text="Resumo do dia" FontSize="18" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding DataReferenciaTexto}" Classes="subtitulo" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Classes="badge badge-neutro" VerticalAlignment="Top">
+                                    <TextBlock Text="VENDAS DO DIA" FontSize="10" FontWeight="Bold" />
+                                </Border>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="16">
+                                <Border Grid.Column="0" Classes="cartao-estatistica">
+                                    <StackPanel Spacing="5">
+                                        <TextBlock Text="Total vendido" Classes="subtitulo" />
+                                        <TextBlock Text="{Binding Diario.TotalVendido, Converter={StaticResource ValorKzConverter}}"
+                                                   FontSize="21" FontWeight="Bold" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Classes="cartao-estatistica">
+                                    <StackPanel Spacing="5">
+                                        <TextBlock Text="Lucro estimado" Classes="subtitulo" />
+                                        <TextBlock Text="{Binding Diario.LucroEstimado, Converter={StaticResource ValorKzConverter}}"
+                                                   FontSize="21" FontWeight="Bold"
+                                                   Foreground="{StaticResource SucessoBrush}" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="2" Classes="cartao-estatistica">
+                                    <StackPanel Spacing="5">
+                                        <TextBlock Text="Vendas realizadas" Classes="subtitulo" />
+                                        <TextBlock Text="{Binding Diario.NumeroDeVendas}" FontSize="21" FontWeight="Bold" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="3" Classes="cartao-estatistica">
+                                    <StackPanel Spacing="5">
+                                        <TextBlock Text="Produtos vendidos" Classes="subtitulo" />
+                                        <TextBlock Text="{Binding Diario.ProdutosVendidos.Count}" FontSize="21" FontWeight="Bold" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <Border Classes="cartao" Padding="0">
+                                <StackPanel>
+                                    <TextBlock Text="Produtos vendidos" FontWeight="Bold" FontSize="15" Margin="20,17,20,12" />
+                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,12">
                                         <Grid ColumnDefinitions="2*,1*,1.2*">
-                                            <TextBlock Text="{Binding ProdutoNome}" FontWeight="Medium" TextWrapping="Wrap" />
-                                            <TextBlock Grid.Column="1" Text="{Binding QuantidadeUnidadeBase, StringFormat={}{0:N2}}" />
-                                            <TextBlock Grid.Column="2" Text="{Binding ValorTotalVendido, Converter={StaticResource ValorKzConverter}}"
-                                                       HorizontalAlignment="Right" FontWeight="SemiBold" />
+                                            <TextBlock Text="PRODUTO" Classes="subtitulo" FontWeight="SemiBold" />
+                                            <TextBlock Grid.Column="1" Text="QUANTIDADE" Classes="subtitulo" FontWeight="SemiBold" />
+                                            <TextBlock Grid.Column="2" Text="TOTAL" Classes="subtitulo" FontWeight="SemiBold" HorizontalAlignment="Right" />
                                         </Grid>
                                     </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-
-            <!-- Mensal -->
-            <StackPanel Spacing="16" IsVisible="{Binding MostrarMensal}">
-                <Border Classes="cartao" IsVisible="{Binding Mensal, Converter={x:Static ObjectConverters.IsNotNull}}">
-                    <StackPanel Spacing="18">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <StackPanel Spacing="3">
-                                <TextBlock Text="Relatório Mensal" FontSize="19" FontWeight="Bold" />
-                                <TextBlock Text="{Binding Mensal.Mes, StringFormat='Mês {0}'}" Classes="subtitulo" />
-                            </StackPanel>
-                            <Border Grid.Column="1" Classes="badge badge-neutro">
-                                <TextBlock Text="{Binding Mensal.Ano, StringFormat='ANO {0}'}" FontSize="10" FontWeight="Bold" />
-                            </Border>
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                            <Border Grid.Column="0" Classes="cartao-estatistica">
-                                <StackPanel Spacing="5">
-                                    <TextBlock Text="Receita" Classes="subtitulo" />
-                                    <TextBlock Text="{Binding Mensal.Receita, Converter={StaticResource ValorKzConverter}}" FontSize="22" FontWeight="Bold" />
+                                    <ItemsControl ItemsSource="{Binding Diario.ProdutosVendidos}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="rel:ProdutoVendidoDto">
+                                                <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,14">
+                                                    <Grid ColumnDefinitions="2*,1*,1.2*">
+                                                        <TextBlock Text="{Binding ProdutoNome}" FontWeight="Medium" TextWrapping="Wrap" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding QuantidadeUnidadeBase, StringFormat={}{0:N2}}" />
+                                                        <TextBlock Grid.Column="2" Text="{Binding ValorTotalVendido, Converter={StaticResource ValorKzConverter}}"
+                                                                   HorizontalAlignment="Right" FontWeight="SemiBold" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,28"
+                                            IsVisible="{Binding DiarioSemVendas}">
+                                        <TextBlock Classes="subtitulo" Text="Sem vendas registadas neste dia."
+                                                   HorizontalAlignment="Center" />
+                                    </Border>
                                 </StackPanel>
                             </Border>
-                            <Border Grid.Column="1" Classes="cartao-estatistica">
-                                <StackPanel Spacing="5">
-                                    <TextBlock Text="Lucro estimado" Classes="subtitulo" />
-                                    <TextBlock Text="{Binding Mensal.LucroEstimado, Converter={StaticResource ValorKzConverter}}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource SucessoBrush}" />
-                                </StackPanel>
-                            </Border>
-                        </Grid>
+                        </StackPanel>
                     </StackPanel>
-                </Border>
 
-                <Border Classes="cartao" Padding="0" IsVisible="{Binding Mensal, Converter={x:Static ObjectConverters.IsNotNull}}">
-                    <StackPanel>
-                        <TextBlock Text="Produtos mais vendidos" FontWeight="Bold" FontSize="15" Margin="20,17" />
-                        <ItemsControl ItemsSource="{Binding Mensal.ProdutosMaisVendidos}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="rel:ProdutoVendidoDto">
-                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,13">
+                    <!-- ===================== Mensal ===================== -->
+                    <StackPanel Spacing="20" IsVisible="{Binding MostrarMensal}">
+                        <StackPanel Spacing="20" IsVisible="{Binding Mensal, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Spacing="3">
+                                    <TextBlock Text="Resumo do mês" FontSize="18" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding MesReferenciaTexto}" Classes="subtitulo" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Classes="badge badge-neutro" VerticalAlignment="Top">
+                                    <TextBlock Text="{Binding Mensal.Ano, StringFormat='ANO {0}'}" FontSize="10" FontWeight="Bold" />
+                                </Border>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                                <Border Grid.Column="0" Classes="cartao-estatistica">
+                                    <StackPanel Spacing="5">
+                                        <TextBlock Text="Receita" Classes="subtitulo" />
+                                        <TextBlock Text="{Binding Mensal.Receita, Converter={StaticResource ValorKzConverter}}" FontSize="22" FontWeight="Bold" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Classes="cartao-estatistica">
+                                    <StackPanel Spacing="5">
+                                        <TextBlock Text="Lucro estimado" Classes="subtitulo" />
+                                        <TextBlock Text="{Binding Mensal.LucroEstimado, Converter={StaticResource ValorKzConverter}}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource SucessoBrush}" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <Border Classes="cartao" Padding="0">
+                                <StackPanel>
+                                    <TextBlock Text="Produtos mais vendidos" FontWeight="Bold" FontSize="15" Margin="20,17,20,12" />
+                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,12">
                                         <Grid ColumnDefinitions="2*,1*,1.2*">
-                                            <TextBlock Text="{Binding ProdutoNome}" FontWeight="Medium" TextWrapping="Wrap" />
-                                            <TextBlock Grid.Column="1" Text="{Binding QuantidadeUnidadeBase, StringFormat={}{0:N2}}" />
-                                            <TextBlock Grid.Column="2" Text="{Binding ValorTotalVendido, Converter={StaticResource ValorKzConverter}}" HorizontalAlignment="Right" FontWeight="SemiBold" />
+                                            <TextBlock Text="PRODUTO" Classes="subtitulo" FontWeight="SemiBold" />
+                                            <TextBlock Grid.Column="1" Text="QUANTIDADE" Classes="subtitulo" FontWeight="SemiBold" />
+                                            <TextBlock Grid.Column="2" Text="TOTAL" Classes="subtitulo" FontWeight="SemiBold" HorizontalAlignment="Right" />
                                         </Grid>
                                     </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-
-            <!-- Stock -->
-            <StackPanel Spacing="16" IsVisible="{Binding MostrarStock}">
-                <Border Classes="cartao" IsVisible="{Binding Stock, Converter={x:Static ObjectConverters.IsNotNull}}">
-                    <StackPanel Spacing="16">
-                        <Grid ColumnDefinitions="*,* " ColumnSpacing="12">
-                            <Border Classes="cartao-estatistica">
-                                <StackPanel Spacing="4">
-                                    <TextBlock Text="Em falta" Classes="subtitulo" />
-                                    <TextBlock Text="{Binding Stock.ProdutosEmFalta.Count}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PerigoBrush}" />
+                                    <ItemsControl ItemsSource="{Binding Mensal.ProdutosMaisVendidos}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="rel:ProdutoVendidoDto">
+                                                <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,14">
+                                                    <Grid ColumnDefinitions="2*,1*,1.2*">
+                                                        <TextBlock Text="{Binding ProdutoNome}" FontWeight="Medium" TextWrapping="Wrap" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding QuantidadeUnidadeBase, StringFormat={}{0:N2}}" />
+                                                        <TextBlock Grid.Column="2" Text="{Binding ValorTotalVendido, Converter={StaticResource ValorKzConverter}}" HorizontalAlignment="Right" FontWeight="SemiBold" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,28"
+                                            IsVisible="{Binding MensalSemVendas}">
+                                        <TextBlock Classes="subtitulo" Text="Sem vendas registadas neste mês."
+                                                   HorizontalAlignment="Center" />
+                                    </Border>
                                 </StackPanel>
                             </Border>
-                            <Border Classes="cartao-estatistica">
-                                <StackPanel Spacing="4">
-                                    <TextBlock Text="Stock baixo" Classes="subtitulo" />
-                                    <TextBlock Text="{Binding Stock.ProdutosComStockBaixo.Count}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AvisoBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- ===================== Stock ===================== -->
+                    <StackPanel Spacing="20" IsVisible="{Binding MostrarStock}">
+                        <StackPanel Spacing="20" IsVisible="{Binding Stock, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                                <Border Grid.Column="0" Classes="cartao-estatistica">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Em falta" Classes="subtitulo" />
+                                        <TextBlock Text="{Binding Stock.ProdutosEmFalta.Count}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource PerigoBrush}" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Classes="cartao-estatistica">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Stock baixo" Classes="subtitulo" />
+                                        <TextBlock Text="{Binding Stock.ProdutosComStockBaixo.Count}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource AvisoBrush}" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <!-- Produtos em falta -->
+                            <Border Classes="cartao" Padding="0">
+                                <StackPanel>
+                                    <TextBlock Text="Produtos em falta" FontWeight="Bold" FontSize="15" Margin="20,17,20,12" />
+                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,12">
+                                        <Grid ColumnDefinitions="2*,1*,1*">
+                                            <TextBlock Text="PRODUTO" Classes="subtitulo" FontWeight="SemiBold" />
+                                            <TextBlock Grid.Column="1" Text="QUANTIDADE" Classes="subtitulo" FontWeight="SemiBold" />
+                                            <TextBlock Grid.Column="2" Text="UNIDADE" Classes="subtitulo" FontWeight="SemiBold" HorizontalAlignment="Right" />
+                                        </Grid>
+                                    </Border>
+                                    <ItemsControl ItemsSource="{Binding Stock.ProdutosEmFalta}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="rel:ProdutoStockDto">
+                                                <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,14">
+                                                    <Grid ColumnDefinitions="2*,1*,1*">
+                                                        <TextBlock Text="{Binding ProdutoNome}" FontWeight="Medium" TextWrapping="Wrap" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding QuantidadeApresentacao, StringFormat={}{0:N2}}" />
+                                                        <TextBlock Grid.Column="2" Text="{Binding UnidadeStock}" HorizontalAlignment="Right" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,28"
+                                            IsVisible="{Binding SemProdutosEmFalta}">
+                                        <TextBlock Classes="subtitulo" Text="Nenhum produto em falta."
+                                                   HorizontalAlignment="Center" />
+                                    </Border>
                                 </StackPanel>
                             </Border>
-                        </Grid>
+
+                            <!-- Stock baixo -->
+                            <Border Classes="cartao" Padding="0">
+                                <StackPanel>
+                                    <TextBlock Text="Stock baixo" FontWeight="Bold" FontSize="15" Margin="20,17,20,12" />
+                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,12">
+                                        <Grid ColumnDefinitions="2*,1*,1*">
+                                            <TextBlock Text="PRODUTO" Classes="subtitulo" FontWeight="SemiBold" />
+                                            <TextBlock Grid.Column="1" Text="STOCK ATUAL" Classes="subtitulo" FontWeight="SemiBold" />
+                                            <TextBlock Grid.Column="2" Text="MÍNIMO" Classes="subtitulo" FontWeight="SemiBold" HorizontalAlignment="Right" />
+                                        </Grid>
+                                    </Border>
+                                    <ItemsControl ItemsSource="{Binding Stock.ProdutosComStockBaixo}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="rel:ProdutoStockDto">
+                                                <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,14">
+                                                    <Grid ColumnDefinitions="2*,1*,1*">
+                                                        <TextBlock Text="{Binding ProdutoNome}" FontWeight="Medium" TextWrapping="Wrap" />
+                                                        <TextBlock Grid.Column="1" Text="{Binding EstoqueAtual, StringFormat={}{0:N2}}" />
+                                                        <TextBlock Grid.Column="2" Text="{Binding StockMinimo, StringFormat={}{0:N2}}" HorizontalAlignment="Right" Classes="subtitulo" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,28"
+                                            IsVisible="{Binding SemStockBaixo}">
+                                        <TextBlock Classes="subtitulo" Text="Nenhum produto com stock baixo."
+                                                   HorizontalAlignment="Center" />
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- Aviso de sucesso/erro: sem botão, some sozinho em 3 s -->
+        <Border IsVisible="{Binding ToastVisivel}"
+                IsHitTestVisible="False"
+                ZIndex="100"
+                Background="#44000000">
+
+            <Grid Width="320"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+
+                <Border Classes="cartao"
+                        Margin="0,32,0,0"
+                        Padding="24,44,24,24"
+                        CornerRadius="12"
+                        BoxShadow="0 12 32 0 #66000000">
+                    <StackPanel Spacing="8" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding ToastTitulo}"
+                                   FontSize="22"
+                                   FontWeight="Light"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="{Binding ToastMensagem}"
+                                   FontSize="13"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   Opacity="0.85" />
                     </StackPanel>
                 </Border>
 
-                <Border Classes="cartao" Padding="0" IsVisible="{Binding Stock, Converter={x:Static ObjectConverters.IsNotNull}}">
-                    <StackPanel>
-                        <TextBlock Text="Produtos em falta" FontWeight="Bold" FontSize="15" Margin="20,17" />
-                        <ItemsControl ItemsSource="{Binding Stock.ProdutosEmFalta}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="rel:ProdutoStockDto">
-                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,13">
-                                        <Grid ColumnDefinitions="2*,1*,1*">
-                                            <TextBlock Text="{Binding ProdutoNome}" FontWeight="Medium" />
-                                            <TextBlock Grid.Column="1" Text="{Binding QuantidadeApresentacao, StringFormat={}{0:N2}}" />
-                                            <TextBlock Grid.Column="2" Text="{Binding UnidadeStock}" HorizontalAlignment="Right" />
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <TextBlock Text="Stock baixo" FontWeight="Bold" FontSize="15" Margin="20,20,20,12" />
-                        <ItemsControl ItemsSource="{Binding Stock.ProdutosComStockBaixo}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="rel:ProdutoStockDto">
-                                    <Border BorderBrush="{StaticResource BordaBrush}" BorderThickness="0,1,0,0" Padding="20,13">
-                                        <Grid ColumnDefinitions="2*,1*,1*">
-                                            <TextBlock Text="{Binding ProdutoNome}" FontWeight="Medium" />
-                                            <TextBlock Grid.Column="1" Text="{Binding EstoqueAtual, StringFormat={}{0:N2}}" />
-                                            <TextBlock Grid.Column="2" Text="{Binding StockMinimo, StringFormat='mín. {0:N2}'}" HorizontalAlignment="Right" Classes="subtitulo" />
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
+                <!-- Círculo de sucesso (verde + visto) -->
+                <Border Width="64" Height="64" CornerRadius="32"
+                        VerticalAlignment="Top" HorizontalAlignment="Center"
+                        Background="{StaticResource SucessoBrush}"
+                        IsVisible="{Binding !ToastErro}">
+                    <PathIcon Data="{StaticResource IconeVisto}" Width="32" Height="32" Foreground="White" />
                 </Border>
-            </StackPanel>
 
-        </StackPanel>
-    </ScrollViewer>
+                <!-- Círculo de erro (vermelho + X) -->
+                <Border Width="64" Height="64" CornerRadius="32"
+                        VerticalAlignment="Top" HorizontalAlignment="Center"
+                        Background="{StaticResource PerigoBrush}"
+                        IsVisible="{Binding ToastErro}">
+                    <PathIcon Data="{StaticResource IconeFechar}" Width="28" Height="28" Foreground="White" />
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>

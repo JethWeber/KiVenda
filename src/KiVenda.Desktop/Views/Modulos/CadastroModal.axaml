@@ -1,0 +1,184 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
+             x:Class="KiVenda.Desktop.Views.Modulos.CadastroModal"
+             x:DataType="vm:CadastrosViewModel">
+
+    <UserControl.Styles>
+        <Style Selector="Button.fechar-modal">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Background" Value="{DynamicResource NeutroSuaveBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextoSecundarioBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <!-- Indicador das etapas do cadastro de funcionário -->
+        <Style Selector="Border.passo">
+            <Setter Property="Background" Value="{DynamicResource NeutroSuaveBrush}" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        <Style Selector="Border.passo TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextoSecundarioBrush}" />
+        </Style>
+        <Style Selector="Border.passo.ativo">
+            <Setter Property="Background" Value="{DynamicResource VerdeSuaveBrush}" />
+        </Style>
+        <Style Selector="Border.passo.ativo TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource VerdePrimarioBrush}" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+    </UserControl.Styles>
+
+    <!-- Camada escura: bloqueia a interação com o resto do ecrã enquanto o modal está aberto -->
+    <Grid x:Name="Overlay"
+          IsVisible="{Binding FormularioAberto}"
+          Background="#66000000"
+          KeyDown="OnKeyDown">
+
+        <Border Classes="cartao" Width="640" MaxHeight="720"
+                HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
+            <StackPanel Spacing="18">
+
+                <!-- Cabeçalho -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Spacing="3">
+                        <TextBlock Text="{Binding TituloFormulario}" FontSize="20" FontWeight="Bold" />
+                        <TextBlock Classes="subtitulo" Text="Preencha os dados e confirme o cadastro." />
+                    </StackPanel>
+                    <Button Grid.Column="1" Classes="fechar-modal" Content="×"
+                            VerticalAlignment="Top"
+                            Command="{Binding FecharFormularioCommand}" />
+                </Grid>
+
+                <!-- Campos comuns -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                    <StackPanel Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Nome / Razão Social" />
+                        <TextBox x:Name="CampoPrincipal" Text="{Binding Nome}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Telefone" />
+                        <TextBox Text="{Binding Telefone}" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Cliente / Fornecedor -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="14" IsVisible="{Binding !EhFuncionario}">
+                    <StackPanel Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="Email" />
+                        <TextBox Text="{Binding Email}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Classes="rotulo-campo" Text="NIF" />
+                        <TextBox Text="{Binding Nif}" />
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel IsVisible="{Binding EhFornecedor}" Spacing="4">
+                    <TextBlock Classes="rotulo-campo" Text="Produtos fornecidos" />
+                    <TextBox Text="{Binding ProdutosFornecidos}" Watermark="ex.: Arroz, óleo, açúcar..." />
+                </StackPanel>
+
+                <!-- Funcionário (3 etapas) -->
+                <StackPanel IsVisible="{Binding EhFuncionario}" Spacing="14">
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                        <Border Classes="passo" Classes.ativo="{Binding FuncionarioEtapa1}">
+                            <TextBlock Text="1 · Dados pessoais" />
+                        </Border>
+                        <Border Grid.Column="1" Classes="passo" Classes.ativo="{Binding FuncionarioEtapa2}">
+                            <TextBlock Text="2 · Função" />
+                        </Border>
+                        <Border Grid.Column="2" Classes="passo" Classes.ativo="{Binding FuncionarioEtapa3}">
+                            <TextBlock Text="3 · Contrato" />
+                        </Border>
+                    </Grid>
+
+                    <StackPanel IsVisible="{Binding FuncionarioEtapa1}" Spacing="14">
+                        <TextBlock Text="Dados pessoais" FontSize="16" FontWeight="SemiBold" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                            <StackPanel Spacing="4">
+                                <TextBlock Classes="rotulo-campo" Text="BI" />
+                                <TextBox Text="{Binding Bi}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="4">
+                                <TextBlock Classes="rotulo-campo" Text="Email" />
+                                <TextBox Text="{Binding Email}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding FuncionarioEtapa2}" Spacing="14">
+                        <TextBlock Text="Função e organização" FontSize="16" FontWeight="SemiBold" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                            <StackPanel Spacing="4">
+                                <TextBlock Classes="rotulo-campo" Text="Cargo / Perfil" />
+                                <TextBox Text="{Binding Cargo}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="4">
+                                <TextBlock Classes="rotulo-campo" Text="Departamento" />
+                                <TextBox Text="{Binding Departamento}" />
+                            </StackPanel>
+                        </Grid>
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="rotulo-campo" Text="Turno / Caixa" />
+                            <TextBox Text="{Binding Turno}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel IsVisible="{Binding FuncionarioEtapa3}" Spacing="14">
+                        <TextBlock Text="Contrato e remuneração" FontSize="16" FontWeight="SemiBold" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                            <StackPanel Spacing="4">
+                                <TextBlock Classes="rotulo-campo" Text="Data de admissão" />
+                                <DatePicker SelectedDate="{Binding DataAdmissao}" HorizontalAlignment="Stretch" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="4">
+                                <TextBlock Classes="rotulo-campo" Text="Salário base (Kz)" />
+                                <TextBox Text="{Binding SalarioBase}" />
+                            </StackPanel>
+                        </Grid>
+                        <CheckBox Content="Funcionário ativo" IsChecked="{Binding Ativo}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock Classes="erro" TextWrapping="Wrap"
+                           Text="{Binding MensagemErro}"
+                           IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                <!-- Ações -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                    <Button Content="Cancelar" Classes="secundario"
+                            Command="{Binding FecharFormularioCommand}" />
+
+                    <!-- Só funcionários navegam por etapas -->
+                    <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding EhFuncionario}">
+                        <Button Content="Voltar" Classes="secundario"
+                                Command="{Binding VoltarEtapaFuncionarioCommand}"
+                                IsVisible="{Binding !FuncionarioEtapa1}" />
+                        <Button Content="Avançar" Classes="primario"
+                                Command="{Binding AvancarEtapaFuncionarioCommand}"
+                                IsVisible="{Binding !FuncionarioEtapa3}" />
+                        <Button Content="Guardar" Classes="primario"
+                                Command="{Binding GuardarCommand}"
+                                IsVisible="{Binding FuncionarioEtapa3}"
+                                IsEnabled="{Binding !AGuardar}" />
+                    </StackPanel>
+
+                    <!-- Cliente / Fornecedor -->
+                    <Button Content="Guardar" Classes="primario"
+                            Command="{Binding GuardarCommand}"
+                            IsVisible="{Binding !EhFuncionario}"
+                            IsEnabled="{Binding !AGuardar}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

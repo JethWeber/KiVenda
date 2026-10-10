@@ -3,58 +3,16 @@
              xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
              xmlns:cad="using:KiVenda.Application.Cadastros"
              xmlns:ic="using:FluentIcons.Avalonia"
+             xmlns:views="using:KiVenda.Desktop.Views.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.CadastrosView"
              x:DataType="vm:CadastrosViewModel">
 
+    <UserControl.Resources>
+        <StreamGeometry x:Key="IconeVisto">M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z</StreamGeometry>
+        <StreamGeometry x:Key="IconeFechar">M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z</StreamGeometry>
+    </UserControl.Resources>
+
     <UserControl.Styles>
-
-        <!-- ===== Pílulas de resumo (contagens por entidade) ===== -->
-        <Style Selector="Border.pilula-resumo">
-            <Setter Property="Background" Value="{DynamicResource SuperficieBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource BordaBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="999" />
-            <Setter Property="Padding" Value="14,8" />
-        </Style>
-
-        <!-- ===== Abas em formato de pílula ===== -->
-        <Style Selector="TabItem">
-            <Setter Property="Padding" Value="4" />
-            <Setter Property="Margin" Value="0,0,8,0" />
-            <Setter Property="Background" Value="Transparent" />
-        </Style>
-        <Style Selector="Border.aba-pilula">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="CornerRadius" Value="10" />
-            <Setter Property="Padding" Value="14,9" />
-        </Style>
-        <Style Selector="TabItem:selected Border.aba-pilula">
-            <Setter Property="Background" Value="{DynamicResource VerdePrimarioBrush}" />
-        </Style>
-        <Style Selector="TextBlock.aba-rotulo">
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{DynamicResource TextoPrimarioBrush}" />
-        </Style>
-        <Style Selector="TabItem:selected TextBlock.aba-rotulo">
-            <Setter Property="Foreground" Value="White" />
-        </Style>
-        <Style Selector="Border.aba-contador">
-            <Setter Property="Background" Value="{DynamicResource NeutroSuaveBrush}" />
-            <Setter Property="CornerRadius" Value="999" />
-            <Setter Property="Padding" Value="7,2" />
-        </Style>
-        <Style Selector="TabItem:selected Border.aba-contador">
-            <Setter Property="Background" Value="#33FFFFFF" />
-        </Style>
-        <Style Selector="TextBlock.aba-contador-texto">
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Foreground" Value="{DynamicResource TextoSecundarioBrush}" />
-        </Style>
-        <Style Selector="TabItem:selected TextBlock.aba-contador-texto">
-            <Setter Property="Foreground" Value="White" />
-        </Style>
 
         <!-- ===== Cartões de indicadores (KPIs) ===== -->
         <Style Selector="Border.kpi">
@@ -94,19 +52,6 @@
             <Setter Property="Margin" Value="0,4,0,0" />
         </Style>
 
-        <!-- ===== Campo de pesquisa com ícone ===== -->
-        <Style Selector="Border.campo-busca">
-            <Setter Property="Background" Value="{DynamicResource FundoPaginaBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource BordaBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="10" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-        </Style>
-        <Style Selector="Border.campo-busca TextBox">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-        </Style>
-
         <!-- ===== Avatares com iniciais (sem fotografias) ===== -->
         <Style Selector="Border.avatar">
             <Setter Property="Width" Value="38" />
@@ -130,7 +75,7 @@
 
         <!-- ===== Tabela ===== -->
         <Style Selector="Border.cabecalho-tabela">
-            <Setter Property="Background" Value="{DynamicResource NeutroSuaveBrush}" />
+            <Setter Property="Background" Value="Transparent" />
         </Style>
         <Style Selector="Border.cabecalho-tabela TextBlock">
             <Setter Property="FontSize" Value="11" />
@@ -155,62 +100,92 @@
             <Setter Property="Foreground" Value="{DynamicResource PerigoBrush}" />
         </Style>
 
+        <!-- ===== Separadores (mesmo desenho do Stock) ===== -->
+        <Style Selector="Button.tab">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0,0,0,2" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Padding" Value="20,11" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Foreground" Value="{DynamicResource TextoSecundarioBrush}" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="Button.tab:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource NeutroSuaveBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextoPrimarioBrush}" />
+        </Style>
+        <Style Selector="Button.tab.ativa">
+            <Setter Property="Foreground" Value="{DynamicResource VerdePrimarioBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.tab.ativa /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="BorderBrush" Value="{DynamicResource VerdePrimarioBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource VerdePrimarioBrush}" />
+        </Style>
+        <Style Selector="Button.tab.ativa:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="BorderBrush" Value="{DynamicResource VerdePrimarioBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource VerdePrimarioBrush}" />
+        </Style>
     </UserControl.Styles>
 
     <Grid>
-    
-        <StackPanel Spacing="18">
+        <Grid RowDefinitions="Auto,Auto,*" RowSpacing="0">
 
-            <!-- ===================== Cabeçalho ===================== -->
-            <StackPanel Spacing="4">
-                <TextBlock Text="MÓDULO DE CADASTROS" FontSize="11" FontWeight="Bold"
-                           Foreground="{DynamicResource VerdePrimarioBrush}" />
-                <TextBlock Classes="titulo-pagina" Text="Central de Cadastros" />
+            <!-- Cabeçalho -->
+            <StackPanel Grid.Row="0" Spacing="3" Margin="0,0,0,20">
+                <TextBlock Classes="titulo-pagina" Text="Cadastros" />
                 <TextBlock Classes="subtitulo" Text="Clientes, fornecedores e funcionários num único espaço." />
             </StackPanel>
 
-            <TextBlock Classes="erro" Text="{Binding MensagemErro}"
-                       IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            <!-- Separadores -->
+            <Border Grid.Row="1"
+                    BorderBrush="{DynamicResource BordaBrush}"
+                    BorderThickness="0,0,0,1"
+                    Margin="0,0,0,20">
+                <StackPanel Orientation="Horizontal">
+                    <Button Classes="tab"
+                            Classes.ativa="{Binding EhAbaClientes}"
+                            Content="Clientes"
+                            Command="{Binding SelecionarAbaClientesCommand}" />
+                    <Button Classes="tab"
+                            Classes.ativa="{Binding EhAbaFornecedores}"
+                            Content="Fornecedores"
+                            Command="{Binding SelecionarAbaFornecedoresCommand}" />
+                    <Button Classes="tab"
+                            Classes.ativa="{Binding EhAbaFuncionarios}"
+                            Content="Funcionários"
+                            Command="{Binding SelecionarAbaFuncionariosCommand}" />
+                </StackPanel>
+            </Border>
 
-            <!-- ===================== Abas ===================== -->
-            <TabControl SelectedIndex="{Binding AbaSelecionada}">
+            <!-- Conteúdo -->
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Spacing="20">
 
-                <!-- ============================================================ -->
-                <!-- CLIENTES                                                      -->
-                <!-- ============================================================ -->
-                <TabItem>
-                    <TabItem.Header>
-                        <Border Classes="aba-pilula">
-                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                <TextBlock Classes="aba-rotulo" Text="Clientes" />
-                                
-                            </StackPanel>
-                        </Border>
-                    </TabItem.Header>
+                    <TextBlock Classes="erro" Text="{Binding MensagemErro}"
+                               IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
-                    <StackPanel Spacing="18">
+                    <StackPanel Spacing="20" IsVisible="{Binding EhAbaClientes}">
 
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="2">
-                            <Border Classes="campo-busca">
-                                <Grid ColumnDefinitions="Auto,*">
-                                    <TextBlock Text="⌕" FontSize="15" Margin="12,0,2,0" VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextoSecundarioBrush}" />
-                                    <TextBox Grid.Column="1" Text="{Binding PesquisaClientes}"
-                                             Watermark="Pesquisar por nome, telefone ou NIF..." />
-                                </Grid>
+                        <!-- Barra de ferramentas: pesquisa + ação principal (abre modal) -->
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <Border Background="{DynamicResource SuperficieBrush}"
+                                    BorderBrush="{DynamicResource BordaBrush}" BorderThickness="1"
+                                    CornerRadius="10" Padding="13,4">
+                                <TextBox Text="{Binding PesquisaClientes}" Watermark="Pesquisar por nome, telefone ou NIF..."
+                                         Background="Transparent" BorderThickness="0" />
                             </Border>
-                            <Button Grid.Column="1" Classes="primario" Command="{Binding NovoClienteCommand}">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <TextBlock Text="+" FontWeight="Bold" />
-                                    <TextBlock Text="Novo Cliente" />
-                                </StackPanel>
-                            </Button>
+                            <Button Grid.Column="1" Content="+ Novo Cliente" Classes="primario"
+                                    Padding="20,10" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                                    Command="{Binding NovoClienteCommand}" />
                         </Grid>
 
                         <Border Classes="cartao" Padding="0">
                             <StackPanel>
                                 <Border Classes="cabecalho-tabela">
-                                    <Grid ColumnDefinitions="48,2*,1.2*,1.4*,1.2*,Auto" Margin="16,12">
+                                    <Grid ColumnDefinitions="48,2*,1.2*,1.4*,1.2*,Auto" Margin="20,17">
                                         <TextBlock Grid.Column="1" Text="CLIENTE" />
                                         <TextBlock Grid.Column="2" Text="CONTACTO" />
                                         <TextBlock Grid.Column="3" Text="EMAIL" />
@@ -222,7 +197,7 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate DataType="cad:ClienteCadastroDto">
                                             <Border Classes="linha-tabela" BorderBrush="{DynamicResource BordaBrush}"
-                                                    BorderThickness="0,0,0,1" Padding="16,12">
+                                                    BorderThickness="0,1,0,0" Padding="20,14">
                                                 <Grid ColumnDefinitions="48,2*,1.2*,1.4*,1.2*,Auto">
                                                     <Border Classes="avatar">
                                                         <TextBlock Text="{Binding Nome, Converter={StaticResource IniciaisConverter}}" />
@@ -254,44 +229,26 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
-                </TabItem>
 
-                <!-- ============================================================ -->
-                <!-- FORNECEDORES                                                  -->
-                <!-- ============================================================ -->
-                <TabItem>
-                    <TabItem.Header>
-                        <Border Classes="aba-pilula">
-                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                <TextBlock Classes="aba-rotulo" Text="Fornecedores" />
-                                
-                            </StackPanel>
-                        </Border>
-                    </TabItem.Header>
+                    <StackPanel Spacing="20" IsVisible="{Binding EhAbaFornecedores}">
 
-                    <StackPanel Spacing="18">
-
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="2">
-                            <Border Classes="campo-busca">
-                                <Grid ColumnDefinitions="Auto,*">
-                                    <TextBlock Text="⌕" FontSize="15" Margin="12,0,2,0" VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextoSecundarioBrush}" />
-                                    <TextBox Grid.Column="1" Text="{Binding PesquisaFornecedores}"
-                                             Watermark="Pesquisar por fornecedor, NIF ou contacto..." />
-                                </Grid>
+                        <!-- Barra de ferramentas: pesquisa + ação principal (abre modal) -->
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <Border Background="{DynamicResource SuperficieBrush}"
+                                    BorderBrush="{DynamicResource BordaBrush}" BorderThickness="1"
+                                    CornerRadius="10" Padding="13,4">
+                                <TextBox Text="{Binding PesquisaFornecedores}" Watermark="Pesquisar por fornecedor, NIF ou contacto..."
+                                         Background="Transparent" BorderThickness="0" />
                             </Border>
-                            <Button Grid.Column="1" Classes="primario" Command="{Binding NovoFornecedorCommand}">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <TextBlock Text="+" FontWeight="Bold" />
-                                    <TextBlock Text="Novo Fornecedor" />
-                                </StackPanel>
-                            </Button>
+                            <Button Grid.Column="1" Content="+ Novo Fornecedor" Classes="primario"
+                                    Padding="20,10" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                                    Command="{Binding NovoFornecedorCommand}" />
                         </Grid>
 
                         <Border Classes="cartao" Padding="0">
                             <StackPanel>
                                 <Border Classes="cabecalho-tabela">
-                                    <Grid ColumnDefinitions="48,1.6*,1.1*,1.3*,1.1*,1.6*,Auto" Margin="16,12">
+                                    <Grid ColumnDefinitions="48,1.6*,1.1*,1.3*,1.1*,1.6*,Auto" Margin="20,17">
                                         <TextBlock Grid.Column="1" Text="FORNECEDOR" />
                                         <TextBlock Grid.Column="2" Text="CONTACTO" />
                                         <TextBlock Grid.Column="3" Text="EMAIL" />
@@ -304,7 +261,7 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate DataType="cad:FornecedorCadastroDto">
                                             <Border Classes="linha-tabela" BorderBrush="{DynamicResource BordaBrush}"
-                                                    BorderThickness="0,0,0,1" Padding="16,12">
+                                                    BorderThickness="0,1,0,0" Padding="20,14">
                                                 <Grid ColumnDefinitions="48,1.6*,1.1*,1.3*,1.1*,1.6*,Auto">
                                                     <Border Classes="avatar avatar-info">
                                                         <TextBlock Text="{Binding Nome, Converter={StaticResource IniciaisConverter}}" />
@@ -340,22 +297,8 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
-                </TabItem>
 
-                <!-- ============================================================ -->
-                <!-- FUNCIONÁRIOS                                                  -->
-                <!-- ============================================================ -->
-                <TabItem>
-                    <TabItem.Header>
-                        <Border Classes="aba-pilula">
-                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                <TextBlock Classes="aba-rotulo" Text="Funcionários" />
-                                
-                            </StackPanel>
-                        </Border>
-                    </TabItem.Header>
-
-                    <StackPanel Spacing="18">
+                    <StackPanel Spacing="20" IsVisible="{Binding EhAbaFuncionarios}">
 
                         <UniformGrid Columns="4" Rows="1">
                             <Border Classes="kpi" Margin="0,0,7,0">
@@ -395,27 +338,23 @@
                             </Border>
                         </UniformGrid>
 
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="2">
-                            <Border Classes="campo-busca">
-                                <Grid ColumnDefinitions="Auto,*">
-                                    <TextBlock Text="⌕" FontSize="15" Margin="12,0,2,0" VerticalAlignment="Center"
-                                               Foreground="{DynamicResource TextoSecundarioBrush}" />
-                                    <TextBox Grid.Column="1" Text="{Binding PesquisaFuncionarios}"
-                                             Watermark="Pesquisar por nome, cargo, BI ou código..." />
-                                </Grid>
+                        <!-- Barra de ferramentas: pesquisa + ação principal (abre modal) -->
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <Border Background="{DynamicResource SuperficieBrush}"
+                                    BorderBrush="{DynamicResource BordaBrush}" BorderThickness="1"
+                                    CornerRadius="10" Padding="13,4">
+                                <TextBox Text="{Binding PesquisaFuncionarios}" Watermark="Pesquisar por nome, cargo, BI ou código..."
+                                         Background="Transparent" BorderThickness="0" />
                             </Border>
-                            <Button Grid.Column="1" Classes="primario" Command="{Binding NovoFuncionarioCommand}">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <TextBlock Text="+" FontWeight="Bold" />
-                                    <TextBlock Text="Novo Funcionário" />
-                                </StackPanel>
-                            </Button>
+                            <Button Grid.Column="1" Content="+ Novo Funcionário" Classes="primario"
+                                    Padding="20,10" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                                    Command="{Binding NovoFuncionarioCommand}" />
                         </Grid>
 
                         <Border Classes="cartao" Padding="0">
                             <StackPanel>
                                 <Border Classes="cabecalho-tabela">
-                                    <Grid ColumnDefinitions="48,0.7*,1.6*,1.2*,1.3*,1.0*,1.0*,0.9*,Auto" Margin="16,12">
+                                    <Grid ColumnDefinitions="48,0.7*,1.6*,1.2*,1.3*,1.0*,1.0*,0.9*,Auto" Margin="20,17">
                                         <TextBlock Grid.Column="1" Text="CÓDIGO" />
                                         <TextBlock Grid.Column="2" Text="FUNCIONÁRIO / BI" />
                                         <TextBlock Grid.Column="3" Text="CONTACTO" />
@@ -430,7 +369,7 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate DataType="cad:FuncionarioDto">
                                             <Border Classes="linha-tabela" BorderBrush="{DynamicResource BordaBrush}"
-                                                    BorderThickness="0,0,0,1" Padding="16,12">
+                                                    BorderThickness="0,1,0,0" Padding="20,14">
                                                 <Grid ColumnDefinitions="48,0.7*,1.6*,1.2*,1.3*,1.0*,1.0*,0.9*,Auto">
                                                     <Border Classes="avatar avatar-info">
                                                         <TextBlock Text="{Binding Nome, Converter={StaticResource IniciaisConverter}}" />
@@ -482,145 +421,58 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
-                </TabItem>
 
-            </TabControl>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
 
-        </StackPanel>
-    
-            <!-- Popup de cadastro -->
-            <Grid IsVisible="{Binding FormularioAberto}" Background="#66000000">
-                <Border Classes="cartao" Width="760" MaxHeight="720"
-                        HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
-                    
-                        <StackPanel Spacing="18">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <StackPanel Spacing="3">
-                                    <TextBlock Text="{Binding EntidadeEmEdicao, StringFormat={}Novo {0}}"
-                                               FontSize="20" FontWeight="Bold" />
-                                    <TextBlock Classes="subtitulo" Text="Preencha os dados e confirme o cadastro." />
-                                </StackPanel>
-                                <Button Grid.Column="1" Classes="acao-icone" Content="×"
-                                        Command="{Binding FecharFormularioCommand}" />
-                            </Grid>
+        <!-- Modal de cadastro (UserControl): por cima da página inteira -->
+        <views:CadastroModal />
 
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                                <StackPanel Spacing="4">
-                                    <TextBlock Classes="rotulo-campo" Text="Nome / Razão Social" />
-                                    <TextBox Text="{Binding Nome}" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Spacing="4">
-                                    <TextBlock Classes="rotulo-campo" Text="Telefone" />
-                                    <TextBox Text="{Binding Telefone}" />
-                                </StackPanel>
-                            </Grid>
+        <!-- Aviso de sucesso/erro: sem botão, some sozinho em 3 s -->
+        <Border IsVisible="{Binding ToastVisivel}"
+                IsHitTestVisible="False"
+                ZIndex="100"
+                Background="#44000000">
 
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="14" IsVisible="{Binding !EhFuncionario}">
-                                <StackPanel Spacing="4">
-                                    <TextBlock Classes="rotulo-campo" Text="Email" />
-                                    <TextBox Text="{Binding Email}" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Spacing="4">
-                                    <TextBlock Classes="rotulo-campo" Text="NIF" />
-                                    <TextBox Text="{Binding Nif}" />
-                                </StackPanel>
-                            </Grid>
+            <Grid Width="320"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
 
-                            <StackPanel IsVisible="{Binding EhFornecedor}" Spacing="4">
-                                <TextBlock Classes="rotulo-campo" Text="Produtos fornecidos" />
-                                <TextBox Text="{Binding ProdutosFornecidos}" Watermark="ex.: Arroz, óleo, açúcar..." />
-                            </StackPanel>
+                <Border Classes="cartao"
+                        Margin="0,32,0,0"
+                        Padding="24,44,24,24"
+                        CornerRadius="12"
+                        BoxShadow="0 12 32 0 #66000000">
+                    <StackPanel Spacing="8" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding ToastTitulo}"
+                                   FontSize="22"
+                                   FontWeight="Light"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="{Binding ToastMensagem}"
+                                   FontSize="13"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   Opacity="0.85" />
+                    </StackPanel>
+                </Border>
 
-                            <StackPanel IsVisible="{Binding EhFuncionario}" Spacing="14">
-                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
-                                    <Border Classes="badge" Padding="10" HorizontalAlignment="Stretch">
-                                        <TextBlock Text="1 · Dados pessoais" HorizontalAlignment="Center"
-                                                   Foreground="{DynamicResource VerdePrimarioBrush}" />
-                                    </Border>
-                                    <Border Grid.Column="1" Classes="badge" Padding="10" HorizontalAlignment="Stretch">
-                                        <TextBlock Text="2 · Função" HorizontalAlignment="Center"
-                                                   Foreground="{DynamicResource TextoSecundarioBrush}" />
-                                    </Border>
-                                    <Border Grid.Column="2" Classes="badge" Padding="10" HorizontalAlignment="Stretch">
-                                        <TextBlock Text="3 · Contrato" HorizontalAlignment="Center"
-                                                   Foreground="{DynamicResource TextoSecundarioBrush}" />
-                                    </Border>
-                                </Grid>
+                <!-- Círculo de sucesso (verde + visto) -->
+                <Border Width="64" Height="64" CornerRadius="32"
+                        VerticalAlignment="Top" HorizontalAlignment="Center"
+                        Background="{StaticResource SucessoBrush}"
+                        IsVisible="{Binding !ToastErro}">
+                    <PathIcon Data="{StaticResource IconeVisto}" Width="32" Height="32" Foreground="White" />
+                </Border>
 
-                                <StackPanel IsVisible="{Binding FuncionarioEtapa1}" Spacing="14">
-                                    <TextBlock Text="Dados pessoais" FontSize="16" FontWeight="SemiBold" />
-                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                                        <StackPanel Spacing="4">
-                                            <TextBlock Classes="rotulo-campo" Text="BI" />
-                                            <TextBox Text="{Binding Bi}" />
-                                        </StackPanel>
-                                        <StackPanel Grid.Column="1" Spacing="4">
-                                            <TextBlock Classes="rotulo-campo" Text="Email" />
-                                            <TextBox Text="{Binding Email}" />
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
-
-                                <StackPanel IsVisible="{Binding FuncionarioEtapa2}" Spacing="14">
-                                    <TextBlock Text="Função e organização" FontSize="16" FontWeight="SemiBold" />
-                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                                        <StackPanel Spacing="4">
-                                            <TextBlock Classes="rotulo-campo" Text="Cargo / Perfil" />
-                                            <TextBox Text="{Binding Cargo}" />
-                                        </StackPanel>
-                                        <StackPanel Grid.Column="1" Spacing="4">
-                                            <TextBlock Classes="rotulo-campo" Text="Departamento" />
-                                            <TextBox Text="{Binding Departamento}" />
-                                        </StackPanel>
-                                    </Grid>
-                                    <StackPanel Spacing="4">
-                                        <TextBlock Classes="rotulo-campo" Text="Turno / Caixa" />
-                                        <TextBox Text="{Binding Turno}" />
-                                    </StackPanel>
-                                </StackPanel>
-
-                                <StackPanel IsVisible="{Binding FuncionarioEtapa3}" Spacing="14">
-                                    <TextBlock Text="Contrato e remuneração" FontSize="16" FontWeight="SemiBold" />
-                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                                        <StackPanel Spacing="4">
-                                            <TextBlock Classes="rotulo-campo" Text="Data de admissão" />
-                                            <DatePicker SelectedDate="{Binding DataAdmissao}" HorizontalAlignment="Stretch" />
-                                        </StackPanel>
-                                        <StackPanel Grid.Column="1" Spacing="4">
-                                            <TextBlock Classes="rotulo-campo" Text="Salário base (Kz)" />
-                                            <TextBox Text="{Binding SalarioBase}" />
-                                        </StackPanel>
-                                    </Grid>
-                                    <CheckBox Content="Funcionário ativo" IsChecked="{Binding Ativo}" />
-                                </StackPanel>
-                            </StackPanel>
-
-                            <TextBlock Classes="erro" Text="{Binding MensagemErro}"
-                                       IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
-
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                                <Button Content="Cancelar" Classes="secundario" Command="{Binding FecharFormularioCommand}" />
-                                <Button Content="Voltar" Classes="secundario"
-                                        Command="{Binding VoltarEtapaFuncionarioCommand}"
-                                        IsVisible="{Binding EhFuncionario}" />
-                                <Button Content="Avançar" Classes="primario"
-                                        Command="{Binding AvancarEtapaFuncionarioCommand}"
-                                        IsVisible="{Binding FuncionarioEtapa1}" />
-                                <Button Content="Avançar" Classes="primario"
-                                        Command="{Binding AvancarEtapaFuncionarioCommand}"
-                                        IsVisible="{Binding FuncionarioEtapa2}" />
-                                <Button Content="Guardar" Classes="primario"
-                                        Command="{Binding GuardarCommand}"
-                                        IsVisible="{Binding FuncionarioEtapa3}"
-                                        IsEnabled="{Binding !AGuardar}" />
-                                <Button Content="Guardar" Classes="primario"
-                                        Command="{Binding GuardarCommand}"
-                                        IsVisible="{Binding !EhFuncionario}"
-                                        IsEnabled="{Binding !AGuardar}" />
-                            </StackPanel>
-                        </StackPanel>
-                    
+                <!-- Círculo de erro (vermelho + X) -->
+                <Border Width="64" Height="64" CornerRadius="32"
+                        VerticalAlignment="Top" HorizontalAlignment="Center"
+                        Background="{StaticResource PerigoBrush}"
+                        IsVisible="{Binding ToastErro}">
+                    <PathIcon Data="{StaticResource IconeFechar}" Width="28" Height="28" Foreground="White" />
                 </Border>
             </Grid>
-</Grid>
+        </Border>
+    </Grid>
 </UserControl>
