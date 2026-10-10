@@ -155,12 +155,23 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
         try
         {
             byte[] png = Licensing.GenerateActivationQrCode();
+
+            if (png.Length == 0)
+            {
+                Mensagem = "O gerador de ativação devolveu uma imagem vazia.";
+                OnPropertyChanged(nameof(MostrarQr));
+                return;
+            }
+
             using var stream = new MemoryStream(png);
             QrCode = new Bitmap(stream);
+
+            Mensagem = $"QR de ativação gerado ({QrCode.PixelSize.Width}x{QrCode.PixelSize.Height}).";
         }
         catch (Exception ex)
         {
-            Mensagem = $"Não foi possível gerar o QR de ativação: {ex.Message}";
+            QrCode = null;
+            Mensagem = $"Não foi possível gerar o QR de ativação: {ex}";
         }
 
         OnPropertyChanged(nameof(MostrarQr));
