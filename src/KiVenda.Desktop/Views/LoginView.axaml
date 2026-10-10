@@ -103,10 +103,16 @@
                                 <TextBlock Text="{Binding MensagemErro}"
                                            Classes="erro"
                                            FontSize="12" />
+                                <TextBlock Text="{Binding TempoBloqueio, StringFormat='Acesso bloqueado. Aguarde {0}.'}"
+                                           IsVisible="{Binding EstaBloqueado}"
+                                           Foreground="{DynamicResource AvisoBrush}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           TextWrapping="Wrap" />
 
                                 <Button Content="Entrar"
                                         Command="{Binding EntrarCommand}"
-                                        IsEnabled="{Binding !AEntrar}"
+                                        IsEnabled="{Binding PodeEntrar}"
                                         Classes="primario"
                                         Height="46"
                                         HorizontalAlignment="Stretch"

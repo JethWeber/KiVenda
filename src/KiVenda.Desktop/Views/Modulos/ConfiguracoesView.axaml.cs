@@ -9,13 +9,13 @@ namespace KiVenda.Desktop.Views.Modulos;
 
 public partial class ConfiguracoesView : UserControl
 {
-    // Preencha para mostrar as ligações do rodapé. Vazio = botão escondido.
+    // URLs vazias escondem os respetivos links do rodapé.
     private static readonly string SuporteUrl = "";
     private static readonly string DocumentacaoUrl = "";
 
-    // Separadores onde o botão "Guardar alterações" faz sentido.
     private const int AbaEmpresa = 0;
     private const int AbaDispositivos = 1;
+    private const int AbaLicenca = 2;
 
     public ConfiguracoesView()
     {
@@ -24,18 +24,38 @@ public partial class ConfiguracoesView : UserControl
         VersaoText.Text = $"v{ObterVersao()}";
         SuporteLink.IsVisible = !string.IsNullOrWhiteSpace(SuporteUrl);
         DocumentacaoLink.IsVisible = !string.IsNullOrWhiteSpace(DocumentacaoUrl);
+
+        AtualizarBotaoGuardar();
     }
 
     private void Abas_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        // SelectionChanged de ComboBox filhos também sobe até aqui.
-        if (!ReferenceEquals(e.Source, Abas) || GuardarBtn is null)
+        // Ignorar eventos de ComboBoxes dentro das abas.
+        if (!ReferenceEquals(e.Source, Abas))
             return;
 
-        GuardarBtn.IsVisible = Abas.SelectedIndex is AbaEmpresa or AbaDispositivos;
+        // Quando a licença restringe o acesso, manter apenas a aba Licença.
+        if (DataContext is ConfiguracoesViewModel vm &&
+            vm.SomenteLicenca &&
+            Abas.SelectedIndex != AbaLicenca)
+        {
+            Abas.SelectedIndex = AbaLicenca;
+            return;
+        }
+
+        AtualizarBotaoGuardar();
     }
 
-    private void Guardar_Click(object? sender, RoutedEventArgs e)
+    private void AtualizarBotaoGuardar()
+    {
+        if (GuardarBtn is null || Abas is null)
+            return;
+
+        GuardarBtn.IsVisible =
+            Abas.SelectedIndex is AbaEmpresa or AbaDispositivos;
+    }
+
+    private async void Guardar_Click(object? sender, RoutedEventArgs e)
     {
         if (DataContext is not ConfiguracoesViewModel vm)
             return;
@@ -44,27 +64,30 @@ public partial class ConfiguracoesView : UserControl
         {
             case AbaEmpresa:
                 if (vm.Empresa.PodeExecutar)
-                    Executar(vm.Empresa.GuardarCommand);
+                    await vm.Empresa.GuardarCommand.ExecuteAsync(null);
                 break;
 
             case AbaDispositivos:
                 if (!vm.Scanner.AGuardar)
-                    Executar(vm.Scanner.GuardarCommand);
+                    await vm.Scanner.GuardarCommand.ExecuteAsync(null);
+
                 if (!vm.Impressora.AGuardar)
-                    Executar(vm.Impressora.GuardarCommand);
+                    await vm.Impressora.GuardarCommand.ExecuteAsync(null);
+                break;
+
+            // A licença é importada no seu painel.
+            // O tema é aplicado imediatamente.
+            case AbaLicenca:
+            case 4:
                 break;
         }
     }
 
-    private static void Executar(ICommand? comando)
-    {
-        if (comando?.CanExecute(null) == true)
-            comando.Execute(null);
-    }
+    private void Suporte_Click(object? sender, RoutedEventArgs e)
+        => Abrir(SuporteUrl);
 
-    private void Suporte_Click(object? sender, RoutedEventArgs e) => Abrir(SuporteUrl);
-
-    private void Documentacao_Click(object? sender, RoutedEventArgs e) => Abrir(DocumentacaoUrl);
+    private void Documentacao_Click(object? sender, RoutedEventArgs e)
+        => Abrir(DocumentacaoUrl);
 
     private static void Abrir(string url)
     {
@@ -73,17 +96,23 @@ public partial class ConfiguracoesView : UserControl
 
         try
         {
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(url)
+            {
+                UseShellExecute = true
+            });
         }
         catch
         {
-            // Sem navegador/handler disponível: ignora silenciosamente.
+            // Nenhum navegador ou handler disponível.
         }
     }
 
     private static string ObterVersao()
     {
         var versao = Assembly.GetEntryAssembly()?.GetName().Version;
-        return versao is null ? "1.0.0" : $"{versao.Major}.{versao.Minor}.{versao.Build}";
+
+        return versao is null
+            ? "1.0.0"
+            : $"{versao.Major}.{versao.Minor}.{versao.Build}";
     }
 }

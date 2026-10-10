@@ -85,8 +85,31 @@
         </Border>
 
         <!-- Main -->
-        <Grid Grid.Column="1" RowDefinitions="Auto,*">
+        <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*">
             <Border Grid.Row="0"
+                    IsVisible="{Binding MostrarBannerLicenca}"
+                    Background="{DynamicResource AvisoSuaveBrush}"
+                    BorderBrush="{DynamicResource AvisoBrush}"
+                    BorderThickness="0,0,0,1"
+                    Padding="18,10">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <TextBlock Text="⚠" FontSize="20" VerticalAlignment="Center"
+                               Foreground="{DynamicResource AvisoBrush}" />
+                    <StackPanel Grid.Column="1" Spacing="2">
+                        <TextBlock Text="{Binding BannerLicencaTitulo}" FontWeight="Bold" />
+                        <TextBlock Text="{Binding BannerLicencaMensagem}" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource TextoSecundarioBrush}" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="2"
+                               IsVisible="{Binding BannerLicencaBloqueado}"
+                               Text="AÇÃO NECESSÁRIA"
+                               FontSize="10" FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource ErroBrush}" />
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="1"
                     Background="{DynamicResource SuperficieBrush}"
                     BorderBrush="{DynamicResource BordaBrush}"
                     BorderThickness="0,0,0,1"
@@ -180,7 +203,7 @@
                 </Grid>
             </Border>
 
-            <ContentControl Grid.Row="1"
+            <ContentControl Grid.Row="2"
                             Content="{Binding ConteudoAtual}"
                             Margin="24,24,24,32"
                             HorizontalContentAlignment="Stretch"

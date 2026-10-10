@@ -3,7 +3,8 @@
              xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoLicencaView"
              x:DataType="vm:ConfiguracaoLicencaViewModel">
-
+<ScrollViewer VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Disabled">
     <Grid ColumnDefinitions="1.4*,*" ColumnSpacing="24" VerticalAlignment="Top">
 
         <!-- ═══ Licença atual ═══ -->
@@ -134,4 +135,5 @@
             </StackPanel>
         </Border>
     </Grid>
+</ScrollViewer>
 </UserControl>

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -16,21 +17,89 @@ public partial class RelatoriosViewModel : ViewModelBase
     private readonly IServicoImpressao _impressao;
 
     [ObservableProperty] private DateTimeOffset? _dataSelecionada = DateTimeOffset.Now;
-    [ObservableProperty] private string _relatorioSelecionado = "Diario";
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeImprimir))] private string _relatorioSelecionado = "Diario";
 
     public bool MostrarDiario => RelatorioSelecionado == "Diario";
     public bool MostrarMensal => RelatorioSelecionado == "Mensal";
     public bool MostrarStock => RelatorioSelecionado == "Stock";
     public bool MostrarFiltrosData => !MostrarStock;
     public bool MostrarFiltroUtilizador => MostrarDiario;
-    [ObservableProperty] private bool _aCarregar;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeImprimir))] private bool _aCarregar;
     [ObservableProperty] private string? _mensagem;
-    [ObservableProperty] private RelatorioDiarioDto? _diario;
-    [ObservableProperty] private RelatorioMensalDto? _mensal;
-    [ObservableProperty] private RelatorioStockDto? _stock;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeImprimir))] [NotifyPropertyChangedFor(nameof(DiarioSemVendas))] [NotifyPropertyChangedFor(nameof(DataReferenciaTexto))] private RelatorioDiarioDto? _diario;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeImprimir))] [NotifyPropertyChangedFor(nameof(MensalSemVendas))] [NotifyPropertyChangedFor(nameof(MesReferenciaTexto))] private RelatorioMensalDto? _mensal;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PodeImprimir))] [NotifyPropertyChangedFor(nameof(SemProdutosEmFalta))] [NotifyPropertyChangedFor(nameof(SemStockBaixo))] private RelatorioStockDto? _stock;
     [ObservableProperty] private UtilizadorDto? _utilizadorSelecionado;
 
     public ObservableCollection<UtilizadorDto> Utilizadores { get; } = new();
+
+    // ===================== Apoio à apresentação =====================
+
+    private static readonly CultureInfo CulturaPt = new("pt-PT");
+
+    /// <summary>Só imprime quando o relatório atual já está carregado.</summary>
+    public bool PodeImprimir => !ACarregar && (RelatorioSelecionado switch
+    {
+        "Diario" => Diario is not null,
+        "Mensal" => Mensal is not null,
+        "Stock" => Stock is not null,
+        _ => false
+    });
+
+    /// <summary>Ex.: "Sábado, 10 de outubro de 2026".</summary>
+    public string DataReferenciaTexto => Diario is null
+        ? string.Empty
+        : Capitalizar(Diario.Data.ToString("dddd, dd 'de' MMMM 'de' yyyy", CulturaPt));
+
+    /// <summary>Ex.: "Outubro de 2026".</summary>
+    public string MesReferenciaTexto => Mensal is null
+        ? string.Empty
+        : Capitalizar(new DateTime(Mensal.Ano, Mensal.Mes, 1).ToString("MMMM 'de' yyyy", CulturaPt));
+
+    // Estados vazios (a lista existe mas não tem linhas).
+    public bool DiarioSemVendas => Diario is not null && !Diario.ProdutosVendidos.Any();
+    public bool MensalSemVendas => Mensal is not null && !Mensal.ProdutosMaisVendidos.Any();
+    public bool SemProdutosEmFalta => Stock is not null && !Stock.ProdutosEmFalta.Any();
+    public bool SemStockBaixo => Stock is not null && !Stock.ProdutosComStockBaixo.Any();
+
+    private static string Capitalizar(string texto) =>
+        string.IsNullOrEmpty(texto) ? texto : char.ToUpper(texto[0], CulturaPt) + texto[1..];
+
+    // ===================== Aviso (toast) de sucesso/erro: aparece 3 s e some sozinho =====================
+    private CancellationTokenSource? _toastCts;
+
+    [ObservableProperty] private bool _toastVisivel;
+    [ObservableProperty] private bool _toastErro;
+    [ObservableProperty] private string _toastTitulo = string.Empty;
+    [ObservableProperty] private string _toastMensagem = string.Empty;
+
+    private async void MostrarToast(bool erro, string mensagem)
+    {
+        _toastCts?.Cancel();
+        var cts = _toastCts = new CancellationTokenSource();
+
+        ToastErro = erro;
+        ToastTitulo = erro ? "Erro" : "Sucesso";
+        ToastMensagem = mensagem;
+        ToastVisivel = true;
+
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
+            ToastVisivel = false;
+        }
+        catch (OperationCanceledException)
+        {
+            // Chegou outro aviso: ele reinicia a contagem.
+        }
+    }
+
+    // Erros (carregar, imprimir) viram também aviso visual.
+    partial void OnMensagemChanged(string? value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+            MostrarToast(erro: true, value);
+    }
 
     public RelatoriosViewModel(IServiceScopeFactory scopeFactory)
     {
@@ -113,7 +182,7 @@ public partial class RelatoriosViewModel : ViewModelBase
             var titulo = $"Relatório {RelatorioSelecionado}";
             var conteudo = ConstruirTextoRelatorio();
             await _impressao.ImprimirTextoAsync(titulo, conteudo);
-            Mensagem = "Relatório enviado para impressão.";
+            MostrarToast(erro: false, "Relatório enviado para impressão.");
         }
         catch (Exception ex)
         {

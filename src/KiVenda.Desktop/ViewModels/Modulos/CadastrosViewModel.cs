@@ -75,6 +75,56 @@ public partial class CadastrosViewModel : ViewModelBase
     [ObservableProperty] private string _massaSalarialTexto = "—";
     [ObservableProperty] private string _admissoesEsteAnoTexto = "—";
 
+    // ===================== Formulário =====================
+
+    /// <summary>"Novo Cliente", "Editar Funcionário"... conforme a entidade e se é criação ou edição.</summary>
+    public string TituloFormulario =>
+        (IdEmEdicao is null ? "Novo " : "Editar ") + RotuloEntidade(EntidadeEmEdicao);
+
+    private static string RotuloEntidade(string? tipo) => tipo switch
+    {
+        "Cliente" => "Cliente",
+        "Fornecedor" => "Fornecedor",
+        "Funcionario" => "Funcionário",
+        _ => "Registo"
+    };
+
+    // ===================== Aviso (toast) de sucesso/erro: aparece 3 s e some sozinho =====================
+    private CancellationTokenSource? _toastCts;
+
+    [ObservableProperty] private bool _toastVisivel;
+    [ObservableProperty] private bool _toastErro;
+    [ObservableProperty] private string _toastTitulo = string.Empty;
+    [ObservableProperty] private string _toastMensagem = string.Empty;
+
+    private async void MostrarToast(bool erro, string mensagem)
+    {
+        _toastCts?.Cancel();
+        var cts = _toastCts = new CancellationTokenSource();
+
+        ToastErro = erro;
+        ToastTitulo = erro ? "Erro" : "Sucesso";
+        ToastMensagem = mensagem;
+        ToastVisivel = true;
+
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
+            ToastVisivel = false;
+        }
+        catch (OperationCanceledException)
+        {
+            // Chegou outro aviso: ele reinicia a contagem.
+        }
+    }
+
+    // Qualquer mensagem de erro (lista ou formulário) vira também aviso visual.
+    partial void OnMensagemErroChanged(string? value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+            MostrarToast(erro: true, value);
+    }
+
     public CadastrosViewModel(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
@@ -88,11 +138,13 @@ public partial class CadastrosViewModel : ViewModelBase
     {
         EhFornecedor = value == "Fornecedor";
         EhFuncionario = value == "Funcionario";
+        OnPropertyChanged(nameof(TituloFormulario));
         EtapaFuncionario = 0;
         AtualizarEtapaFuncionario();
     }
 
     partial void OnEtapaFuncionarioChanged(int value) => AtualizarEtapaFuncionario();
+    partial void OnIdEmEdicaoChanged(Guid? value) => OnPropertyChanged(nameof(TituloFormulario));
 
     private void AtualizarEtapaFuncionario()
     {
@@ -208,12 +260,16 @@ public partial class CadastrosViewModel : ViewModelBase
             if(EntidadeEmEdicao=="Cliente"){await s.ServiceProvider.GetRequiredService<GuardarClienteCadastroUseCase>().ExecutarAsync(IdEmEdicao,Nome,Telefone,Email,Nif);await CarregarClientesAsync();}
             else if(EntidadeEmEdicao=="Fornecedor"){await s.ServiceProvider.GetRequiredService<GuardarFornecedorCadastroUseCase>().ExecutarAsync(IdEmEdicao,Nome,Telefone,Email,Nif,ProdutosFornecidos);await CarregarFornecedoresAsync();}
             else{await s.ServiceProvider.GetRequiredService<GuardarFuncionarioUseCase>().ExecutarAsync(IdEmEdicao,Nome,Telefone,Email,Bi,Cargo,Departamento,Turno,DataAdmissao?.DateTime ?? DateTime.Today,SalarioBase,Ativo);await CarregarFuncionariosAsync();}
+            var tipoGuardado = RotuloEntidade(EntidadeEmEdicao);
+            var acaoGuardada = IdEmEdicao is null ? "adicionado" : "atualizado";
+            var nomeGuardado = Nome;
             FecharFormulario();
+            MostrarToast(false, $"{tipoGuardado} \"{nomeGuardado}\" {acaoGuardada} com sucesso.");
         }catch(DomainException ex){MensagemErro=ex.Message;}catch(Exception ex){MensagemErro=$"Não foi possível guardar: {ex.Message}";}finally{AGuardar=false;}
     }
 
     [RelayCommand] private Task EliminarClienteAsync(ClienteCadastroDto x)=>EliminarAsync("Cliente",x.Id);
     [RelayCommand] private Task EliminarFornecedorAsync(FornecedorCadastroDto x)=>EliminarAsync("Fornecedor",x.Id);
     [RelayCommand] private Task EliminarFuncionarioAsync(FuncionarioDto x)=>EliminarAsync("Funcionario",x.Id);
-    private async Task EliminarAsync(string tipo,Guid id){try{await using var s=_scopeFactory.CreateAsyncScope();if(tipo=="Cliente"){await s.ServiceProvider.GetRequiredService<EliminarClienteUseCase>().ExecutarAsync(id);await CarregarClientesAsync();}else if(tipo=="Fornecedor"){await s.ServiceProvider.GetRequiredService<EliminarFornecedorUseCase>().ExecutarAsync(id);await CarregarFornecedoresAsync();}else{await s.ServiceProvider.GetRequiredService<EliminarFuncionarioUseCase>().ExecutarAsync(id);await CarregarFuncionariosAsync();}}catch(Exception ex){MensagemErro=$"Não foi possível eliminar: {ex.Message}";}}
+    private async Task EliminarAsync(string tipo,Guid id){try{await using var s=_scopeFactory.CreateAsyncScope();if(tipo=="Cliente"){await s.ServiceProvider.GetRequiredService<EliminarClienteUseCase>().ExecutarAsync(id);await CarregarClientesAsync();}else if(tipo=="Fornecedor"){await s.ServiceProvider.GetRequiredService<EliminarFornecedorUseCase>().ExecutarAsync(id);await CarregarFornecedoresAsync();}else{await s.ServiceProvider.GetRequiredService<EliminarFuncionarioUseCase>().ExecutarAsync(id);await CarregarFuncionariosAsync();}MostrarToast(false,$"{RotuloEntidade(tipo)} eliminado com sucesso.");}catch(Exception ex){MensagemErro=$"Não foi possível eliminar: {ex.Message}";}}
 }

@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using KiVenda.Desktop.Autenticacao;
 using WeberTech.Licensing.Enums;
 using WeberTech.Licensing.Services;
 
@@ -21,11 +22,20 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
 
     public bool LicencaValida => Estado == LicenseStatus.Valid;
     public bool LicencaExpirada => Estado == LicenseStatus.Expired;
-    public bool PrecisaAtivacao => Estado is LicenseStatus.NotFound or LicenseStatus.Invalid or LicenseStatus.ProductMismatch or LicenseStatus.MachineMismatch;
+
+    // Uma licença expirada também precisa de mostrar o fluxo de renovação.
+    // Caso contrário, o botão de importar .wta fica escondido pelo painel pai.
+    public bool PrecisaAtivacao => Estado is
+        LicenseStatus.NotFound or
+        LicenseStatus.Invalid or
+        LicenseStatus.ProductMismatch or
+        LicenseStatus.MachineMismatch or
+        LicenseStatus.Expired;
+
     public bool PodeImportar => Estado != LicenseStatus.Valid;
     public bool MostrarQr => PrecisaAtivacao && QrCode is not null;
     public bool MostrarDetalhes => LicencaValida || LicencaExpirada;
-    public bool PlataformaSuportada => OperatingSystem.IsWindows();
+    public bool PlataformaSuportada => OperatingSystem.IsWindows() || OperatingSystem.IsLinux();
 
     public ConfiguracaoLicencaViewModel()
     {
@@ -39,15 +49,6 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
 
         try
         {
-            if (!OperatingSystem.IsWindows())
-            {
-                Estado = LicenseStatus.NotFound;
-                Mensagem = "O licenciamento do KiVenda usa Machine ID via WMI e é validado no Windows. O SDK está integrado, mas a ativação real deve ser feita no Windows.";
-                QrCode = null;
-                NotificarEstado();
-                return;
-            }
-
             if (Licensing.GetLicensePath() is null)
             {
                 Licensing.Initialize(ProductType.KiVenda, ProductId);
@@ -80,12 +81,6 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
 
         try
         {
-            if (!OperatingSystem.IsWindows())
-            {
-                Mensagem = "A ativação real do KiVenda deve ser feita no Windows.";
-                return;
-            }
-
             if (Licensing.CurrentStatus == LicenseStatus.NotFound)
             {
                 Licensing.Initialize(ProductType.KiVenda, ProductId);
@@ -122,6 +117,10 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
     private void AplicarInfo()
     {
         var info = Licensing.GetLicenseInfo();
+        var politica = PoliticaLicencaKiVenda.Avaliar();
+
+        if (politica.Acesso is AcessoLicenca.Tolerancia or AcessoLicenca.Bloqueado)
+            Estado = LicenseStatus.Expired;
 
         Cliente = info?.CustomerName ?? "-";
         Plano = info?.Plan ?? "MVP";
@@ -137,6 +136,9 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
             DiasRestantes = "∞";
         }
 
+        if (politica.MostrarBanner)
+            Mensagem = politica.Mensagem;
+
         NotificarEstado();
     }
 
@@ -144,7 +146,7 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
     {
         QrCode = null;
 
-        if (!PrecisaAtivacao || !OperatingSystem.IsWindows())
+        if (!PrecisaAtivacao || !PlataformaSuportada)
         {
             OnPropertyChanged(nameof(MostrarQr));
             return;
@@ -153,12 +155,23 @@ public partial class ConfiguracaoLicencaViewModel : ViewModelBase
         try
         {
             byte[] png = Licensing.GenerateActivationQrCode();
+
+            if (png.Length == 0)
+            {
+                Mensagem = "O gerador de ativação devolveu uma imagem vazia.";
+                OnPropertyChanged(nameof(MostrarQr));
+                return;
+            }
+
             using var stream = new MemoryStream(png);
             QrCode = new Bitmap(stream);
+
+            Mensagem = $"QR de ativação gerado ({QrCode.PixelSize.Width}x{QrCode.PixelSize.Height}).";
         }
         catch (Exception ex)
         {
-            Mensagem = $"Não foi possível gerar o QR de ativação: {ex.Message}";
+            QrCode = null;
+            Mensagem = $"Não foi possível gerar o QR de ativação: {ex}";
         }
 
         OnPropertyChanged(nameof(MostrarQr));
