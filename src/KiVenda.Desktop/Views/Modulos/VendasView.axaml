@@ -1,13 +1,139 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vmm="using:KiVenda.Desktop.ViewModels.Modulos"
+             xmlns:views="using:KiVenda.Desktop.Views.Modulos"
              xmlns:produtos="using:KiVenda.Application.Produtos"
              xmlns:vendas="using:KiVenda.Application.Vendas"
              xmlns:enums="using:KiVenda.Core.Enums"
              x:Class="KiVenda.Desktop.Views.Modulos.VendasView"
              x:DataType="vmm:VendasViewModel"
              AttachedToVisualTree="VendasView_AttachedToVisualTree"
-             DetachedFromVisualTree="VendasView_DetachedFromVisualTree">
+             DetachedFromVisualTree="VendasView_DetachedFromVisualTree"
+             KeyDown="VendasView_KeyDown">
+
+    <UserControl.Resources>
+        <StreamGeometry x:Key="PdvIconBarcode">M2 5h2v14H2V5zm3 0h1v14H5V5zm2 0h3v14H7V5zm4 0h1v14h-1V5zm2 0h2v14h-2V5zm3 0h1v14h-1V5zm2 0h2v14h-2V5z</StreamGeometry>
+        <StreamGeometry x:Key="PdvIconBox">M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z</StreamGeometry>
+        <StreamGeometry x:Key="PdvIconTrash">M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z</StreamGeometry>
+        <StreamGeometry x:Key="PdvIconCash">M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9-1c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z</StreamGeometry>
+        <StreamGeometry x:Key="PdvIconCancel">M14.59 8L12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41 14.59 8zM12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z</StreamGeometry>
+        <StreamGeometry x:Key="PdvIconAdd">M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z</StreamGeometry>
+        <StreamGeometry x:Key="PdvIconCheck">M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z</StreamGeometry>
+        <StreamGeometry x:Key="PdvIconClose">M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z</StreamGeometry>
+        <StreamGeometry x:Key="PdvIconWifi">M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z</StreamGeometry>
+
+        <!-- Cores só deste ecrã (não existem no tema global) -->
+        <SolidColorBrush x:Key="PdvAzulBrush" Color="#3F4FA8" />
+        <SolidColorBrush x:Key="PdvPerigoFundoBrush" Color="#FDECEC" />
+        <SolidColorBrush x:Key="PdvPerigoBordaBrush" Color="#F3B9B9" />
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <!-- Campo de pesquisa sem moldura própria (a moldura é a do Border à volta) -->
+        <Style Selector="TextBox.pdv-busca">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="MinHeight" Value="44" />
+            <Style.Resources>
+                <SolidColorBrush x:Key="TextControlBackground" Color="Transparent" />
+                <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="Transparent" />
+                <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="Transparent" />
+                <SolidColorBrush x:Key="TextControlBorderBrush" Color="Transparent" />
+                <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="Transparent" />
+                <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="Transparent" />
+            </Style.Resources>
+        </Style>
+
+        <!-- Botão "vazio": quem desenha é o Border lá dentro (cartão, chip, botões de ação).
+             Focusable=False para o clique não tirar o foco do campo do scanner. -->
+        <Style Selector="Button.pdv-flat">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style Selector="Button.pdv-flat /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.pdv-flat:pointerover /template/ ContentPresenter#PART_ContentPresenter, Button.pdv-flat:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.pdv-flat:pointerover">
+            <Setter Property="Opacity" Value="0.9" />
+        </Style>
+        <Style Selector="Button.pdv-flat:disabled">
+            <Setter Property="Opacity" Value="0.5" />
+        </Style>
+
+        <!-- Chips de categoria -->
+        <Style Selector="Border.pdv-chip">
+            <Setter Property="Height" Value="36" />
+            <Setter Property="CornerRadius" Value="18" />
+            <Setter Property="Padding" Value="18,0" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="Border.pdv-chip TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Border.pdv-chip.ativo">
+            <Setter Property="Background" Value="{DynamicResource VerdePrimarioBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource VerdePrimarioBrush}" />
+        </Style>
+        <Style Selector="Border.pdv-chip.ativo TextBlock">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+
+        <!-- Selo de stock sobre a imagem do produto -->
+        <Style Selector="TextBlock.pdv-stock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource VerdePrimarioBrush}" />
+        </Style>
+        <Style Selector="TextBlock.pdv-stock.zerado">
+            <Setter Property="Foreground" Value="{DynamicResource PerigoBrush}" />
+        </Style>
+
+        <!-- Botão de ícone (remover item) -->
+        <Style Selector="Button.pdv-icone">
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource PerigoBrush}" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Focusable" Value="False" />
+        </Style>
+        <Style Selector="Button.pdv-icone /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource PerigoBrush}" />
+        </Style>
+        <Style Selector="Button.pdv-icone:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource NeutroSuaveBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource PerigoBrush}" />
+        </Style>
+
+        <!-- Aviso de sucesso/erro: aparece e some com fade -->
+        <Style Selector="Border.pdv-toast-fundo">
+            <Setter Property="Opacity" Value="0" />
+        </Style>
+        <Style Selector="Border.pdv-toast-fundo.mostrar">
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+
+        <!-- Indicador do scanner -->
+        <Style Selector="Ellipse.pdv-ponto">
+            <Setter Property="Fill" Value="{DynamicResource SucessoBrush}" />
+        </Style>
+        <Style Selector="Ellipse.pdv-ponto.inativo">
+            <Setter Property="Fill" Value="{DynamicResource TextoSecundarioBrush}" />
+        </Style>
+    </UserControl.Styles>
 
     <Grid>
 
@@ -18,129 +144,430 @@
         </StackPanel>
 
         <!-- PDV -->
-        <Grid IsVisible="{Binding !SemCaixaAberto}" ColumnDefinitions="*,340">
+        <Grid IsVisible="{Binding !SemCaixaAberto}" ColumnDefinitions="*,Auto">
 
-            <!-- Catálogo -->
-            <StackPanel Grid.Column="0" Spacing="16" Margin="0,0,20,0">
-                <TextBox x:Name="PesquisaCodigoTextBox"
-                         Text="{Binding TermoPesquisa}"
-                         Watermark="Pesquisar Produto ou Bipar Código"
-                         TextInput="PesquisaCodigoTextBox_TextInput"
-                         KeyDown="PesquisaCodigoTextBox_KeyDown" />
+            <!-- ═══════════ Catálogo ═══════════ -->
+            <Grid Grid.Column="0" RowDefinitions="Auto,Auto,Auto,*">
 
-                <TextBlock Classes="erro" Text="{Binding MensagemErro}" IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                <TextBlock Text="{Binding MensagemSucesso}" Foreground="{StaticResource SucessoBrush}" FontWeight="Medium"
-                           IsVisible="{Binding MensagemSucesso, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
-
-                <!-- Leitura reconhecida sem adição automática -->
-                <Border Classes="cartao" Padding="12" IsVisible="{Binding MostrarQuantidadeScanner}">
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Leitura do scanner" FontWeight="Bold" />
-                        <TextBlock Text="{Binding LeituraScannerPendenteTexto}" TextWrapping="Wrap" />
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                            <TextBox x:Name="QuantidadeScannerTextBox"
-                                     Grid.Column="0"
-                                     Text="{Binding QuantidadeScannerInput}"
-                                     Watermark="Quantidade" />
-                            <Button Grid.Column="1"
-                                    Content="Adicionar leitura"
-                                    Classes="primario"
-                                    Command="{Binding ConfirmarQuantidadeScannerCommand}" />
-                        </Grid>
-                    </StackPanel>
+                <!-- Pesquisa / scanner -->
+                <Border Grid.Row="0"
+                        Classes="cartao"
+                        Padding="0"
+                        CornerRadius="14"
+                        BorderThickness="2"
+                        BorderBrush="{StaticResource VerdePrimarioBrush}">
+                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="16,0,12,0">
+                        <PathIcon Grid.Column="0"
+                                  Data="{StaticResource PdvIconBarcode}"
+                                  Width="22" Height="22"
+                                  Foreground="{StaticResource VerdePrimarioBrush}" />
+                        <TextBox x:Name="PesquisaCodigoTextBox"
+                                 Grid.Column="1"
+                                 Classes="pdv-busca"
+                                 Margin="8,0"
+                                 Text="{Binding TermoPesquisa}"
+                                 Watermark="Pesquisar Produto ou Bipar Código"
+                                 TextInput="PesquisaCodigoTextBox_TextInput"
+                                 KeyDown="PesquisaCodigoTextBox_KeyDown" />
+                        <Border Grid.Column="2"
+                                CornerRadius="6"
+                                Padding="10,4"
+                                VerticalAlignment="Center"
+                                Background="{StaticResource NeutroSuaveBrush}">
+                            <TextBlock Text="F1"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource TextoSecundarioBrush}" />
+                        </Border>
+                    </Grid>
                 </Border>
 
-                <ItemsControl ItemsSource="{Binding ProdutosFiltrados}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel ItemSpacing="14" LineSpacing="14" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="produtos:ProdutoDto">
-                            <Border Classes="cartao" Width="170" Padding="14">
-                                <StackPanel Spacing="8">
-                                    <TextBlock Text="{Binding Nome}" FontWeight="Medium" TextWrapping="Wrap" />
-                                    <TextBlock Text="{Binding PrecoVendaPorUnidadeBase, Converter={StaticResource ValorKzConverter}, ConverterParameter=2}"
-                                               Foreground="{StaticResource SucessoBrush}" FontWeight="SemiBold" />
-                                    <Button Content="+ Adicionar" Classes="secundario" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                            Tag="{Binding}" Click="BotaoAdicionarProduto_Click" />
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+                <!-- Leitura pendente (mensagens de sucesso/erro aparecem no aviso central) -->
+                <StackPanel Grid.Row="1" Spacing="12" Margin="0,14,0,0">
+                    <!-- Leitura reconhecida sem adição automática -->
+                    <Border Classes="cartao" Padding="16" IsVisible="{Binding MostrarQuantidadeScanner}">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Leitura do scanner" FontWeight="Bold" />
+                            <TextBlock Text="{Binding LeituraScannerPendenteTexto}" TextWrapping="Wrap" />
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                <TextBox x:Name="QuantidadeScannerTextBox"
+                                         Grid.Column="0"
+                                         Text="{Binding QuantidadeScannerInput}"
+                                         Watermark="Quantidade" />
+                                <Button Grid.Column="1"
+                                        Content="Adicionar leitura"
+                                        Classes="primario"
+                                        Command="{Binding ConfirmarQuantidadeScannerCommand}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
 
-            <!-- Carrinho -->
-            <Border Grid.Column="1" Classes="cartao">
-                <Grid RowDefinitions="Auto,*,Auto">
+                <!-- Chips de categoria (a última pode ficar cortada: faz scroll horizontal) -->
+                <ScrollViewer Grid.Row="2"
+                              Margin="0,12,0,0"
+                              HorizontalScrollBarVisibility="Hidden"
+                              VerticalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding Categorias}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="vmm:CategoriaFiltroItem">
+                                <Button Classes="pdv-flat"
+                                        Tag="{Binding}"
+                                        Click="BotaoCategoria_Click">
+                                    <Border Classes="cartao pdv-chip"
+                                            Classes.ativo="{Binding Selecionada}">
+                                        <TextBlock Text="{Binding Nome}" />
+                                    </Border>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
 
-                    <TextBlock Grid.Row="0" Text="Carrinho" FontWeight="Bold" FontSize="18" Margin="0,0,0,12" />
-
-                    <ScrollViewer Grid.Row="1">
-                        <ItemsControl ItemsSource="{Binding Carrinho}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="vendas:ItemVendaDto">
-                                    <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,8">
-                                        <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{Binding ProdutoNome}" FontWeight="Medium" TextWrapping="Wrap" />
-                                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                                <TextBlock Classes="subtitulo" Text="{Binding QuantidadeNaApresentacao}" />
-                                                <TextBlock Classes="subtitulo" Text="x" />
-                                                <TextBlock Classes="subtitulo" Text="{Binding ApresentacaoNome}" />
+                <!-- Grelha de produtos -->
+                <ScrollViewer Grid.Row="3"
+                              Margin="0,20,0,0"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding ProdutosFiltrados}" Margin="0,0,8,12">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel ItemSpacing="14" LineSpacing="14" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="produtos:ProdutoDto">
+                                <Button Classes="pdv-flat"
+                                        Width="156"
+                                        Tag="{Binding}"
+                                        Click="BotaoAdicionarProduto_Click"
+                                        ToolTip.Tip="{Binding Nome}">
+                                    <Border Classes="cartao"
+                                            Padding="0"
+                                            CornerRadius="12"
+                                            ClipToBounds="True">
+                                        <StackPanel>
+                                            <!-- Imagem do produto + selo de stock -->
+                                            <Grid Height="104">
+                                                <Border Background="{StaticResource NeutroSuaveBrush}">
+                                                    <PathIcon Data="{StaticResource PdvIconBox}"
+                                                              Width="36" Height="36"
+                                                              HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"
+                                                              Opacity="0.55"
+                                                              Foreground="{StaticResource TextoSecundarioBrush}" />
+                                                </Border>
+                                                <!-- ProdutoDto.EstoqueAtual -->
+                                                <Border HorizontalAlignment="Right"
+                                                        VerticalAlignment="Top"
+                                                        Margin="0,8,8,0"
+                                                        Padding="8,2"
+                                                        CornerRadius="10"
+                                                        Background="#F2FFFFFF">
+                                                    <TextBlock Classes="pdv-stock"
+                                                               Classes.zerado="{Binding EstoqueAtual, Converter={x:Static views:VendasView.StockEsgotado}}"
+                                                               Text="{Binding EstoqueAtual, StringFormat='{}{0:0.##} UN'}" />
+                                                </Border>
+                                            </Grid>
+                                            <StackPanel Margin="12,10,12,12" Spacing="3">
+                                                <TextBlock Text="{Binding Nome}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"
+                                                           TextWrapping="NoWrap"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding PrecoVendaPorUnidadeBase, Converter={StaticResource ValorKzConverter}, ConverterParameter=2}"
+                                                           FontSize="16"
+                                                           FontWeight="Bold"
+                                                           Foreground="{StaticResource VerdePrimarioBrush}" />
                                             </StackPanel>
                                         </StackPanel>
-                                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="8,0"
-                                                   Text="{Binding ValorTotal, Converter={StaticResource ValorKzConverter}, ConverterParameter=2}" />
-                                        <Button Grid.Column="2" Content="✕" Classes="perigo" Padding="8,4"
-                                                Tag="{Binding}" Click="BotaoRemoverItem_Click" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                                    </Border>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
 
-                    <StackPanel Grid.Row="2" Spacing="10" Margin="0,12,0,0">
+            <!-- ═══════════ Carrinho ═══════════ -->
+            <Border Grid.Column="1"
+                    Classes="cartao"
+                    Width="330"
+                    Margin="20,0,0,0"
+                    IsVisible="{Binding CarrinhoVisivel}"
+                    Padding="0"
+                    CornerRadius="14"
+                    ClipToBounds="True">
+                <Grid RowDefinitions="Auto,*,Auto,Auto">
+
+                    <!-- Cabeçalho -->
+                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="18,16,18,12">
+                        <StackPanel Grid.Column="0" Spacing="4">
+                            <TextBlock Text="Carrinho" FontSize="20" FontWeight="Bold" />
+                            <TextBlock Classes="subtitulo" FontSize="12"
+                                       Text="{Binding VendaNumero, StringFormat='Venda nº {0}'}" />
+                        </StackPanel>
+                        <Border Grid.Column="1"
+                                VerticalAlignment="Top"
+                                CornerRadius="11"
+                                Padding="10,3"
+                                Background="{StaticResource VerdeSuaveBrush}">
+                            <TextBlock Text="{Binding Carrinho.Count, StringFormat='{}{0} Itens'}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource VerdePrimarioBrush}" />
+                        </Border>
+                    </Grid>
+
+                    <!-- Itens -->
+                    <Border Grid.Row="1"
+                            BorderThickness="0,1,0,1"
+                            BorderBrush="{StaticResource NeutroSuaveBrush}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding Carrinho}" Margin="18,4">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="vmm:ItemCarrinho">
+                                        <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,8">
+                                            <Border Grid.Column="0"
+                                                    Width="44" Height="44"
+                                                    CornerRadius="8"
+                                                    VerticalAlignment="Center"
+                                                    Background="{StaticResource NeutroSuaveBrush}">
+                                                <PathIcon Data="{StaticResource PdvIconBox}"
+                                                          Width="20" Height="20"
+                                                          Opacity="0.55"
+                                                          Foreground="{StaticResource TextoSecundarioBrush}" />
+                                            </Border>
+
+                                            <StackPanel Grid.Column="1" Margin="12,0,6,0" Spacing="3" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding ProdutoNome}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"
+                                                           TextWrapping="Wrap" />
+                                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                                    <StackPanel Grid.Column="0"
+                                                                Orientation="Horizontal"
+                                                                Spacing="4"
+                                                                VerticalAlignment="Center">
+                                                        <TextBlock Classes="subtitulo" FontSize="12" Text="{Binding Quantidade, StringFormat='{}{0:0.##}'}" />
+                                                        <TextBlock Classes="subtitulo" FontSize="12" Text="x" />
+                                                        <TextBlock Classes="subtitulo" FontSize="12" Text="{Binding ApresentacaoNome}" />
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="1"
+                                                               FontSize="13"
+                                                               FontWeight="Bold"
+                                                               TextWrapping="NoWrap"
+                                                               Text="{Binding ValorTotal, Converter={StaticResource ValorKzConverter}, ConverterParameter=2}" />
+                                                </Grid>
+                                            </StackPanel>
+
+                                            <Button Grid.Column="2"
+                                                    Classes="pdv-icone"
+                                                    VerticalAlignment="Center"
+                                                    Tag="{Binding}"
+                                                    Click="BotaoRemoverItem_Click"
+                                                    ToolTip.Tip="Remover item">
+                                                <PathIcon Data="{StaticResource PdvIconTrash}" Width="16" Height="16" />
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+
+                    <!-- Totais e ações -->
+                    <StackPanel Grid.Row="2" Spacing="10" Margin="18,14,18,14">
 
                         <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Grid.Column="0" Text="Subtotal" Classes="subtitulo" />
-                            <TextBlock Grid.Column="1" Text="{Binding SubtotalTexto}" />
+                            <TextBlock Grid.Column="0" Text="Subtotal" Classes="subtitulo" FontSize="13" />
+                            <TextBlock Grid.Column="1" Text="{Binding SubtotalTexto}" FontSize="13" />
                         </Grid>
                         <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Grid.Column="0" Text="Desconto" Foreground="{StaticResource PerigoBrush}" />
-                            <TextBlock Grid.Column="1" Text="{Binding DescontoTexto}" Foreground="{StaticResource PerigoBrush}" />
-                        </Grid>
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBlock Grid.Column="0" Text="TOTAL" FontWeight="Bold" FontSize="16" />
-                            <TextBlock Grid.Column="1" Text="{Binding TotalTexto}" FontWeight="Bold" FontSize="16" Foreground="{StaticResource SucessoBrush}" />
-                        </Grid>
-
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBox Grid.Column="0" Text="{Binding DescontoInput}" Watermark="Desconto (Kz)" Margin="0,0,8,0" />
-                            <Button Grid.Column="1" Content="Aplicar" Classes="secundario" Command="{Binding AplicarDescontoCommand}" />
+                            <TextBlock Grid.Column="0" Text="Desconto" Classes="subtitulo" FontSize="13" />
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding DescontoTexto, StringFormat='- {0}'}"
+                                       FontSize="13"
+                                       Foreground="{StaticResource PerigoBrush}" />
                         </Grid>
 
-                        <ComboBox ItemsSource="{Binding MetodosPagamento}" SelectedItem="{Binding MetodoSelecionado}" HorizontalAlignment="Stretch">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate DataType="enums:MetodoPagamento">
-                                    <TextBlock Text="{Binding Converter={StaticResource MetodoPagamentoParaTextoConverter}}" />
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
+                        <Border Height="1" Background="{StaticResource NeutroSuaveBrush}" />
 
-                        <TextBox Text="{Binding ValorPago}" Watermark="Valor pago (vazio = total exato)" />
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="TOTAL" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
+                            <!-- Viewbox: encolhe o valor se for muito grande, em vez de cortar -->
+                            <Viewbox Grid.Column="1" StretchDirection="DownOnly" HorizontalAlignment="Right" Margin="12,0,0,0">
+                                <TextBlock Text="{Binding TotalTexto}"
+                                           FontSize="26"
+                                           FontWeight="Bold"
+                                           TextWrapping="NoWrap"
+                                           Foreground="{StaticResource SucessoBrush}" />
+                            </Viewbox>
+                        </Grid>
 
-                        <Button Content="RECEBER (F10)" Classes="primario" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                Command="{Binding FinalizarVendaCommand}" IsEnabled="{Binding !AFinalizar}" />
-                        <Button Content="CANCELAR VENDA" Classes="perigo" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                Command="{Binding CancelarVendaCommand}" />
+                        <!-- Desconto e forma de pagamento: recolhido para o ecrã ficar como o mockup -->
+                        <Expander Header="Desconto e forma de pagamento" HorizontalAlignment="Stretch" IsExpanded="False">
+                            <StackPanel Spacing="10" Margin="0,8,0,0">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <TextBox Grid.Column="0" Text="{Binding DescontoInput}" Watermark="Desconto (Kz)" />
+                                    <Button Grid.Column="1" Content="Aplicar" Classes="secundario"
+                                            Command="{Binding AplicarDescontoCommand}" />
+                                </Grid>
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                    <ComboBox Grid.Column="0"
+                                              ItemsSource="{Binding MetodosPagamento}"
+                                              SelectedItem="{Binding MetodoSelecionado}"
+                                              HorizontalAlignment="Stretch">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate DataType="enums:MetodoPagamento">
+                                                <TextBlock Text="{Binding Converter={StaticResource MetodoPagamentoParaTextoConverter}}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <TextBox Grid.Column="1"
+                                             Text="{Binding ValorPago}"
+                                             Watermark="Valor pago"
+                                             ToolTip.Tip="Vazio = total exato" />
+                                </Grid>
+                            </StackPanel>
+                        </Expander>
 
+                        <!-- RECEBER -->
+                        <Button Classes="pdv-flat"
+                                Height="56"
+                                HorizontalAlignment="Stretch"
+                                Command="{Binding FinalizarVendaCommand}"
+                                IsEnabled="{Binding !AFinalizar}">
+                            <Border CornerRadius="12"
+                                    Background="{StaticResource SucessoBrush}"
+                                    BoxShadow="0 4 12 0 #3317A34A">
+                                <StackPanel Orientation="Horizontal" Spacing="10"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <PathIcon Data="{StaticResource PdvIconCash}" Width="24" Height="24" Foreground="White" />
+                                    <TextBlock Text="RECEBER (F10)" FontSize="18" FontWeight="Bold"
+                                               Foreground="White" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+
+                        <!-- NOVA VENDA / CANCELAR -->
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Button Grid.Column="0" Classes="pdv-flat" Height="48"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding NovaVendaManualCommand}">
+                                <Border CornerRadius="10" Background="{StaticResource PdvAzulBrush}">
+                                    <StackPanel Orientation="Horizontal" Spacing="6"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <PathIcon Data="{StaticResource PdvIconAdd}" Width="18" Height="18" Foreground="White" />
+                                        <TextBlock Text="NOVA VENDA" FontSize="13" FontWeight="Bold"
+                                                   Foreground="White" TextWrapping="Wrap" TextAlignment="Center"
+                                                   MaxWidth="64" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </Button>
+
+                            <Button Grid.Column="1" Classes="pdv-flat" Height="48"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding CancelarVendaCommand}">
+                                <Border CornerRadius="10"
+                                        Background="{StaticResource PdvPerigoFundoBrush}"
+                                        BorderBrush="{StaticResource PdvPerigoBordaBrush}"
+                                        BorderThickness="1.5">
+                                    <StackPanel Orientation="Horizontal" Spacing="6"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <PathIcon Data="{StaticResource PdvIconCancel}" Width="18" Height="18"
+                                                  Foreground="{StaticResource PerigoBrush}" />
+                                        <TextBlock Text="CANCELAR" FontSize="13" FontWeight="Bold"
+                                                   Foreground="{StaticResource PerigoBrush}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </Button>
+                        </Grid>
                     </StackPanel>
+
+                    <!-- Estado do scanner -->
+                    <Border Grid.Row="3"
+                            Padding="18,10"
+                            Background="{StaticResource NeutroSuaveBrush}">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                            <Ellipse x:Name="ScannerDot" Classes="pdv-ponto" Width="9" Height="9" />
+                            <TextBlock x:Name="ScannerEstadoText"
+                                       Grid.Column="1"
+                                       Text="SCANNER: ATIVO"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       Foreground="{StaticResource VerdePrimarioBrush}" />
+                            <PathIcon Grid.Column="2"
+                                      Data="{StaticResource PdvIconWifi}"
+                                      Width="14" Height="14"
+                                      Foreground="{StaticResource TextoSecundarioBrush}" />
+                        </Grid>
+                    </Border>
                 </Grid>
             </Border>
 
         </Grid>
+
+        <!-- Aviso de sucesso/erro: sem botão, some sozinho em 3 s -->
+        <Border Classes="pdv-toast-fundo"
+                Classes.mostrar="{Binding ToastVisivel}"
+                IsHitTestVisible="False"
+                Background="#44000000">
+            <Border.Transitions>
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.25" />
+                </Transitions>
+            </Border.Transitions>
+
+            <Grid Classes="pdv-toast-card"
+                  Classes.mostrar="{Binding ToastVisivel}"
+                  Width="300"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+
+                <Border Classes="cartao"
+                        Margin="0,32,0,0"
+                        Padding="24,44,24,24"
+                        CornerRadius="12"
+                        BoxShadow="0 12 32 0 #66000000">
+                    <StackPanel Spacing="8" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding ToastTitulo}"
+                                   FontSize="22"
+                                   FontWeight="Light"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="{Binding ToastMensagem}"
+                                   FontSize="13"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   Opacity="0.85" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Círculo de sucesso (verde + visto) -->
+                <Border Width="64" Height="64" CornerRadius="32"
+                        VerticalAlignment="Top" HorizontalAlignment="Center"
+                        Background="{StaticResource SucessoBrush}"
+                        IsVisible="{Binding !ToastErro}">
+                    <PathIcon Data="{StaticResource PdvIconCheck}" Width="32" Height="32" Foreground="White" />
+                </Border>
+
+                <!-- Círculo de erro (vermelho + X) -->
+                <Border Width="64" Height="64" CornerRadius="32"
+                        VerticalAlignment="Top" HorizontalAlignment="Center"
+                        Background="{StaticResource PerigoBrush}"
+                        IsVisible="{Binding ToastErro}">
+                    <PathIcon Data="{StaticResource PdvIconClose}" Width="28" Height="28" Foreground="White" />
+                </Border>
+            </Grid>
+        </Border>
+
     </Grid>
 
 </UserControl>

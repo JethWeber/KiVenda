@@ -4,48 +4,94 @@
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoTemaView"
              x:DataType="vm:ConfiguracaoTemaViewModel">
 
-    
-        <StackPanel Spacing="16" MaxWidth="980" Margin="0,8,0,24">
+    <Grid ColumnDefinitions="1.4*,*" ColumnSpacing="24" VerticalAlignment="Top">
 
-            <StackPanel Spacing="4">
-                <TextBlock Classes="titulo-pagina" Text="Ajustes" />
-                <TextBlock Classes="subtitulo"
-                           Text="Personalize a aparência do KiVenda. A opção Sistema acompanha automaticamente o tema do sistema operativo."
-                           TextWrapping="Wrap" />
-            </StackPanel>
-
-            <Border Classes="cartao">
-                <StackPanel Spacing="14">
-                    <StackPanel Spacing="4">
-                        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Tema da aplicação" />
-                        <TextBlock Classes="subtitulo"
-                                   Text="A alteração é aplicada imediatamente e fica guardada para a próxima sessão."
-                                   TextWrapping="Wrap" />
+        <!-- ═══ Seleção ═══ -->
+        <Border Grid.Column="0" Classes="cartao cfg-card" VerticalAlignment="Top">
+            <StackPanel Spacing="20">
+                <StackPanel Spacing="6">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon Classes="cfg-accent" Data="{DynamicResource CfgIconPalette}" />
+                        <TextBlock Classes="cfg-card-title" Text="Tema da aplicação" />
                     </StackPanel>
-
-                    <ComboBox ItemsSource="{Binding OpcoesTema}"
-                              SelectedItem="{Binding TemaSelecionado}"
-                              MinWidth="260"
-                              HorizontalAlignment="Left" />
-
-                    <Border Background="{DynamicResource NeutroSuaveBrush}"
-                            CornerRadius="10"
-                            Padding="14">
-                        <StackPanel Spacing="4">
-                            <TextBlock FontWeight="SemiBold" Text="Tema selecionado" />
-                            <TextBlock Text="{Binding TemaAtualDescricao}"
-                                       Foreground="{DynamicResource TextoSecundarioBrush}" />
-                        </StackPanel>
-                    </Border>
-
-                    <TextBlock Text="• Sistema — segue Light/Dark definido no Fedora, Windows ou macOS.
-• KiVenda Dark — força o tema escuro.
-• KiVenda Light — força o tema claro."
-                               TextWrapping="Wrap"
-                               Foreground="{DynamicResource TextoSecundarioBrush}" />
+                    <TextBlock Classes="cfg-body"
+                               Text="A alteração é aplicada imediatamente e fica guardada para a próxima sessão." />
                 </StackPanel>
-            </Border>
 
-        </StackPanel>
-    
+                <StackPanel Classes="cfg-field">
+                    <TextBlock Classes="cfg-label" Text="Aparência" />
+                    <ComboBox Classes="cfg"
+                              ItemsSource="{Binding OpcoesTema}"
+                              SelectedItem="{Binding TemaSelecionado}" />
+                </StackPanel>
+
+                <Border Classes="cfg-inset">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <PathIcon Data="{DynamicResource CfgIconCheck}"
+                                  Width="20" Height="20"
+                                  VerticalAlignment="Top"
+                                  Foreground="{DynamicResource VerdePrimarioBrush}" />
+                        <StackPanel Grid.Column="1" Spacing="2">
+                            <TextBlock Classes="cfg-label" Text="Tema selecionado" />
+                            <TextBlock Classes="cfg-value" Text="{Binding TemaAtualDescricao}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <!-- ═══ Modos ═══ -->
+        <Border Grid.Column="1" Classes="cartao cfg-card" VerticalAlignment="Top">
+            <StackPanel Spacing="6">
+                <TextBlock Classes="cfg-card-title" Margin="0,0,0,10" HorizontalAlignment="Left" Text="Modos disponíveis" />
+
+                <Border Classes="cfg-row">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border Width="48" Height="32" CornerRadius="8"
+                                BorderThickness="1"
+                                BorderBrush="{DynamicResource NeutroSuaveBrush}">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                                    <GradientStop Color="#F3F5FA" Offset="0" />
+                                    <GradientStop Color="#F3F5FA" Offset="0.5" />
+                                    <GradientStop Color="#0A1020" Offset="0.5" />
+                                    <GradientStop Color="#0A1020" Offset="1" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                            <TextBlock Classes="cfg-value" Text="Sistema" />
+                            <TextBlock Classes="cfg-hint" Text="Segue o modo claro/escuro do Fedora, Windows ou macOS." />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Classes="cfg-row">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border Width="48" Height="32" CornerRadius="8"
+                                Background="#0A1020"
+                                BorderThickness="1"
+                                BorderBrush="{DynamicResource NeutroSuaveBrush}" />
+                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                            <TextBlock Classes="cfg-value" Text="KiVenda Dark" />
+                            <TextBlock Classes="cfg-hint" Text="Força o tema escuro." />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Classes="cfg-row" BorderThickness="0" Padding="0,14,0,0">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border Width="48" Height="32" CornerRadius="8"
+                                Background="#F3F5FA"
+                                BorderThickness="1"
+                                BorderBrush="{DynamicResource NeutroSuaveBrush}" />
+                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                            <TextBlock Classes="cfg-value" Text="KiVenda Light" />
+                            <TextBlock Classes="cfg-hint" Text="Força o tema claro." />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </Border>
+    </Grid>
 </UserControl>

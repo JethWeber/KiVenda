@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using KiVenda.Application.Abstractions.Persistence;
@@ -15,6 +16,10 @@ namespace KiVenda.Desktop.Views.Modulos;
 
 public partial class VendasView : UserControl
 {
+    /// <summary>Usado no AXAML: pinta o selo de stock a vermelho quando o stock é 0 (ou menos).</summary>
+    public static readonly FuncValueConverter<object?, bool> StockEsgotado =
+        new(valor => valor is not null && System.Convert.ToDecimal(valor) <= 0m);
+
     private IServicoScanner? _servicoScanner;
 
     public VendasView()
@@ -42,6 +47,28 @@ public partial class VendasView : UserControl
 
         _ = RecarregarScannerAsync();
         PesquisaCodigoTextBox.Focus();
+    }
+
+    /// <summary>Atalhos do PDV: F1 foca a pesquisa, F10 recebe o pagamento.</summary>
+    private void VendasView_KeyDown(object? sender, KeyEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case Key.F1:
+                PesquisaCodigoTextBox.Focus();
+                PesquisaCodigoTextBox.SelectAll();
+                e.Handled = true;
+                break;
+
+            case Key.F10:
+                if (DataContext is VendasViewModel vm && !vm.AFinalizar)
+                {
+                    vm.FinalizarVendaCommand.Execute(null);
+                }
+
+                e.Handled = true;
+                break;
+        }
     }
 
     private void VendasView_DetachedFromVisualTree(object? sender, Avalonia.VisualTreeAttachmentEventArgs e)
@@ -181,9 +208,17 @@ public partial class VendasView : UserControl
 
     private void BotaoRemoverItem_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is Button { Tag: ItemVendaDto item } && DataContext is VendasViewModel vm)
+        if (sender is Button { Tag: ItemCarrinho item } && DataContext is VendasViewModel vm)
         {
             vm.RemoverItemCommand.Execute(item);
+        }
+    }
+
+    private void BotaoCategoria_Click(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: CategoriaFiltroItem categoria } && DataContext is VendasViewModel vm)
+        {
+            vm.SelecionarCategoriaCommand.Execute(categoria);
         }
     }
 }

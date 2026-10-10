@@ -3,52 +3,154 @@
              xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoEmpresaView"
              x:DataType="vm:ConfiguracaoEmpresaViewModel">
-    
-        <StackPanel Spacing="16" MaxWidth="980" Margin="0,8,0,24">
-            <StackPanel Spacing="4">
-                <TextBlock Classes="titulo-pagina" Text="Empresa" />
-                <TextBlock Classes="subtitulo" Text="Dados que identificarão a empresa no KiVenda e nos futuros recibos." TextWrapping="Wrap" />
+
+    <Grid ColumnDefinitions="1.6*,*" ColumnSpacing="24" VerticalAlignment="Top">
+
+        <!-- ═══ Identificação ═══ -->
+        <Border Grid.Column="0" Classes="cartao cfg-card" VerticalAlignment="Top">
+            <StackPanel Spacing="20">
+                <StackPanel Spacing="6">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon Classes="cfg-accent" Data="{DynamicResource CfgIconBusiness}" />
+                        <TextBlock Classes="cfg-card-title" Text="Identificação" />
+                    </StackPanel>
+                    <TextBlock Classes="cfg-body"
+                               Text="Dados que identificam a empresa no KiVenda e nos futuros recibos." />
+                </StackPanel>
+
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                      ColumnSpacing="16" RowSpacing="16">
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" Classes="cfg-field">
+                        <TextBlock Classes="cfg-label" Text="Nome comercial *" />
+                        <TextBox Classes="cfg" Text="{Binding NomeComercial}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Classes="cfg-field">
+                        <TextBlock Classes="cfg-label" Text="Razão social" />
+                        <TextBox Classes="cfg" Text="{Binding RazaoSocial}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Grid.Column="0" Classes="cfg-field">
+                        <TextBlock Classes="cfg-label" Text="NIF" />
+                        <TextBox Classes="cfg" Text="{Binding Nif}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Classes="cfg-field">
+                        <TextBlock Classes="cfg-label" Text="Telefone" />
+                        <TextBox Classes="cfg" Text="{Binding Telefone}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0" Classes="cfg-field">
+                        <TextBlock Classes="cfg-label" Text="E-mail" />
+                        <TextBox Classes="cfg" Text="{Binding Email}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="1" Classes="cfg-field">
+                        <TextBlock Classes="cfg-label" Text="Website" />
+                        <TextBox Classes="cfg" Text="{Binding Website}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Classes="cfg-field">
+                        <TextBlock Classes="cfg-label" Text="Endereço" />
+                        <TextBox Classes="cfg" Text="{Binding Endereco}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="4" Grid.Column="0" Classes="cfg-field">
+                        <TextBlock Classes="cfg-label" Text="Município" />
+                        <TextBox Classes="cfg" Text="{Binding Municipio}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Grid.Column="1" Classes="cfg-field">
+                        <TextBlock Classes="cfg-label" Text="Província" />
+                        <TextBox Classes="cfg" Text="{Binding Provincia}" />
+                    </StackPanel>
+                </Grid>
             </StackPanel>
+        </Border>
 
-            <Border Classes="cartao" Padding="20">
-                <StackPanel Spacing="12">
-                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="Identificação" />
-                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="14" RowSpacing="10">
-                        <TextBox Grid.Row="0" Grid.Column="0" Watermark="Nome comercial *" Text="{Binding NomeComercial}" />
-                        <TextBox Grid.Row="0" Grid.Column="1" Watermark="Razão social" Text="{Binding RazaoSocial}" />
-                        <TextBox Grid.Row="1" Grid.Column="0" Watermark="NIF" Text="{Binding Nif}" />
-                        <TextBox Grid.Row="1" Grid.Column="1" Watermark="Telefone" Text="{Binding Telefone}" />
-                        <TextBox Grid.Row="2" Grid.Column="0" Watermark="E-mail" Text="{Binding Email}" />
-                        <TextBox Grid.Row="2" Grid.Column="1" Watermark="Website" Text="{Binding Website}" />
-                        <TextBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Watermark="Endereço" Text="{Binding Endereco}" />
-                        <TextBox Grid.Row="4" Grid.Column="0" Watermark="Município" Text="{Binding Municipio}" />
-                        <TextBox Grid.Row="4" Grid.Column="1" Watermark="Província" Text="{Binding Provincia}" />
+        <!-- ═══ Coluna direita ═══ -->
+        <StackPanel Grid.Column="1" Spacing="24" VerticalAlignment="Top">
+
+            <!-- Logótipo -->
+            <Border Classes="cartao cfg-card">
+                <StackPanel Spacing="18">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon Classes="cfg-accent" Data="{DynamicResource CfgIconImage}" />
+                        <TextBlock Classes="cfg-card-title" Text="Logótipo" />
+                    </StackPanel>
+
+                    <Border Classes="cfg-inset" Height="180" ClipToBounds="True">
+                        <Grid>
+                            <!-- Pré-visualização da imagem (preenchida no code-behind) -->
+                            <Image x:Name="LogoPreview"
+                                   Margin="6"
+                                   Stretch="Uniform"
+                                   IsVisible="False" />
+
+                            <!-- Estado vazio -->
+                            <StackPanel x:Name="LogoPlaceholder"
+                                        VerticalAlignment="Center"
+                                        Spacing="10">
+                                <PathIcon Data="{DynamicResource CfgIconImage}"
+                                          Width="38" Height="38"
+                                          HorizontalAlignment="Center"
+                                          Foreground="{DynamicResource TextoSecundarioBrush}" />
+                                <TextBlock Classes="cfg-hint"
+                                           Text="Sem logótipo"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <TextBlock Classes="cfg-hint"
+                               Text="{Binding EstadoLogo}"
+                               TextAlignment="Center"
+                               HorizontalAlignment="Center" />
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0" Classes="secundario cfg"
+                                HorizontalAlignment="Stretch"
+                                Click="EscolherLogo_Click">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <PathIcon Data="{DynamicResource CfgIconUpload}" Width="16" Height="16" />
+                                <TextBlock Text="Escolher imagem" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="1" Classes="secundario cfg"
+                                HorizontalAlignment="Stretch"
+                                Click="RemoverLogo_Click">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <PathIcon Data="{DynamicResource CfgIconDelete}" Width="16" Height="16" />
+                                <TextBlock Text="Remover" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
                     </Grid>
+
+                    <TextBlock Classes="cfg-hint"
+                               Text="Formatos aceites: PNG, JPEG e WebP. Tamanho máximo: 2 MB." />
                 </StackPanel>
             </Border>
 
-            <Border Classes="cartao" Padding="20">
-                <StackPanel Spacing="10">
-                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="Logótipo" />
-                    <TextBlock Text="{Binding EstadoLogo}" />
+            <!-- Estado -->
+            <Border Classes="cartao cfg-card">
+                <StackPanel Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Button Content="Escolher imagem" Classes="secundario" Click="EscolherLogo_Click" />
-                        <Button Content="Remover logótipo" Classes="secundario" Click="RemoverLogo_Click" />
+                        <PathIcon Classes="cfg-accent" Data="{DynamicResource CfgIconInfo}" />
+                        <TextBlock Classes="cfg-card-title" Text="Estado" />
                     </StackPanel>
-                    <TextBlock Text="Formatos aceites: PNG, JPEG e WebP. Tamanho máximo: 2 MB." Opacity="0.7" TextWrapping="Wrap" />
-                </StackPanel>
-            </Border>
 
-            <Border Classes="cartao" Padding="20">
-                <StackPanel Spacing="10">
-                    <TextBlock FontWeight="SemiBold" Text="Estado" />
-                    <TextBlock Text="{Binding Mensagem}" TextWrapping="Wrap" />
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Button Content="Guardar empresa" Classes="primario" Command="{Binding GuardarCommand}" IsEnabled="{Binding PodeExecutar}" />
-                        <Button Content="Remover cadastro" Classes="secundario" Command="{Binding RemoverCommand}" IsEnabled="{Binding TemEmpresa}" />
-                    </StackPanel>
+                    <Border Classes="cfg-inset">
+                        <TextBlock Classes="cfg-body" Text="{Binding Mensagem}" />
+                    </Border>
+
+                    <Button Classes="secundario cfg"
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding RemoverCommand}"
+                            IsEnabled="{Binding TemEmpresa}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon Data="{DynamicResource CfgIconDelete}" Width="16" Height="16" />
+                            <TextBlock Text="Remover cadastro" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Border>
         </StackPanel>
-    
+    </Grid>
 </UserControl>

@@ -43,6 +43,9 @@ public partial class ComprasViewModel : ListaModuloViewModelBase<CompraDto>
 
     public ObservableCollection<ProdutoDto> Produtos { get; } = new();
 
+    /// <summary>Disparado depois de uma compra ser registada (a mensagem é mostrada no aviso de sucesso do Stock).</summary>
+    public event EventHandler<string>? GuardadoComSucesso;
+
     public ComprasViewModel(IServiceScopeFactory scopeFactory) : base(scopeFactory)
     {
         _ = CarregarAsync();
@@ -125,8 +128,12 @@ public partial class ComprasViewModel : ListaModuloViewModelBase<CompraDto>
             var item = new ItemCompraCommand(ProdutoSelecionado.Id, apresentacaoPadrao.Id, quantidade, custoTotal);
             await useCase.ExecutarAsync(new RegistarCompraCommand(FornecedorSelecionado.Id, new[] { item }));
 
+            var nomeProduto = ProdutoSelecionado.Nome;
+
             FecharFormularioCommand.Execute(null);
             await CarregarAsync();
+
+            GuardadoComSucesso?.Invoke(this, $"Compra de \"{nomeProduto}\" registada. O stock foi atualizado.");
         }
         catch (DomainException ex)
         {

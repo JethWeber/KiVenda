@@ -3,34 +3,94 @@
              xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoScannerView"
              x:DataType="vm:ConfiguracaoScannerViewModel">
-    <StackPanel Spacing="18" MaxWidth="760">
-        <StackPanel Spacing="4">
-            <TextBlock Classes="titulo-pagina" Text="Dispositivos" />
-            <TextBlock Classes="subtitulo" Text="Scanner de código de barras — leitor USB tipo teclado" />
-        </StackPanel>
-        <Border Classes="cartao" Padding="18">
-            <StackPanel Spacing="16">
-                <TextBlock Text="Scanner de código de barras" FontSize="18" FontWeight="Bold" />
-                <TextBlock Classes="subtitulo"
-                           Text="As alterações são guardadas localmente e aplicadas ao PDV sem reiniciar o KiVenda."
-                           TextWrapping="Wrap" />
-                <CheckBox Content="Ativado" IsChecked="{Binding Ativo}" IsEnabled="{Binding !ACarregar}" />
-                <CheckBox Content="Emitir som ao ler" IsChecked="{Binding EmitirSomAoLer}" IsEnabled="{Binding !ACarregar}" />
-                <CheckBox Content="Adicionar automaticamente" IsChecked="{Binding AdicionarAutomaticamente}" IsEnabled="{Binding !ACarregar}" />
-                <CheckBox Content="Abrir quantidade após leitura" IsChecked="{Binding AbrirQuantidadeAposLeitura}" IsEnabled="{Binding !ACarregar}" />
-                <Border Background="{StaticResource NeutroSuaveBrush}" CornerRadius="8" Padding="12">
-                    <TextBlock TextWrapping="Wrap"
-                               Text="Adicionar automaticamente: cada bip entra no carrinho com quantidade 1. Desativado: a leitura fica pendente para informar a quantidade." />
-                </Border>
+
+    <Border Classes="cartao cfg-card">
+        <StackPanel Spacing="8">
+
+            <StackPanel Spacing="6" Margin="0,0,0,10">
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Button Content="Guardar configuração" Classes="primario"
-                            Command="{Binding GuardarCommand}" IsEnabled="{Binding !AGuardar}" />
-                    <Button Content="Restaurar padrão" Classes="secundario"
-                            Command="{Binding RestaurarPadraoCommand}" IsEnabled="{Binding !AGuardar}" />
+                    <PathIcon Classes="cfg-accent" Data="{DynamicResource CfgIconBarcode}" />
+                    <TextBlock Classes="cfg-card-title" Text="Scanner de código de barras" />
                 </StackPanel>
-                <TextBlock Text="{Binding Mensagem}" TextWrapping="Wrap"
-                           Foreground="{StaticResource TextoSecundarioBrush}" />
+                <TextBlock Classes="cfg-body"
+                           Text="Leitor USB tipo teclado. As alterações são guardadas localmente e aplicadas ao PDV sem reiniciar o KiVenda." />
             </StackPanel>
-        </Border>
-    </StackPanel>
+
+            <Border Classes="cfg-row">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Classes="cfg-value" Text="Ativado" />
+                        <TextBlock Classes="cfg-hint" Text="Liga a leitura por scanner no PDV." />
+                    </StackPanel>
+                    <ToggleSwitch Grid.Column="1"
+                                  OnContent="{x:Null}" OffContent="{x:Null}"
+                                  IsChecked="{Binding Ativo}"
+                                  IsEnabled="{Binding !ACarregar}" />
+                </Grid>
+            </Border>
+
+            <Border Classes="cfg-row">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Classes="cfg-value" Text="Emitir som ao ler" />
+                        <TextBlock Classes="cfg-hint" Text="Toca um aviso a cada leitura." />
+                    </StackPanel>
+                    <ToggleSwitch Grid.Column="1"
+                                  OnContent="{x:Null}" OffContent="{x:Null}"
+                                  IsChecked="{Binding EmitirSomAoLer}"
+                                  IsEnabled="{Binding !ACarregar}" />
+                </Grid>
+            </Border>
+
+            <Border Classes="cfg-row">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Classes="cfg-value" Text="Adicionar automaticamente" />
+                        <TextBlock Classes="cfg-hint" Text="Cada leitura entra no carrinho com quantidade 1." />
+                    </StackPanel>
+                    <ToggleSwitch Grid.Column="1"
+                                  OnContent="{x:Null}" OffContent="{x:Null}"
+                                  IsChecked="{Binding AdicionarAutomaticamente}"
+                                  IsEnabled="{Binding !ACarregar}" />
+                </Grid>
+            </Border>
+
+            <Border Classes="cfg-row" BorderThickness="0">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Classes="cfg-value" Text="Abrir quantidade após leitura" />
+                        <TextBlock Classes="cfg-hint" Text="Pede a quantidade antes de adicionar o produto." />
+                    </StackPanel>
+                    <ToggleSwitch Grid.Column="1"
+                                  OnContent="{x:Null}" OffContent="{x:Null}"
+                                  IsChecked="{Binding AbrirQuantidadeAposLeitura}"
+                                  IsEnabled="{Binding !ACarregar}" />
+                </Grid>
+            </Border>
+
+            <Border Classes="cfg-inset">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <PathIcon Data="{DynamicResource CfgIconInfo}"
+                              Width="18" Height="18"
+                              VerticalAlignment="Top"
+                              Foreground="{DynamicResource VerdePrimarioBrush}" />
+                    <TextBlock Grid.Column="1" Classes="cfg-body"
+                               Text="Adicionar automaticamente: cada bip entra no carrinho com quantidade 1. Desativado: a leitura fica pendente para informar a quantidade." />
+                </Grid>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
+                <Button Classes="secundario cfg"
+                        Command="{Binding RestaurarPadraoCommand}"
+                        IsEnabled="{Binding !AGuardar}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Data="{DynamicResource CfgIconRestore}" Width="16" Height="16" />
+                        <TextBlock Text="Restaurar padrão" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <TextBlock Classes="cfg-hint" Margin="0,6,0,0" Text="{Binding Mensagem}" />
+        </StackPanel>
+    </Border>
 </UserControl>

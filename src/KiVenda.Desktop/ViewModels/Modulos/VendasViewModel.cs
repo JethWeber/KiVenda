@@ -32,9 +32,13 @@ public partial class VendasViewModel : ViewModelBase
     private Guid? _vendaId;
     private decimal _totalAtual;
     private List<ProdutoDto> _catalogo = new();
+    private Guid? _categoriaSelecionada;
 
     [ObservableProperty]
     private bool _semCaixaAberto;
+
+    [ObservableProperty]
+    private string _vendaNumero = "—";
 
     [ObservableProperty]
     private bool _aCarregar;
@@ -47,6 +51,21 @@ public partial class VendasViewModel : ViewModelBase
 
     [ObservableProperty]
     private string _mensagemSucesso = string.Empty;
+
+    // ── Aviso (toast) de sucesso/erro: aparece 3 s e some sozinho ──
+    private CancellationTokenSource? _toastCts;
+
+    [ObservableProperty]
+    private bool _toastVisivel;
+
+    [ObservableProperty]
+    private bool _toastErro;
+
+    [ObservableProperty]
+    private string _toastTitulo = string.Empty;
+
+    [ObservableProperty]
+    private string _toastMensagem = string.Empty;
 
     [ObservableProperty]
     private string _quantidadeScannerInput = "1";
@@ -62,7 +81,14 @@ public partial class VendasViewModel : ViewModelBase
 
     public ObservableCollection<ProdutoDto> ProdutosFiltrados { get; } = new();
 
-    public ObservableCollection<ItemVendaDto> Carrinho { get; } = new();
+    /// <summary>Chips de categoria (o primeiro é sempre "Todos").</summary>
+    public ObservableCollection<CategoriaFiltroItem> Categorias { get; } = new();
+
+    /// <summary>Linhas do carrinho: itens iguais ficam agrupados numa só linha.</summary>
+    public ObservableCollection<ItemCarrinho> Carrinho { get; } = new();
+
+    /// <summary>O carrinho só aparece quando já há pelo menos um item.</summary>
+    public bool CarrinhoVisivel => Carrinho.Count > 0;
 
     [ObservableProperty]
     private string _subtotalTexto = "0 Kz";
@@ -93,6 +119,7 @@ public partial class VendasViewModel : ViewModelBase
     public VendasViewModel(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
+        Carrinho.CollectionChanged += (_, _) => OnPropertyChanged(nameof(CarrinhoVisivel));
         _servicoScanner = App.Services.GetRequiredService<IServicoScanner>();
         _ = InicializarAsync();
     }
@@ -247,12 +274,16 @@ public partial class VendasViewModel : ViewModelBase
             var produtos = await scope.ServiceProvider.GetRequiredService<ListarProdutosUseCase>()
                 .ExecutarAsync(new ListarProdutosQuery());
             _catalogo = produtos.ToList();
+            var categorias = await scope.ServiceProvider.GetRequiredService<ListarCategoriasUseCase>()
+                .ExecutarAsync();
+            ReconstruirCategorias(categorias);
             AtualizarProdutosFiltrados();
 
             var vendaId = await scope.ServiceProvider.GetRequiredService<IniciarVendaUseCase>()
                 .ExecutarAsync(new IniciarVendaCommand());
 
             _vendaId = vendaId;
+            VendaNumero = FormatarNumeroVenda(vendaId);
             SemCaixaAberto = false;
         }
         catch (DomainException ex)
@@ -269,22 +300,107 @@ public partial class VendasViewModel : ViewModelBase
 
     partial void OnTermoPesquisaChanged(string value) => AtualizarProdutosFiltrados();
 
+    // Qualquer MensagemErro/MensagemSucesso definida no ViewModel vira aviso visual.
+    // Depois de mostrada, a propriedade volta a vazio para que a mesma mensagem
+    // repetida volte a disparar o aviso.
+    partial void OnMensagemErroChanged(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return;
+        }
+
+        MostrarToast(erro: true, value);
+        MensagemErro = null;
+    }
+
+    partial void OnMensagemSucessoChanged(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return;
+        }
+
+        MostrarToast(erro: false, value);
+        MensagemSucesso = string.Empty;
+    }
+
+    private async void MostrarToast(bool erro, string mensagem)
+    {
+        _toastCts?.Cancel();
+        var cts = _toastCts = new CancellationTokenSource();
+
+        ToastErro = erro;
+        ToastTitulo = erro ? "Erro" : "Sucesso";
+        ToastMensagem = mensagem.TrimStart('✓', ' ');
+        ToastVisivel = true;
+
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
+            ToastVisivel = false;
+        }
+        catch (OperationCanceledException)
+        {
+            // Chegou outro aviso: ele reinicia a contagem.
+        }
+    }
+
     private void AtualizarProdutosFiltrados()
     {
         ProdutosFiltrados.Clear();
 
-        var query = string.IsNullOrWhiteSpace(TermoPesquisa)
-            ? _catalogo
-            : _catalogo.Where(p =>
+        IEnumerable<ProdutoDto> query = _catalogo;
+
+        if (_categoriaSelecionada is not null)
+        {
+            query = query.Where(p => p.CategoriaId == _categoriaSelecionada);
+        }
+
+        if (!string.IsNullOrWhiteSpace(TermoPesquisa))
+        {
+            query = query.Where(p =>
                 p.Nome.Contains(TermoPesquisa, StringComparison.OrdinalIgnoreCase) ||
                 p.CodigoInterno.Contains(TermoPesquisa, StringComparison.OrdinalIgnoreCase) ||
                 (p.CodigoBarras is not null && p.CodigoBarras.Contains(TermoPesquisa, StringComparison.OrdinalIgnoreCase)));
+        }
 
         foreach (var produto in query)
         {
             ProdutosFiltrados.Add(produto);
         }
     }
+
+    private void ReconstruirCategorias(IReadOnlyList<CategoriaDto> categorias)
+    {
+        Categorias.Clear();
+        Categorias.Add(new CategoriaFiltroItem("Todos", null) { Selecionada = true });
+        _categoriaSelecionada = null;
+
+        // Só mostra categorias que têm pelo menos um produto no catálogo.
+        var usadas = _catalogo.Select(p => p.CategoriaId).ToHashSet();
+
+        foreach (var categoria in categorias.Where(c => usadas.Contains(c.Id)).OrderBy(c => c.Nome))
+        {
+            Categorias.Add(new CategoriaFiltroItem(categoria.Nome, categoria.Id));
+        }
+    }
+
+    [RelayCommand]
+    private void SelecionarCategoria(CategoriaFiltroItem categoria)
+    {
+        foreach (var chip in Categorias)
+        {
+            chip.Selecionada = chip == categoria;
+        }
+
+        _categoriaSelecionada = categoria.Categoria;
+        AtualizarProdutosFiltrados();
+    }
+
+    // Mesmo formato do número do recibo (8 primeiros caracteres do Id).
+    private static string FormatarNumeroVenda(Guid vendaId)
+        => vendaId.ToString()[..8].ToUpperInvariant();
 
     /// <summary>
     /// Chamado tanto ao clicar num produto na grelha como ao premir
@@ -329,7 +445,7 @@ public partial class VendasViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task RemoverItemAsync(ItemVendaDto item)
+    private async Task RemoverItemAsync(ItemCarrinho linha)
     {
         if (_vendaId is null)
         {
@@ -341,7 +457,10 @@ public partial class VendasViewModel : ViewModelBase
             await using var scope = _scopeFactory.CreateAsyncScope();
             var useCase = scope.ServiceProvider.GetRequiredService<RemoverItemVendaUseCase>();
 
-            await useCase.ExecutarAsync(new RemoverItemVendaCommand(_vendaId.Value, item.Id));
+            foreach (var item in linha.Itens)
+            {
+                await useCase.ExecutarAsync(new RemoverItemVendaCommand(_vendaId.Value, item.Id));
+            }
 
             await AtualizarCarrinhoAsync(scope.ServiceProvider);
         }
@@ -432,6 +551,21 @@ public partial class VendasViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    /// Botão "Nova venda". Ainda não existe "suspender venda" no domínio, por isso
+    /// descarta o carrinho atual (se tiver itens) e abre uma venda limpa.
+    /// </summary>
+    [RelayCommand]
+    private async Task NovaVendaManualAsync()
+    {
+        if (Carrinho.Count == 0)
+        {
+            return;
+        }
+
+        await CancelarVendaAsync();
+    }
+
     [RelayCommand]
     private async Task CancelarVendaAsync()
     {
@@ -469,11 +603,13 @@ public partial class VendasViewModel : ViewModelBase
             await using var scope = _scopeFactory.CreateAsyncScope();
             var useCase = scope.ServiceProvider.GetRequiredService<IniciarVendaUseCase>();
             _vendaId = await useCase.ExecutarAsync(new IniciarVendaCommand());
+            VendaNumero = FormatarNumeroVenda(_vendaId.Value);
             SemCaixaAberto = false;
         }
         catch (DomainException ex)
         {
             _vendaId = null;
+            VendaNumero = "—";
             SemCaixaAberto = true;
             MensagemErro = ex.Message;
         }
@@ -490,9 +626,9 @@ public partial class VendasViewModel : ViewModelBase
         var venda = await useCase.ExecutarAsync(new ConsultarVendaQuery(_vendaId.Value));
 
         Carrinho.Clear();
-        foreach (var item in venda.Itens)
+        foreach (var grupo in venda.Itens.GroupBy(i => (i.ProdutoNome, i.ApresentacaoNome)))
         {
-            Carrinho.Add(item);
+            Carrinho.Add(new ItemCarrinho(grupo.ToList()));
         }
 
         _totalAtual = venda.Total;
@@ -500,4 +636,46 @@ public partial class VendasViewModel : ViewModelBase
         DescontoTexto = FormatadorKz.Formatar(venda.Desconto);
         TotalTexto = FormatadorKz.Formatar(venda.Total);
     }
+}
+
+/// <summary>Chip de categoria da grelha de produtos do PDV.</summary>
+public partial class CategoriaFiltroItem : ObservableObject
+{
+    public CategoriaFiltroItem(string nome, Guid? categoria)
+    {
+        Nome = nome;
+        Categoria = categoria;
+    }
+
+    /// <summary>Texto mostrado no chip.</summary>
+    public string Nome { get; }
+
+    /// <summary>Id da categoria usado no filtro; null = "Todos".</summary>
+    public Guid? Categoria { get; }
+
+    [ObservableProperty]
+    private bool _selecionada;
+}
+
+/// <summary>
+/// Uma linha do carrinho. Se o mesmo produto/apresentação foi adicionado várias
+/// vezes, os itens ficam agrupados aqui e a quantidade e o total são somados.
+/// </summary>
+public sealed class ItemCarrinho
+{
+    public ItemCarrinho(IReadOnlyList<ItemVendaDto> itens)
+    {
+        Itens = itens;
+    }
+
+    /// <summary>Itens reais da venda que compõem esta linha.</summary>
+    public IReadOnlyList<ItemVendaDto> Itens { get; }
+
+    public string ProdutoNome => Itens[0].ProdutoNome;
+
+    public string ApresentacaoNome => Itens[0].ApresentacaoNome;
+
+    public decimal Quantidade => Itens.Sum(i => (decimal)i.QuantidadeNaApresentacao);
+
+    public decimal ValorTotal => Itens.Sum(i => (decimal)i.ValorTotal);
 }
