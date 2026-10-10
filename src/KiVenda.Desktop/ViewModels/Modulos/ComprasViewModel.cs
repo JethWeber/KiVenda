@@ -43,6 +43,9 @@ public partial class ComprasViewModel : ListaModuloViewModelBase<CompraDto>
 
     public ObservableCollection<ProdutoDto> Produtos { get; } = new();
 
+    /// <summary>Disparado depois de uma compra ser registada (a mensagem é mostrada no aviso de sucesso do Stock).</summary>
+    public event EventHandler<string>? GuardadoComSucesso;
+
     public ComprasViewModel(IServiceScopeFactory scopeFactory) : base(scopeFactory)
     {
         _ = CarregarAsync();
@@ -66,16 +69,42 @@ public partial class ComprasViewModel : ListaModuloViewModelBase<CompraDto>
             Fornecedores.Add(fornecedor);
         }
 
-        var produtos = await scope.ServiceProvider.GetRequiredService<ListarProdutosUseCase>().ExecutarAsync(new ListarProdutosQuery());
+        await CarregarProdutosAsync(scope.ServiceProvider);
+    }
+
+    private async Task CarregarProdutosAsync(IServiceProvider? servicos = null)
+    {
+        if (servicos is not null)
+        {
+            var produtos = await servicos.GetRequiredService<ListarProdutosUseCase>()
+                .ExecutarAsync(new ListarProdutosQuery());
+
+            Produtos.Clear();
+            foreach (var produto in produtos)
+            {
+                Produtos.Add(produto);
+            }
+
+            return;
+        }
+
+        await using var scope = ScopeFactory.CreateAsyncScope();
+        var listaProdutos = await scope.ServiceProvider.GetRequiredService<ListarProdutosUseCase>()
+            .ExecutarAsync(new ListarProdutosQuery());
+
         Produtos.Clear();
-        foreach (var produto in produtos)
+        foreach (var produto in listaProdutos)
         {
             Produtos.Add(produto);
         }
     }
 
     [RelayCommand]
-    private void AbrirFormulario() => FormularioAberto = true;
+    private async Task AbrirFormularioAsync()
+    {
+        await CarregarProdutosAsync();
+        FormularioAberto = true;
+    }
 
     [RelayCommand]
     private void FecharFormulario()
@@ -125,12 +154,20 @@ public partial class ComprasViewModel : ListaModuloViewModelBase<CompraDto>
             var item = new ItemCompraCommand(ProdutoSelecionado.Id, apresentacaoPadrao.Id, quantidade, custoTotal);
             await useCase.ExecutarAsync(new RegistarCompraCommand(FornecedorSelecionado.Id, new[] { item }));
 
+            var nomeProduto = ProdutoSelecionado.Nome;
+
             FecharFormularioCommand.Execute(null);
             await CarregarAsync();
+
+            GuardadoComSucesso?.Invoke(this, $"Compra de \"{nomeProduto}\" registada. O stock foi atualizado.");
         }
         catch (DomainException ex)
         {
             MensagemErroFormulario = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            MensagemErroFormulario = $"Não foi possível registar a compra. {ex.Message}";
         }
         finally
         {

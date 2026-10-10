@@ -4,134 +4,159 @@
              xmlns:impressao="using:KiVenda.Infrastructure.Impressao"
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoImpressoraView"
              x:DataType="vm:ConfiguracaoImpressoraViewModel">
-    <StackPanel Spacing="18" MaxWidth="760">
-        <StackPanel Spacing="4">
-            <TextBlock Classes="titulo-pagina" Text="Impressora térmica" />
-            <TextBlock Classes="subtitulo"
-                       Text="O KiVenda identifica automaticamente as impressoras disponíveis no sistema operativo. A seleção é guardada localmente em JSON."
-                       TextWrapping="Wrap" />
-        </StackPanel>
 
-        <Border Classes="cartao" Padding="18">
-            <StackPanel Spacing="16">
-                <TextBlock Text="Impressora ESC/POS" FontSize="18" FontWeight="Bold" />
+    <Border Classes="cartao cfg-card">
+        <StackPanel Spacing="20">
 
-                <CheckBox Content="Ativar impressão térmica"
-                          IsChecked="{Binding Ativo}"
-                          IsEnabled="{Binding !ACarregar}" />
-
-                <StackPanel Spacing="6">
-                    <TextBlock Text="Impressora detetada" FontWeight="SemiBold" />
-
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                        <ComboBox Grid.Column="0"
-                                  ItemsSource="{Binding Dispositivos}"
-                                  SelectedItem="{Binding DispositivoSelecionado, Mode=TwoWay}"
-                                  IsEnabled="{Binding !ACarregar}"
-                                  MaxWidth="600">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate x:DataType="impressao:DispositivoImpressora">
-                                    <StackPanel Spacing="2">
-                                        <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" />
-                                        <TextBlock Text="{Binding Porta}"
-                                                   Classes="subtitulo"
-                                                   TextWrapping="NoWrap" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-
-                        <Button Grid.Column="1"
-                                Content="🔄 Procurar"
-                                Command="{Binding ProcurarCommand}"
-                                IsEnabled="{Binding !ADetetar}" />
-                    </Grid>
-
-                    <TextBlock Text="{Binding EstadoDeteccao}"
-                               Classes="subtitulo"
-                               TextWrapping="Wrap" />
-                </StackPanel>
-
-                <Border Background="{StaticResource NeutroSuaveBrush}"
-                        CornerRadius="8"
-                        Padding="12">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Configuração automática" FontWeight="Bold" />
-                        <TextBlock Text="Linux usa os dispositivos de impressão/USB detetados pelo sistema. Windows usa as impressoras instaladas e respetivas portas. O KiVenda escolhe o transporte correto sem o utilizador precisar indicar /dev/usb/lp0 ou COM3."
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-                </Border>
-
+            <!-- Cabeçalho -->
+            <StackPanel Spacing="6">
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Button Content="🖨 Testar impressão"
-                            Classes="secundario"
-                            Command="{Binding TestarCommand}"
-                            IsEnabled="{Binding !ATestar}" />
-                    <Button Content="Guardar configuração"
-                            Classes="primario"
-                            Command="{Binding GuardarCommand}"
-                            IsEnabled="{Binding !AGuardar}" />
-                    <Button Content="Restaurar padrão"
-                            Classes="secundario"
-                            Command="{Binding RestaurarPadraoCommand}"
-                            IsEnabled="{Binding !AGuardar}" />
+                    <PathIcon Classes="cfg-accent" Data="{DynamicResource CfgIconPrint}" />
+                    <TextBlock Classes="cfg-card-title" Text="Impressora térmica" />
                 </StackPanel>
+                <TextBlock Classes="cfg-body"
+                           Text="O KiVenda identifica automaticamente as impressoras ESC/POS disponíveis no sistema operativo. A seleção é guardada localmente em JSON." />
+            </StackPanel>
 
-                <Expander Header="Configuração avançada"
-                          IsExpanded="False">
-                    <StackPanel Spacing="10" Margin="0,10,0,0">
-                        <TextBlock Classes="subtitulo"
-                                   Text="Use apenas quando a deteção automática não encontrar o dispositivo. O valor é o identificador técnico usado pelo sistema operativo."
-                                   TextWrapping="Wrap" />
-
-                        <TextBox Text="{Binding Dispositivo}"
-                                 Watermark="Identificador do dispositivo"
-                                 IsEnabled="{Binding !ACarregar}" />
-
-                        <TextBlock Text="Linux: /dev/serial/by-id/... ou /dev/usb/lp0. Windows: winspool:Nome da impressora."
-                                   Classes="subtitulo"
-                                   TextWrapping="Wrap" />
+            <!-- Ativar -->
+            <Border Classes="cfg-row" Padding="0,0,0,16">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Classes="cfg-value" Text="Ativar impressão térmica" />
+                        <TextBlock Classes="cfg-hint" Text="Imprime recibos na impressora selecionada." />
                     </StackPanel>
-                </Expander>
+                    <ToggleSwitch Grid.Column="1"
+                                  OnContent="{x:Null}" OffContent="{x:Null}"
+                                  IsChecked="{Binding Ativo}"
+                                  IsEnabled="{Binding !ACarregar}" />
+                </Grid>
+            </Border>
 
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
-                    <StackPanel Grid.Column="0" Spacing="6">
-                        <TextBlock Text="Colunas" FontWeight="SemiBold" />
-                        <NumericUpDown Value="{Binding Colunas}"
-                                       Minimum="1"
-                                       Maximum="100"
-                                       FormatString="0"
-                                       IsEnabled="{Binding !ACarregar}" />
-                    </StackPanel>
+            <!-- Dispositivo -->
+            <StackPanel Classes="cfg-field">
+                <TextBlock Classes="cfg-label" Text="Impressora detetada" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <ComboBox Grid.Column="0" Classes="cfg"
+                              ItemsSource="{Binding Dispositivos}"
+                              SelectedItem="{Binding DispositivoSelecionado, Mode=TwoWay}"
+                              IsEnabled="{Binding !ACarregar}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="impressao:DispositivoImpressora">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="{Binding Nome}" FontWeight="SemiBold" />
+                                    <TextBlock Classes="cfg-hint"
+                                               Text="{Binding Porta}"
+                                               TextWrapping="NoWrap" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
-                    <StackPanel Grid.Column="1" Spacing="6">
-                        <TextBlock Text="Linhas no final" FontWeight="SemiBold" />
-                        <NumericUpDown Value="{Binding LinhasAlimentacaoFinal}"
-                                       Minimum="0"
-                                       Maximum="20"
-                                       FormatString="0"
-                                       IsEnabled="{Binding !ACarregar}" />
+                    <Button Grid.Column="1" Classes="secundario cfg"
+                            Command="{Binding ProcurarCommand}"
+                            IsEnabled="{Binding !ADetetar}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon Data="{DynamicResource CfgIconRefresh}" Width="16" Height="16" />
+                            <TextBlock Text="Procurar" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+                <TextBlock Classes="cfg-hint" Text="{Binding EstadoDeteccao}" />
+            </StackPanel>
+
+            <!-- Nota -->
+            <Border Classes="cfg-inset">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <PathIcon Data="{DynamicResource CfgIconInfo}"
+                              Width="18" Height="18"
+                              VerticalAlignment="Top"
+                              Foreground="{DynamicResource VerdePrimarioBrush}" />
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Classes="cfg-value" Text="Configuração automática" />
+                        <TextBlock Classes="cfg-body"
+                                   Text="Linux usa os dispositivos de impressão/USB detetados pelo sistema. Windows usa as impressoras instaladas e respetivas portas. O KiVenda escolhe o transporte correto sem o utilizador precisar indicar /dev/usb/lp0 ou COM3." />
                     </StackPanel>
                 </Grid>
+            </Border>
 
-                <StackPanel Spacing="6">
-                    <TextBlock Text="Codificação" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding EncodingNome}"
-                             Watermark="cp850"
-                             IsEnabled="{Binding !ACarregar}" />
-                    <TextBlock Classes="subtitulo"
-                               Text="Padrão: cp850. Pode ser alterado quando o modelo da impressora exigir outra codificação."
-                               TextWrapping="Wrap" />
+            <!-- Papel -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                <StackPanel Grid.Column="0" Classes="cfg-field">
+                    <TextBlock Classes="cfg-label" Text="Colunas" />
+                    <NumericUpDown Classes="cfg"
+                                   Value="{Binding Colunas}"
+                                   Minimum="1" Maximum="100"
+                                   FormatString="0"
+                                   IsEnabled="{Binding !ACarregar}" />
                 </StackPanel>
+                <StackPanel Grid.Column="1" Classes="cfg-field">
+                    <TextBlock Classes="cfg-label" Text="Linhas no final" />
+                    <NumericUpDown Classes="cfg"
+                                   Value="{Binding LinhasAlimentacaoFinal}"
+                                   Minimum="0" Maximum="20"
+                                   FormatString="0"
+                                   IsEnabled="{Binding !ACarregar}" />
+                </StackPanel>
+            </Grid>
 
-                <CheckBox Content="Cortar papel automaticamente"
-                          IsChecked="{Binding CortarPapel}"
-                          IsEnabled="{Binding !ACarregar}" />
-
-                <TextBlock Text="{Binding Mensagem}"
-                           TextWrapping="Wrap"
-                           Foreground="{StaticResource TextoSecundarioBrush}" />
+            <StackPanel Classes="cfg-field">
+                <TextBlock Classes="cfg-label" Text="Codificação" />
+                <TextBox Classes="cfg"
+                         Text="{Binding EncodingNome}"
+                         Watermark="cp850"
+                         IsEnabled="{Binding !ACarregar}" />
+                <TextBlock Classes="cfg-hint"
+                           Text="Padrão: cp850. Pode ser alterado quando o modelo da impressora exigir outra codificação." />
             </StackPanel>
-        </Border>
-    </StackPanel>
+
+            <Border Classes="cfg-row" BorderThickness="0,1,0,0" Padding="0,16,0,0">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Classes="cfg-value" Text="Cortar papel automaticamente" />
+                        <TextBlock Classes="cfg-hint" Text="Aciona o cortador no fim de cada recibo." />
+                    </StackPanel>
+                    <ToggleSwitch Grid.Column="1"
+                                  OnContent="{x:Null}" OffContent="{x:Null}"
+                                  IsChecked="{Binding CortarPapel}"
+                                  IsEnabled="{Binding !ACarregar}" />
+                </Grid>
+            </Border>
+
+            <!-- Avançado -->
+            <Expander Header="Configuração avançada" IsExpanded="False">
+                <StackPanel Spacing="10" Margin="0,10,0,0">
+                    <TextBlock Classes="cfg-hint"
+                               Text="Use apenas quando a deteção automática não encontrar o dispositivo. O valor é o identificador técnico usado pelo sistema operativo." />
+                    <TextBox Classes="cfg"
+                             Text="{Binding Dispositivo}"
+                             Watermark="Identificador do dispositivo"
+                             IsEnabled="{Binding !ACarregar}" />
+                    <TextBlock Classes="cfg-hint"
+                               Text="Linux: /dev/serial/by-id/... ou /dev/usb/lp0. Windows: winspool:Nome da impressora." />
+                </StackPanel>
+            </Expander>
+
+            <!-- Ações -->
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Button Classes="secundario cfg"
+                        Command="{Binding TestarCommand}"
+                        IsEnabled="{Binding !ATestar}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Data="{DynamicResource CfgIconPrint}" Width="16" Height="16" />
+                        <TextBlock Text="Testar impressão" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Classes="secundario cfg"
+                        Command="{Binding RestaurarPadraoCommand}"
+                        IsEnabled="{Binding !AGuardar}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Data="{DynamicResource CfgIconRestore}" Width="16" Height="16" />
+                        <TextBlock Text="Restaurar padrão" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <TextBlock Classes="cfg-hint" Text="{Binding Mensagem}" />
+        </StackPanel>
+    </Border>
 </UserControl>

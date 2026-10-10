@@ -10,77 +10,17 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Spacing="20">
 
-            <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
-                <StackPanel Spacing="3">
-                    <TextBlock Classes="titulo-pagina" Text="Abastecer" />
-                    <TextBlock Classes="subtitulo" Text="Registe compras e acompanhe a entrada de stock." />
-                </StackPanel>
+            <!-- Barra de ações (o formulário abre num modal) -->
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <TextBlock Classes="subtitulo" Text="Registe compras e acompanhe a entrada de stock."
+                           VerticalAlignment="Center" />
                 <Button Grid.Column="1" Content="+ Nova Compra" Classes="primario"
+                        Padding="20,10"
                         Command="{Binding AbrirFormularioCommand}" />
             </Grid>
 
             <TextBlock Classes="erro" Text="{Binding MensagemErro}"
                        IsVisible="{Binding MensagemErro, Converter={x:Static ObjectConverters.IsNotNull}}" />
-
-            <Border Classes="cartao" IsVisible="{Binding FormularioAberto}">
-                <StackPanel Spacing="16">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <StackPanel Spacing="3">
-                            <TextBlock Text="Nova Compra" FontSize="18" FontWeight="Bold" />
-                            <TextBlock Classes="subtitulo" Text="A entrada será refletida no stock automaticamente." />
-                        </StackPanel>
-                        <Border Grid.Column="1" Classes="badge badge-neutro">
-                            <TextBlock Text="ENTRADA DE STOCK" FontSize="10" FontWeight="Bold" />
-                        </Border>
-                    </Grid>
-
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
-                        <StackPanel Grid.Column="0" Spacing="5">
-                            <TextBlock Classes="rotulo-campo" Text="Fornecedor" />
-                            <ComboBox ItemsSource="{Binding Fornecedores}"
-                                      SelectedItem="{Binding FornecedorSelecionado}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate DataType="fornecedores:FornecedorDto">
-                                        <TextBlock Text="{Binding Nome}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Spacing="5">
-                            <TextBlock Classes="rotulo-campo" Text="Produto" />
-                            <ComboBox ItemsSource="{Binding Produtos}"
-                                      SelectedItem="{Binding ProdutoSelecionado}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate DataType="produtos:ProdutoDto">
-                                        <TextBlock Text="{Binding Nome}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
-                        <StackPanel Grid.Column="0" Spacing="5">
-                            <TextBlock Classes="rotulo-campo" Text="Quantidade" />
-                            <TextBox Text="{Binding Quantidade}" Watermark="ex.: 25" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Spacing="5">
-                            <TextBlock Classes="rotulo-campo" Text="Custo total (Kz)" />
-                            <TextBox Text="{Binding CustoTotal}" Watermark="ex.: 27500" />
-                        </StackPanel>
-                    </Grid>
-
-                    <TextBlock Classes="erro" Text="{Binding MensagemErroFormulario}"
-                               IsVisible="{Binding MensagemErroFormulario, Converter={x:Static ObjectConverters.IsNotNull}}" />
-
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Button Content="Registar compra" Classes="primario"
-                                Command="{Binding GuardarCommand}" IsEnabled="{Binding !AGuardar}" />
-                        <Button Content="Cancelar" Classes="secundario"
-                                Command="{Binding FecharFormularioCommand}" />
-                    </StackPanel>
-                </StackPanel>
-            </Border>
 
             <Border Classes="cartao" Padding="0">
                 <StackPanel>

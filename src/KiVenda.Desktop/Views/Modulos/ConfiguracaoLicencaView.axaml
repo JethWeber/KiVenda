@@ -3,93 +3,137 @@
              xmlns:vm="using:KiVenda.Desktop.ViewModels.Modulos"
              x:Class="KiVenda.Desktop.Views.Modulos.ConfiguracaoLicencaView"
              x:DataType="vm:ConfiguracaoLicencaViewModel">
-    
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+<ScrollViewer VerticalScrollBarVisibility="Auto"
               HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Spacing="18" MaxWidth="920">
-            <StackPanel Spacing="4">
-                <TextBlock Classes="titulo-pagina" Text="Licença" />
-                <TextBlock Classes="subtitulo"
-                           Text="Assinatura do KiVenda — uma ativação por máquina, com acesso completo ao MVP." />
-            </StackPanel>
+    <Grid ColumnDefinitions="1.4*,*" ColumnSpacing="24" VerticalAlignment="Top">
 
-            <Border Classes="cartao" Padding="20">
-                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
-                    <StackPanel Grid.Column="0" Spacing="8">
-                        <TextBlock Text="Estado da licença" FontSize="17" FontWeight="Bold" />
-                        <TextBlock Text="{Binding Estado}" FontSize="22" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding Mensagem}" TextWrapping="Wrap"
-                                   Foreground="{StaticResource TextoSecundarioBrush}" />
+        <!-- ═══ Licença atual ═══ -->
+        <Border Grid.Column="0" Classes="cartao cfg-card" VerticalAlignment="Top">
+            <StackPanel Spacing="22">
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon Classes="cfg-accent" Data="{DynamicResource CfgIconKey}" />
+                        <TextBlock Classes="cfg-card-title" Text="Licença atual" />
                     </StackPanel>
 
-                    <Border Grid.Column="1" Padding="12,8" CornerRadius="16"
-                            Background="{StaticResource VerdeSuaveBrush}"
-                            IsVisible="{Binding LicencaValida}">
-                        <TextBlock Text="ATIVA" Foreground="{StaticResource VerdePrimarioBrush}" FontWeight="Bold" />
+                    <Border Grid.Column="1" Classes="cfg-chip green" IsVisible="{Binding LicencaValida}">
+                        <TextBlock Text="Válida" />
                     </Border>
-
-                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,18,0,0"
-                               Text="Cliente" Foreground="{StaticResource TextoSecundarioBrush}" />
-                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="16,18,0,0"
-                               Text="{Binding Cliente}" FontWeight="SemiBold" />
-
-                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,10,0,0"
-                               Text="Plano" Foreground="{StaticResource TextoSecundarioBrush}" />
-                    <TextBlock Grid.Row="2" Grid.Column="1" Margin="16,10,0,0"
-                               Text="{Binding Plano}" FontWeight="SemiBold" />
-
-                    <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,10,0,0"
-                               Text="Validade" Foreground="{StaticResource TextoSecundarioBrush}" />
-                    <TextBlock Grid.Row="3" Grid.Column="1" Margin="16,10,0,0"
-                               Text="{Binding Validade}" FontWeight="SemiBold" />
+                    <Border Grid.Column="1" Classes="cfg-chip amber" IsVisible="{Binding !LicencaValida}">
+                        <TextBlock Text="{Binding Estado}" />
+                    </Border>
                 </Grid>
-            </Border>
 
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="18" IsVisible="{Binding PrecisaAtivacao}">
-                <Border Grid.Column="0" Classes="cartao" Padding="20">
-                    <StackPanel Spacing="14">
-                        <TextBlock Text="Ativar o KiVenda" FontSize="18" FontWeight="Bold" />
-                        <TextBlock TextWrapping="Wrap"
-                                   Text="Mostre este QR Code à Weber Tech para emitir a licença desta máquina. Depois importe o ficheiro .wta recebido." />
-                        <Border Width="280" Height="280"
-                                HorizontalAlignment="Center"
-                                Background="White"
-                                Padding="12"
-                                IsVisible="{Binding MostrarQr}">
-                            <Image Source="{Binding QrCode}" Stretch="Uniform" />
+                <TextBlock Classes="cfg-body" Text="{Binding Mensagem}" />
+
+                <!-- Detalhes (só com licença carregada) -->
+                <StackPanel Spacing="22" IsVisible="{Binding MostrarDetalhes}">
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="24" RowSpacing="22">
+                        <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                            <TextBlock Classes="cfg-label" Text="Cliente" />
+                            <TextBlock Classes="cfg-value" Text="{Binding Cliente}" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                            <TextBlock Classes="cfg-label" Text="Plano" />
+                            <TextBlock Classes="cfg-value" Text="{Binding Plano}" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
+                            <TextBlock Classes="cfg-label" Text="Validade" />
+                            <TextBlock Classes="cfg-value" Text="{Binding Validade}" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
+                            <TextBlock Classes="cfg-label" Text="Dias restantes" />
+                            <TextBlock Classes="cfg-value" Text="{Binding DiasRestantes}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Spacing="8">
+                        <TextBlock Classes="cfg-label" Text="Módulos contratados" />
+                        <Border Classes="cfg-chip green">
+                            <TextBlock Text="Todos os módulos incluídos" />
                         </Border>
                     </StackPanel>
-                </Border>
+                </StackPanel>
 
-                <Border Grid.Column="1" Classes="cartao" Padding="20">
-                    <StackPanel Spacing="14">
-                        <TextBlock Text="Já tenho uma licença" FontSize="18" FontWeight="Bold" />
-                        <TextBlock TextWrapping="Wrap"
-                                   Text="Importe o ficheiro .wta recebido da Weber Tech. A licença é validada localmente e fica associada a esta máquina." />
-                        <Button Content="Importar licença .wta"
-                                Classes="primario"
-                                HorizontalAlignment="Left"
-                                IsEnabled="{Binding PodeImportar}" Click="ImportarLicenca_Click" />
-                        <TextBlock Text="Ativação única: depois da primeira ativação, use o ficheiro de renovação quando a assinatura expirar."
-                                   TextWrapping="Wrap"
-                                   Foreground="{StaticResource TextoSecundarioBrush}" />
-                    </StackPanel>
-                </Border>
-            </Grid>
+                <!--
+                Machine ID (como no mock): adicione `public string MachineId` ao
+                ConfiguracaoLicencaViewModel e retire este comentário.
 
-            <Border Classes="cartao" Padding="20" IsVisible="{Binding MostrarDetalhes}">
-                <Grid ColumnDefinitions="*,Auto">
-                    <StackPanel Spacing="6">
-                        <TextBlock Text="Assinatura" FontSize="18" FontWeight="Bold" />
-                        <TextBlock Text="Este MVP possui um único pacote. Uma licença válida desbloqueia todos os módulos." TextWrapping="Wrap" />
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" Spacing="4" HorizontalAlignment="Right">
-                        <TextBlock Text="Dias restantes" Foreground="{StaticResource TextoSecundarioBrush}" />
-                        <TextBlock Text="{Binding DiasRestantes}" FontSize="24" FontWeight="Bold" />
-                    </StackPanel>
+                <Border Classes="cfg-inset">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <PathIcon Data="{DynamicResource CfgIconLaptop}" Width="20" Height="20"
+                                  Foreground="{DynamicResource TextoSecundarioBrush}" />
+                        <StackPanel Grid.Column="1" Spacing="2">
+                            <TextBlock Classes="cfg-label" Text="Machine ID desta instalação" />
+                            <TextBlock Classes="cfg-value" Text="{Binding MachineId}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                -->
+            </StackPanel>
+        </Border>
+
+        <!-- ═══ Ativação offline ═══ -->
+        <Border Grid.Column="1" Classes="cartao cfg-card" VerticalAlignment="Top">
+            <StackPanel Spacing="20">
+
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                    <PathIcon Classes="cfg-accent" Data="{DynamicResource CfgIconQr}" />
+                    <TextBlock Classes="cfg-card-title" Text="Ativação offline" />
+                </StackPanel>
+
+                <!-- QR: placeholder quando ainda não há código -->
+                <Grid HorizontalAlignment="Center">
+                    <Border Classes="cfg-inset" Width="190" Height="190" IsVisible="{Binding !MostrarQr}">
+                        <PathIcon Data="{DynamicResource CfgIconQr}"
+                                  Width="64" Height="64"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Foreground="{DynamicResource TextoSecundarioBrush}" />
+                    </Border>
+                    <Border Width="230" Height="230"
+                            CornerRadius="14"
+                            Background="White"
+                            Padding="12"
+                            IsVisible="{Binding MostrarQr}">
+                        <Image Source="{Binding QrCode}" Stretch="Uniform" />
+                    </Border>
                 </Grid>
-            </Border>
-        </StackPanel>
-    </ScrollViewer>
-    
+
+                <TextBlock Classes="cfg-body"
+                           TextAlignment="Center"
+                           Text="Mostre este QR Code à Weber Tech para emitir a licença desta máquina. Depois importe o ficheiro .wta recebido." />
+
+                <!--
+                Botão "Gerar QR Code de Ativação" (como no mock): crie um
+                GerarQrCommand no ViewModel e retire este comentário.
+
+                <Button Classes="primario cfg" HorizontalAlignment="Stretch" Height="48"
+                        Command="{Binding GerarQrCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon Data="{DynamicResource CfgIconQr}" Width="18" Height="18" />
+                        <TextBlock Text="Gerar QR Code de ativação" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                -->
+
+                <Button Classes="primario cfg"
+                        Height="48"
+                        HorizontalAlignment="Stretch"
+                        IsEnabled="{Binding PodeImportar}"
+                        Click="ImportarLicenca_Click">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon Data="{DynamicResource CfgIconUpload}" Width="18" Height="18" />
+                        <TextBlock Text="Importar ficheiro de licença (.wta)" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+
+                <TextBlock Classes="cfg-hint"
+                           TextAlignment="Center"
+                           Text="Depois da primeira ativação, use o ficheiro de renovação quando a assinatura expirar." />
+            </StackPanel>
+        </Border>
+    </Grid>
+</ScrollViewer>
 </UserControl>

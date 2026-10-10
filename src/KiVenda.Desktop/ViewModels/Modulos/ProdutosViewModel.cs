@@ -52,6 +52,9 @@ public partial class ProdutosViewModel : ListaModuloViewModelBase<ProdutoDto>
 
     public ObservableCollection<UnidadeMedidaDto> Unidades { get; } = new();
 
+    /// <summary>Disparado depois de um produto ser guardado (a mensagem é mostrada no aviso de sucesso do Stock).</summary>
+    public event EventHandler<string>? GuardadoComSucesso;
+
     public ProdutosViewModel(IServiceScopeFactory scopeFactory, SessaoUtilizadorAtual sessao) : base(scopeFactory)
     {
         PodeCriar = Permissoes.Permite(sessao.Perfil, Acao.CadastrarProdutos);
@@ -141,13 +144,21 @@ public partial class ProdutosViewModel : ListaModuloViewModelBase<ProdutoDto>
                 stockMinimo,
                 string.IsNullOrWhiteSpace(NovoCodigoBarras) ? null : NovoCodigoBarras));
 
+            var nomeGuardado = NovoNome;
+
             FormularioAberto = false;
             LimparFormulario();
             await CarregarAsync();
+
+            GuardadoComSucesso?.Invoke(this, $"\"{nomeGuardado}\" foi adicionado ao catálogo.");
         }
         catch (DomainException ex)
         {
             MensagemErroFormulario = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            MensagemErroFormulario = $"Não foi possível guardar o produto. {ex.Message}";
         }
         finally
         {
